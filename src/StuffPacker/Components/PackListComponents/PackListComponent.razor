@@ -1,0 +1,31 @@
+﻿@using StuffPacker.ViewModel
+<h2>@Model.Name</h2>
+<b>Total weight: @Model.Weight @Model.WeightPrefix</b>
+@foreach (var group in Model.Items)
+{
+<h4>@group.Name : Total weight: @group.Weight @Model.WeightPrefix</h4>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Weight</th>
+        </tr>
+        </thead>
+        @foreach (var item in group.Items)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <th>@item.Amount</th>
+                <td>@item.Weight @item.WeightPrefix</td>
+            </tr>
+        }
+</table>
+}
+
+
+
+@code {
+      [Parameter]
+    public PackListViewModel Model { get; set; }   
+}

@@ -1,0 +1,33 @@
+﻿@using StuffPacker.Services
+@using System.Reactive.Linq
+@inject IDispatcher Dispatcher
+@inject IMessageService MessageService
+@code {
+    private IDisposable _subscriber;
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        _subscriber = _subscriber ?? SubscribeForMessageUpdates(UpdateCount);
+
+    }
+    private void UpdateCount(string msg)
+    {
+        if (msg.StartsWith("DashService:Update"))
+        {
+            //InvokeAsync(() => Dispatcher.Dispatch(new GetDashDataAction()));
+        }
+        if (msg.StartsWith("OfficeService:Update"))
+        {
+            //InvokeAsync(() => Dispatcher.Dispatch(new GetSiteDataAction()));
+        }
+
+    }
+    private IDisposable SubscribeForMessageUpdates(Action<string> updateCount) => MessageService
+       .Subscribe(action => action.AsStringMessage()
+           .Do(updateCount)
+           .Do(_ => InvokeAsync(() => { StateHasChanged(); }))
+           .Subscribe());
+
+    public void Dispose() => _subscriber?.Dispose();
+}
