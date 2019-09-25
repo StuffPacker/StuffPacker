@@ -1,11 +1,12 @@
-﻿using System;
+﻿using StuffPacker.Persistence.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace StuffPacker.Model
 {
-    public class ProductEntity
+    public class ProductEntity: SoftDeleteEntityBase
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using StuffPacker.Persistence.Entity;
+using System;
 
 namespace StuffPacker.Model
 {
-    public class PackListEntity
+    public class PackListEntity: SoftDeleteEntityBase
     {
         public Guid Id { get; set; }
         public string Groups { get; set; }

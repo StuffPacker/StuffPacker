@@ -12,4 +12,8 @@
     <PackageReference Include="System.Reactive.Linq" Version="4.2.0-preview.625" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Site\StuffPacker.Persistence\StuffPacker.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
