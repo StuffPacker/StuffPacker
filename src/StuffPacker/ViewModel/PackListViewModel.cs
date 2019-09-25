@@ -11,6 +11,8 @@ namespace StuffPacker.ViewModel
         }
         public string Name { get; set; }
 
+        public Guid Id { get; set; }
+
         public decimal Weight => GetTotalWeight();
 
         private decimal GetTotalWeight()

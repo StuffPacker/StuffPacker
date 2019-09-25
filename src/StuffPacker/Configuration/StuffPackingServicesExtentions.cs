@@ -12,8 +12,7 @@ namespace StuffPacker.Configuration
         public static IServiceCollection AddStuffPackerServices(this IServiceCollection services, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             services.AddScoped<IPackListService, PackListService>();
-            services.AddScoped<IPackListsRepository, IPackListsRepositoryFake>();
-            services.AddScoped<IProductRepository, IProductRepositoryFake>();
+            services.AddSingleton<IMessageService, MessageService>();
             services.AddStuffPackerPersistence(configuration);
             return services;
         }

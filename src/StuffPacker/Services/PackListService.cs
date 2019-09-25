@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StuffPacker.Model;
+using StuffPacker.Model.Messaging;
 using StuffPacker.Repositories;
 using StuffPacker.ViewModel;
 
@@ -14,22 +15,46 @@ namespace StuffPacker.Services
 
         private readonly IProductRepository _productRepository;
 
-        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository)
+        private readonly IMessageService _messageService;
+
+        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService)
         {
             _packListsRepository = packListsRepository;
             _productRepository = productRepository;
+            _messageService = messageService;
+        }
+
+        public async Task Add(Guid id, string name)
+        {
+            var model = new PackListModel(id);
+            model.Update(name);
+            await this._packListsRepository.Add(model);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
         public async Task<IEnumerable<PackListViewModel>> Get()
         {
             var packLists = new List<PackListViewModel>();
             var list = await this._packListsRepository.Get();
+            if(list==null)
+            {
+                return packLists;
+            }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { Name = "List name" + item.Id, Items = await GetGroups(item.Groups) });
+                packLists.Add(new PackListViewModel {Id=item.Id ,Name = item.Name, Items = await GetGroups(item.Groups) });
             }
             return packLists;
         }
+
+        public async Task Update(PackListViewModel model)
+        {
+            var item = await this._packListsRepository.Get(model.Id);
+            item.Update(model.Name);
+            await this._packListsRepository.Update(item);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
         private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups)
         {
             var list = new List<PackListGroupViewModel>();
@@ -54,14 +79,18 @@ namespace StuffPacker.Services
                 else
                 {
                     var p = await this._productRepository.Get(item);
-                    list.Add(new PackListItemViewModel
+                    if(p!=null)
                     {
-                        Name = $"item {p.Name}",
-                        Weight = p.Weight,
-                        WeightPrefix = p.WeightPrefix,
-                        Amount = 1,
-                        Id = p.Id
-                    });
+                        list.Add(new PackListItemViewModel
+                        {
+                            Name = p.Name,
+                            Weight = p.Weight,
+                            WeightPrefix = p.WeightPrefix,
+                            Amount = 1,
+                            Id = p.Id
+                        });
+                    }
+                   
                 }
                
             }

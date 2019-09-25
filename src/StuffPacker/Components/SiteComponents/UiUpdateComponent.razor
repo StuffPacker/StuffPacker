@@ -1,5 +1,6 @@
 ﻿@using StuffPacker.Services
 @using System.Reactive.Linq
+@using StuffPacker.store.packlist.Get
 @inject IDispatcher Dispatcher
 @inject IMessageService MessageService
 @code {
@@ -13,14 +14,11 @@
     }
     private void UpdateCount(string msg)
     {
-        if (msg.StartsWith("DashService:Update"))
+        if (msg.StartsWith("PackListService:Update"))
         {
-            //InvokeAsync(() => Dispatcher.Dispatch(new GetDashDataAction()));
+            InvokeAsync(() => Dispatcher.Dispatch(new GetPackListDataAction()));
         }
-        if (msg.StartsWith("OfficeService:Update"))
-        {
-            //InvokeAsync(() => Dispatcher.Dispatch(new GetSiteDataAction()));
-        }
+       
 
     }
     private IDisposable SubscribeForMessageUpdates(Action<string> updateCount) => MessageService

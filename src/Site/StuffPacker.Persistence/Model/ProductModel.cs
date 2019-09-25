@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StuffPacker.Model
 {
@@ -14,7 +11,7 @@ namespace StuffPacker.Model
             Entity = entity;
         }
 
-        public object Name => Entity.Name;
+        public string Name => Entity.Name;
 
         public decimal Weight => Entity.Weight;
 

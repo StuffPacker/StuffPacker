@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Blazor.Fluxor;
 using EmbeddedBlazorContent;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StuffPacker.Configuration;
-
+using StuffPacker.Persistence;
+using System.Net.Http;
 
 namespace StuffPacker
 {
@@ -32,13 +27,15 @@ namespace StuffPacker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<HttpClient>();
+            services.AddDbContext<StuffPackerDbContext>(options =>
+        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddStuffPackerServices(Configuration, LoggerFactory);
 
             services.AddFluxor(options =>
             {
-                options.UseDependencyInjection(typeof(Startup).Assembly);              
+                options.UseDependencyInjection(typeof(Startup).Assembly);
             });
         }
 

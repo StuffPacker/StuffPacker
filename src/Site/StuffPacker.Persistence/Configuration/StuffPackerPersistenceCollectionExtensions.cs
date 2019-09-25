@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using StuffPacker.Persistence.Repository;
+using StuffPacker.Repositories;
 namespace StuffPacker.Persistence.Configuration
 {
     public static class StuffPackerPersistenceCollectionExtensions
@@ -11,8 +10,13 @@ namespace StuffPacker.Persistence.Configuration
         public static IServiceCollection AddStuffPackerPersistence(this IServiceCollection services,
            IConfiguration configuration)
         {
-            var servicesToRet = services;           
-            return servicesToRet;
+
+
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IPackListsRepository, PackListsRepository>();
+
+            
+            return services;
         }
     }
 }
