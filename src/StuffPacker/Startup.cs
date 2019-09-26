@@ -28,7 +28,7 @@ namespace StuffPacker
         {
             services.AddScoped<HttpClient>();
             services.AddDbContext<StuffPackerDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddStuffPackerServices(Configuration, LoggerFactory);
