@@ -4,7 +4,7 @@ namespace StuffPacker.Model
 {
     public class ProductModel
     {
-        private ProductEntity Entity;
+        public ProductEntity Entity;
 
         public ProductModel(ProductEntity entity)
         {
@@ -18,5 +18,16 @@ namespace StuffPacker.Model
         public WeightPrefix WeightPrefix => Entity.WeightPrefix;
 
         public Guid Id => Entity.Id;
+
+        public void Update(string name)
+        {
+            Entity.Name = name;
+        }
+
+        public void Update(string name, decimal weight)
+        {
+            Entity.Name = name;
+            Entity.Weight = weight;
+        }
     }
 }

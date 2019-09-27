@@ -13,6 +13,7 @@ namespace StuffPacker.Model
         public ProductEntity(Guid id)
         {
             Id = id;
+            WeightPrefix = WeightPrefix.Gram;
         }
     }
 }

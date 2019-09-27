@@ -8,5 +8,7 @@ namespace StuffPacker.Repositories
     public interface IProductRepository
     {
         Task<ProductModel> Get(Guid item);
+        Task Add(ProductModel productModel);
+        Task Update(ProductModel model);
     }
 }

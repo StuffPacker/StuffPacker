@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <Content Remove="Repositories\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor.Fluxor" Version="0.35.0-pre" />
     <PackageReference Include="EmbeddedBlazorContent" Version="1.8.0" />
     <PackageReference Include="MatBlazor" Version="1.8.0" />
@@ -15,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Site\StuffPacker.Persistence\StuffPacker.Persistence.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

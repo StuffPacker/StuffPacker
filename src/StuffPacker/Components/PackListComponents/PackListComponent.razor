@@ -1,16 +1,18 @@
 ﻿@using StuffPacker.ViewModel
+@inject StuffPacker.Services.IPackListService _packListService;
 <h2>@Model.Name</h2>
 <b>Total weight: @Model.Weight @Model.WeightPrefix</b>
 @foreach (var group in Model.Items)
 {
-<h4>@group.Name : Total weight: @group.Weight @Model.WeightPrefix</h4>
-<table class="table table-striped">
-    <thead class="thead-dark">
-        <tr>
-            <th>Name</th>
-            <th>Amount</th>
-            <th>Weight</th>
-        </tr>
+    <h4>@group.Name : Total weight: @group.Weight @Model.WeightPrefix</h4>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Weight</th>
+                <th></th>
+            </tr>
         </thead>
         @foreach (var item in group.Items)
         {
@@ -18,14 +20,73 @@
                 <td>@item.Name</td>
                 <th>@item.Amount</th>
                 <td>@item.Weight @item.WeightPrefix</td>
+                <td>
+                    <MatButton Icon="edit" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
+                    <MatButton Icon="delete" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
+                </td>
             </tr>
         }
-</table>
+        <tr>
+            <td colspan="4">
+                <button class="btn btn-primary" @onclick="(e=> AddGroupItem(group.Id))">Add Item</button>
+            </td>
+        </tr>
+    </table>
 }
+<button class="btn btn-primary" @onclick="AddGroup">Add Group</button>
 
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Meny</MatDialogTitle>
+    <MatDialogContent>
+       <MatTextField @bind-Value="@productModalModel.Name" HelperText="Product Name" Label="Name"></MatTextField>
+       <MatTextField @bind-Value="@productModalModel.Weight" HelperText="Product Name" Label="Name"></MatTextField>       
+        <br />
+        
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Avbryt</MatButton>
+        <MatButton OnClick="@OkClick">Spara</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
 
 @code {
-      [Parameter]
-    public PackListViewModel Model { get; set; }   
+    [Parameter]
+    public PackListViewModel Model { get; set; }
+
+    bool dialogIsOpen = false;
+    bool dialogEditMode = false;
+    Guid dialogEditId;
+    PackListItemViewModel productModalModel = new PackListItemViewModel();
+    async Task AddGroup()
+    {
+        await _packListService.AddGroup(Model.Id, "New Group");
+    }
+    async Task AddGroupItem(Guid groupId)
+    {
+        await _packListService.AddGroupItem(Model.Id, groupId, "New Item");
+    }
+    async Task EditGroupItem(Guid groupId,Guid productId)
+    {
+        var model = Model.Items.First(x=>x.Id==groupId);
+        var product = model.Items.First(x=>x.Id==productId);
+        dialogIsOpen = true;
+        dialogEditMode = true;
+        productModalModel = product;
+    }
+    async Task DeleteGroupItem(Guid groupId,Guid productId)
+    {
+        await this._packListService.DeleteProduct(Model.Id,groupId,productId);
+
+    }
+    async Task OkClick()
+    {
+        var id = Guid.NewGuid();
+        if (dialogEditMode)
+        {
+            id = dialogEditId;
+        }
+        dialogIsOpen = false;
+        await this._packListService.UpdateProduct(productModalModel);
+    }
 }

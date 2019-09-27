@@ -1,7 +1,9 @@
 ﻿using Blazor.Fluxor;
+using Microsoft.AspNetCore.Http;
 using StuffPacker.Services;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace StuffPacker.store.packlist.Get
@@ -11,16 +13,22 @@ namespace StuffPacker.store.packlist.Get
     {
         private readonly IPackListService _packListService;
 
-        public GetPackListDataEffect(IPackListService packListService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public GetPackListDataEffect(IPackListService packListService, IHttpContextAccessor httpContextAccessor)
         {
             _packListService = packListService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async override Task HandleAsync(GetPackListDataAction action, IDispatcher dispatcher)
         {
             try
             {
-                var packLists = await _packListService.Get();
+
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var packLists = await _packListService.Get(Guid.Parse(userId));
                 dispatcher.Dispatch(new GetPackListDataSuccessAction(packLists.ToArray()));
             }
             catch (Exception e)

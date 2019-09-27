@@ -41,7 +41,7 @@ namespace StuffPacker.ViewModel
 
         public string Name { get; set; }
        
-        public decimal Weight { get; set; }
+        public string Weight { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
         public Guid Id { get;  set; }
@@ -49,6 +49,8 @@ namespace StuffPacker.ViewModel
     public class PackListGroupViewModel
     {
         public string Name { get; set; }
+
+        public Guid Id { get; set; }
 
         public decimal Weight => GetTotalWeight();
 
@@ -59,7 +61,7 @@ namespace StuffPacker.ViewModel
             decimal total = 0;
             foreach (var item in Items)
             {
-                total = total + (Convert.ToDecimal(item.Amount) * item.Weight);
+                total = total + (Convert.ToDecimal(item.Amount) * Convert.ToDecimal(item.Weight));
             }
             return total;
         }

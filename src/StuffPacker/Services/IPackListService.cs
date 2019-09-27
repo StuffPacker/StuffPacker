@@ -7,8 +7,15 @@ namespace StuffPacker.Services
 {
     public interface IPackListService
     {
-        Task<IEnumerable<PackListViewModel>> Get();
-        Task Add(Guid id,string name);
+        Task<IEnumerable<PackListViewModel>> Get(Guid userId);
+        Task Add(Guid id,string name,Guid userId);
         Task Update(PackListViewModel model);
+        
+        Task AddGroup(Guid listId,string name);
+        Task AddGroupItem(Guid listId, Guid groupId, string name);
+
+        Task UpdateProduct(PackListItemViewModel model);
+
+        Task DeleteProduct(Guid listId,Guid groupId,Guid productId);
     }
 }

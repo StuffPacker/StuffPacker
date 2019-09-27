@@ -1,9 +1,11 @@
 ﻿@page "/packlist"
 @using StuffPacker.store.packlist
 @using StuffPacker.store.packlist.Get
+@using Microsoft.AspNetCore.Http;
 @inject IState<PackListDataState> PackListDataState
 @inject IDispatcher Dispatcher
 @inject StuffPacker.Services.IPackListService _packListService;
+@inject IHttpContextAccessor _httpContextAccessor;
 @attribute [Authorize]
 @if (PackListDataState.Value.PackLists == null)
 {
@@ -72,10 +74,15 @@ else
         else
         {
 
-            await this._packListService.Add(id, dialogListName);
+            await this._packListService.Add(id, dialogListName, this.GetUserId());
 
         }
         dialogIsOpen = false;
+    }
+    private Guid GetUserId()
+    {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        return userId;
     }
 
 }
