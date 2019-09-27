@@ -2,6 +2,7 @@ using Blazor.Fluxor;
 using EmbeddedBlazorContent;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using StuffPacker.Configuration;
 using StuffPacker.Persistence;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components.Authorization;
+
 
 namespace StuffPacker
 {
@@ -18,6 +21,11 @@ namespace StuffPacker
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            //Force Migration
+            var migrationConnection =
+                Configuration.GetConnectionString("DefaultConnection");
+            new StuffPackingDbContextMigrator().Migrate(null, migrationConnection);
         }
 
         public IConfiguration Configuration { get; }
@@ -27,8 +35,8 @@ namespace StuffPacker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<HttpClient>();
-            services.AddDbContext<StuffPackerDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<StuffPackerDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddStuffPackerServices(Configuration, LoggerFactory);
@@ -37,6 +45,7 @@ namespace StuffPacker
             {
                 options.UseDependencyInjection(typeof(Startup).Assembly);
             });
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +56,7 @@ namespace StuffPacker
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.UseDatabaseErrorPage();
             }
             else
             {
@@ -59,6 +69,9 @@ namespace StuffPacker
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
