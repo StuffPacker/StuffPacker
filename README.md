@@ -48,4 +48,4 @@ If you like this project and want it to evolve faster, you can consider becoming
 ## News
 
 ### StuffPacker 1.0.0
-- Waiting to be releaseed
+- Initial version (beta)
