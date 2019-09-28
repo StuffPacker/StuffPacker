@@ -1,0 +1,31 @@
+﻿@using StuffPacker.Services
+@using System.Reactive.Linq
+@using StuffPacker.store.packlist.Get
+@inject IDispatcher Dispatcher
+@inject IMessageService MessageService
+@code {
+    private IDisposable _subscriber;
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        _subscriber = _subscriber ?? SubscribeForMessageUpdates(UpdateCount);
+
+    }
+    private void UpdateCount(string msg)
+    {
+        if (msg.StartsWith("PackListService:Update"))
+        {
+            InvokeAsync(() => Dispatcher.Dispatch(new GetPackListDataAction()));
+        }
+       
+
+    }
+    private IDisposable SubscribeForMessageUpdates(Action<string> updateCount) => MessageService
+       .Subscribe(action => action.AsStringMessage()
+           .Do(updateCount)
+           .Do(_ => InvokeAsync(() => { StateHasChanged(); }))
+           .Subscribe());
+
+    public void Dispose() => _subscriber?.Dispose();
+}

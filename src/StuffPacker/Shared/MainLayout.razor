@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+@inject Blazor.Fluxor.IStore Store
+@Store.Initialize()
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+        <LoginDisplay />        
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+<StuffPacker.Components.SiteComponents.UiUpdateComponent />

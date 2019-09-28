@@ -1,0 +1,89 @@
+﻿@page "/packlist"
+@using StuffPacker.store.packlist
+@using StuffPacker.store.packlist.Get
+@using Microsoft.AspNetCore.Http;
+@inject IState<PackListDataState> PackListDataState
+@inject IDispatcher Dispatcher
+@inject StuffPacker.Services.IPackListService _packListService;
+@inject IHttpContextAccessor _httpContextAccessor;
+@attribute [Authorize]
+@if (PackListDataState.Value.PackLists == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>Packlists</h1>
+    <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
+    
+
+    <div class="container-fluid">
+        <div class="row">
+            @foreach (var item in PackListDataState.Value.PackLists)
+            {
+                <div class="col-5 m-2" style="border:solid 1px #eee">
+                    <StuffPacker.Components.PackListComponents.PackListComponent Model="item" />
+
+                </div>
+            }
+        </div>
+    </div>
+}
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+
+    <MatDialogTitle>Add list</MatDialogTitle>
+    <MatDialogContent>
+
+        <p>Name</p>
+        <MatTextField @bind-Value="@dialogListName"></MatTextField>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@OkClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+@code {
+
+    bool dialogIsOpen = false;
+    bool dialogInfoIsOpen = false;
+    bool dialogEditMode = false;
+    Guid dialogEditId;
+    string dialogListName = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        PackListDataState.Subscribe(this);
+        Dispatcher.Dispatch(new GetPackListDataAction());
+    }
+    async Task OpenAddDialog()
+    {
+        dialogIsOpen = true;
+        dialogEditMode = false;
+        dialogListName = null;
+    }
+    async Task OkClick()
+    {
+
+        var id = Guid.NewGuid();
+        if (dialogEditMode)
+        {
+            id = dialogEditId;
+            var list = PackListDataState.Value.PackLists.First(x => x.Id == dialogEditId);
+            list.Name = dialogListName;
+            await _packListService.Update(list);
+        }
+        else
+        {
+
+            await this._packListService.Add(id, dialogListName, this.GetUserId());
+
+        }
+        dialogIsOpen = false;
+    }
+    private Guid GetUserId()
+    {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        return userId;
+    }
+
+}
