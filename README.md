@@ -40,7 +40,7 @@ It is an totaly independent project created for fun in our spare time.
 The development is a ongoing process and we are working hard to release new features as often as we can.
 
 If you like this project and want it to evolve faster, you can consider becoming a backer/sponsor.
-- [PayPal](link later)
+- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JYFE8G5THVXRY&source=url)
 - [Patreon](link later)
 
 ### Backers:
