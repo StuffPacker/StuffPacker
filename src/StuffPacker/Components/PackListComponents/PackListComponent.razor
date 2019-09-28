@@ -1,64 +1,64 @@
 ﻿@using StuffPacker.ViewModel
 @inject StuffPacker.Services.IPackListService _packListService;
 
-    <h2>
-        @if(ListEditMode)
+<h2>
+    @if(ListEditMode)
         {
-        <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
+    <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
         }
         else
         {
-        @Model.Name   
-        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
-        <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
+    @Model.Name
+    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
+    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
         }
 
-    </h2>
+</h2>
 <b>Total weight: @Model.Weight @Model.WeightPrefix</b>
 @foreach (var group in Model.Items)
 {
 <h4>
     @if (GroupEditMode)
     {
-        <MatTextField @bind-Value="@group.Name" HelperText="Groupname" Label="Name" OnFocusOut="@(e=> SaveGroupName(group.Id))"></MatTextField>
+    <MatTextField @bind-Value="@group.Name" HelperText="Groupname" Label="Name" OnFocusOut="@(e=> SaveGroupName(group.Id))"></MatTextField>
     }
     else
     {
-        @group.Name
-        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(group.Id))" Label=""></MatButton>
+    @group.Name
+    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(group.Id))" Label=""></MatButton>
     }
     : Total weight: @group.Weight @Model.WeightPrefix
 
 </h4>
-    <table class="table table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Weight</th>
-                <th></th>
-            </tr>
-        </thead>
-        @foreach (var item in group.Items)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <th>@item.Amount</th>
-                <td>@item.Weight @item.WeightPrefix</td>
-                <td>
-                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
-                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
-                </td>
-            </tr>
-        }
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
-            <td colspan="4">
-                <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> AddGroupItem(group.Id))" Label="Add product"></MatButton>
-            </td>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Weight</th>
+            <th></th>
         </tr>
-    </table>
+    </thead>
+    @foreach (var item in group.Items)
+        {
+    <tr>
+        <td>@item.Name</td>
+        <th>@item.Amount</th>
+        <td>@item.Weight @item.WeightPrefix</td>
+        <td>
+            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
+            <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
+        </td>
+    </tr>
+        }
+    <tr>
+        <td colspan="4">
+            <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> AddGroupItem(group.Id))" Label="Add product"></MatButton>
+        </td>
+    </tr>
+</table>
 }
-<button class="btn btn-primary" @onclick="AddGroup">Add Group</button>
+<MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen">
     <MatDialogTitle>Meny</MatDialogTitle>
