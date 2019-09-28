@@ -2,6 +2,8 @@
 using StuffPacker.Model;
 using StuffPacker.Repositories;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StuffPacker.Persistence.Repository
@@ -30,6 +32,17 @@ namespace StuffPacker.Persistence.Repository
                 return null;
             }
             return new ProductModel(product);
+        }
+
+        public async Task<IEnumerable<ProductModel>> GetByOwner(Guid userId)
+        {
+            var products = await _context.Products.AsNoTracking().Where(x=>x.Owner==userId).ToListAsync();
+            var list = new List<ProductModel>();
+            foreach (var item in products)
+            {
+                list.Add(new ProductModel(item));
+            }
+            return list;
         }
 
         public async Task Update(ProductModel model)

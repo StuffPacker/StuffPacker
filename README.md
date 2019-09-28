@@ -3,7 +3,7 @@
 Stuff packer helps you to orgenize your items in a easy way.
 
 ## Beta
-- [***.com - Beta website](https://www.***.com)
+- [Beta website](https://stuffpackerprod.azurewebsites.net)
 
 ## Prerequisites
 
