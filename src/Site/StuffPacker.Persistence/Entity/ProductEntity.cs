@@ -10,10 +10,13 @@ namespace StuffPacker.Model
         public decimal Weight { get; set; }
         public WeightPrefix WeightPrefix { get; set; }
 
-        public ProductEntity(Guid id)
+        public Guid? Owner { get; set; }
+
+        public ProductEntity(Guid id,Guid? owner)
         {
             Id = id;
             WeightPrefix = WeightPrefix.Gram;
+            Owner = owner;
         }
     }
 }

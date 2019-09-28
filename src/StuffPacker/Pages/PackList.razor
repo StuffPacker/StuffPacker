@@ -38,8 +38,8 @@ else
         <MatTextField @bind-Value="@dialogListName"></MatTextField>
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Avbryt</MatButton>
-        <MatButton OnClick="@OkClick">Spara</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@OkClick">Save</MatButton>
     </MatDialogActions>
 </MatDialog>
 @code {

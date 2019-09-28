@@ -12,7 +12,7 @@ namespace StuffPacker.Services
         Task Update(PackListViewModel model);
         
         Task AddGroup(Guid listId,string name);
-        Task AddGroupItem(Guid listId, Guid groupId, string name);
+        Task AddGroupItem(Guid listId, Guid groupId, string name, Guid userId);
 
         Task UpdateProduct(PackListItemViewModel model);
 
@@ -21,5 +21,9 @@ namespace StuffPacker.Services
         Task DeleteList(Guid listId);
 
         Task UpdateGroup(Guid listId,PackListGroupViewModel model);
+
+        Task<IEnumerable<AddProductListItemViewModel>> GetAddableProducts(Guid userId);
+
+        Task AddProducts(Guid userId, Guid listId, Guid groupId, IEnumerable<AddProductListItemViewModel> productlist);
     }
 }
