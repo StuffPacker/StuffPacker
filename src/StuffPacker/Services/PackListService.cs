@@ -57,6 +57,14 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
+        public async Task DeleteList(Guid listId)
+        {
+            var item = await this._packListsRepository.Get(listId);
+           
+            await this._packListsRepository.Delete(item);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
         public async Task DeleteProduct(Guid listId, Guid groupId, Guid productId)
         {
             var model = await this._packListsRepository.Get(listId);
@@ -84,6 +92,14 @@ namespace StuffPacker.Services
         {
             var item = await this._packListsRepository.Get(model.Id);
             item.Update(model.Name);
+            await this._packListsRepository.Update(item);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
+        public async Task UpdateGroup(Guid listId, PackListGroupViewModel model)
+        {
+            var item = await this._packListsRepository.Get(listId);
+            item.UpdateGroup(model.Id,model.Name);
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }

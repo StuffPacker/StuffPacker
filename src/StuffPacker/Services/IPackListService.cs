@@ -17,5 +17,9 @@ namespace StuffPacker.Services
         Task UpdateProduct(PackListItemViewModel model);
 
         Task DeleteProduct(Guid listId,Guid groupId,Guid productId);
+
+        Task DeleteList(Guid listId);
+
+        Task UpdateGroup(Guid listId,PackListGroupViewModel model);
     }
 }

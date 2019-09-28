@@ -1,10 +1,35 @@
 ﻿@using StuffPacker.ViewModel
 @inject StuffPacker.Services.IPackListService _packListService;
-<h2>@Model.Name</h2>
+
+    <h2>
+        @if(ListEditMode)
+        {
+        <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
+        }
+        else
+        {
+        @Model.Name   
+        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
+        <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
+        }
+
+    </h2>
 <b>Total weight: @Model.Weight @Model.WeightPrefix</b>
 @foreach (var group in Model.Items)
 {
-    <h4>@group.Name : Total weight: @group.Weight @Model.WeightPrefix</h4>
+<h4>
+    @if (GroupEditMode)
+    {
+        <MatTextField @bind-Value="@group.Name" HelperText="Groupname" Label="Name" OnFocusOut="@(e=> SaveGroupName(group.Id))"></MatTextField>
+    }
+    else
+    {
+        @group.Name
+        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(group.Id))" Label=""></MatButton>
+    }
+    : Total weight: @group.Weight @Model.WeightPrefix
+
+</h4>
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
@@ -21,14 +46,14 @@
                 <th>@item.Amount</th>
                 <td>@item.Weight @item.WeightPrefix</td>
                 <td>
-                    <MatButton Icon="edit" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
-                    <MatButton Icon="delete" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
+                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
+                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
                 </td>
             </tr>
         }
         <tr>
             <td colspan="4">
-                <button class="btn btn-primary" @onclick="(e=> AddGroupItem(group.Id))">Add Item</button>
+                <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> AddGroupItem(group.Id))" Label="Add product"></MatButton>
             </td>
         </tr>
     </table>
@@ -38,10 +63,10 @@
 <MatDialog @bind-IsOpen="@dialogIsOpen">
     <MatDialogTitle>Meny</MatDialogTitle>
     <MatDialogContent>
-       <MatTextField @bind-Value="@productModalModel.Name" HelperText="Product Name" Label="Name"></MatTextField>
-       <MatTextField @bind-Value="@productModalModel.Weight" HelperText="Product Name" Label="Name"></MatTextField>       
+        <MatTextField @bind-Value="@productModalModel.Name" HelperText="Product Name" Label="Name"></MatTextField>
+        <MatTextField @bind-Value="@productModalModel.Weight" HelperText="Product Name" Label="Name"></MatTextField>
         <br />
-        
+
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Avbryt</MatButton>
@@ -53,9 +78,12 @@
 @code {
     [Parameter]
     public PackListViewModel Model { get; set; }
-
+    string tempListName = "";
+    string tempGroupName = "";
+    bool ListEditMode = false;
     bool dialogIsOpen = false;
     bool dialogEditMode = false;
+    bool GroupEditMode = false;
     Guid dialogEditId;
     PackListItemViewModel productModalModel = new PackListItemViewModel();
     async Task AddGroup()
@@ -66,17 +94,17 @@
     {
         await _packListService.AddGroupItem(Model.Id, groupId, "New Item");
     }
-    async Task EditGroupItem(Guid groupId,Guid productId)
+    async Task EditGroupItem(Guid groupId, Guid productId)
     {
-        var model = Model.Items.First(x=>x.Id==groupId);
-        var product = model.Items.First(x=>x.Id==productId);
+        var model = Model.Items.First(x => x.Id == groupId);
+        var product = model.Items.First(x => x.Id == productId);
         dialogIsOpen = true;
         dialogEditMode = true;
         productModalModel = product;
     }
-    async Task DeleteGroupItem(Guid groupId,Guid productId)
+    async Task DeleteGroupItem(Guid groupId, Guid productId)
     {
-        await this._packListService.DeleteProduct(Model.Id,groupId,productId);
+        await this._packListService.DeleteProduct(Model.Id, groupId, productId);
 
     }
     async Task OkClick()
@@ -88,5 +116,38 @@
         }
         dialogIsOpen = false;
         await this._packListService.UpdateProduct(productModalModel);
+    }
+    async Task DeleteList()
+    {
+        await this._packListService.DeleteList(Model.Id);
+    }
+    async Task EditList()
+    {
+        tempListName = Model.Name;
+        ListEditMode = true;
+    }
+    async Task SaveListName()
+    {
+        if(tempListName!=Model.Name)
+        {
+            await this._packListService.Update(Model);
+        }
+        ListEditMode = false;
+    }
+    async Task EditGroup(Guid groupId)
+    {
+        var group=Model.Items.First(x=>x.Id==groupId);
+        tempGroupName = group.Name;
+        GroupEditMode = true;
+    }
+    async Task SaveGroupName(Guid groupId)
+    {
+        var group=Model.Items.First(x=>x.Id==groupId);
+
+        if (tempGroupName != group.Name)
+        {
+            await this._packListService.UpdateGroup(Model.Id,group);
+        }
+        GroupEditMode = false;
     }
 }

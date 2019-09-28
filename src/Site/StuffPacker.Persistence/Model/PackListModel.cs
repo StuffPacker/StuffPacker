@@ -71,5 +71,13 @@ namespace StuffPacker.Model
             g.Items = list;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
         }
+
+        public void UpdateGroup(Guid groupId,string name)
+        {
+            var all = (GetGroups().ToList());
+            var g = all.First(x => x.Id == groupId);
+            g.Name = name;
+            Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
+        }
     }
 }

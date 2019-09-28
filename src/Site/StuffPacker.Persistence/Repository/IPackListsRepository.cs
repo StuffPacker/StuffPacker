@@ -11,5 +11,6 @@ namespace StuffPacker.Repositories
         Task<PackListModel> Get(Guid id);
         Task Add(PackListModel model);
         Task Update(PackListModel model);
+        Task Delete(PackListModel model);
     }
 }

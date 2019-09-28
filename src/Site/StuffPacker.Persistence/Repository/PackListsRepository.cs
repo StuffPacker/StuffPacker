@@ -60,5 +60,12 @@ namespace StuffPacker.Persistence.Repository
             modelToUpdate.Groups = model.Entity.Groups;
             await _context.SaveChangesAsync();
         }
+
+        public async Task Delete(PackListModel model)
+        {
+            var modelToUpdate = await _context.PackLists.FirstOrDefaultAsync(s => s.Id == model.Id);
+             _context.Remove(modelToUpdate);
+            await _context.SaveChangesAsync();
+        }
     }
 }
