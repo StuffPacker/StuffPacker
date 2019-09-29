@@ -1,0 +1,104 @@
+﻿@inject StuffPacker.Services.IPackListService _packListService;
+
+<MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> OpenAddProductDialog(GroupId))" Label="Add product"></MatButton>
+<MatDialog @bind-IsOpen="@dialogAddProductIsOpen">
+        <MatDialogContent>
+        <h2>Add product</h2>
+        <MatTextField @bind-Value="@addProductDialogName" Label="Name"></MatTextField><MatButton Icon="add_circle" Style="color:green;" OnClick="@AddNewProduct" Label="Add"></MatButton>
+        <br />
+        <hr />
+        <table>
+            <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th>
+                        Name
+                        @*<br />*@
+                        @*<MatTextField @bind-Value="@filterText" @onkeyup="@FilterProducts" Label="filtertext"></MatTextField>*@
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in GetProductList())
+            {
+                <tr>
+                    <td> <MatCheckbox @bind-Checked="@item.Selected" Label=""></MatCheckbox></td>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </table>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogAddProductIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@AddProductDialogOkClick">Add products</MatButton>
+    </MatDialogActions>
+</MatDialog>
+@code {
+    bool dialogAddProductIsOpen = false;
+    string addProductDialogName = "";
+    Guid dialogAddProductGroupId;
+    string filterText = "";
+
+    [Parameter]
+    public Guid GroupId { get; set; }
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    [Parameter]
+    public Guid ListId { get; set; }
+
+    List<AddProductListItemViewModel> dialogAddProductProducts = new List<AddProductListItemViewModel>();
+    List<AddProductListItemViewModel> dialogAddProductProductsDefault = new List<AddProductListItemViewModel>();
+    async Task OpenAddProductDialog(Guid groupId)
+    {
+        filterText = "";
+        dialogAddProductGroupId = groupId;
+        dialogAddProductProducts = (await this._packListService.GetAddableProducts(UserId)).ToList();
+        dialogAddProductProductsDefault = dialogAddProductProducts;
+        dialogAddProductIsOpen = true;
+        addProductDialogName = "";
+    }
+    async Task AddProductDialogOkClick()
+    {
+        await _packListService.AddProducts(UserId, ListId, dialogAddProductGroupId, dialogAddProductProducts);
+        dialogAddProductIsOpen = false;
+    }
+    async Task AddNewProduct()
+    {
+        dialogAddProductProducts.Add(new AddProductListItemViewModel
+        {
+            Id = Guid.NewGuid(),
+            IsNew = true,
+            Name = addProductDialogName,
+            Selected = true
+        });
+        addProductDialogName = "";
+    }
+    private List<AddProductListItemViewModel> GetProductList()
+    {
+        if(!string.IsNullOrEmpty(filterText))
+        {
+            return dialogAddProductProducts.Where(x=>x.Name.ToLower().Contains(filterText.ToLower())).ToList();
+        }
+        return dialogAddProductProducts;
+    }
+
+
+
+
+    void FilterProducts(KeyboardEventArgs e)
+    {
+        var filter = filterText.ToLower();
+        filter = filter + e.Key;
+        
+        if(!string.IsNullOrEmpty(filterText))
+        {
+            dialogAddProductProducts= dialogAddProductProductsDefault.Where(x=>x.Name.ToLower().Contains(filter)).ToList();
+        }
+        else
+        {
+            dialogAddProductProducts = dialogAddProductProductsDefault;
+        }
+
+    }
+}

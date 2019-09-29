@@ -13,8 +13,8 @@
                 else
                 {
                 @Model.Name
-                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
-                <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
+                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditList())" Label=""></MatButton>
+                <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteList())" Label=""></MatButton>
                 }
 
             </h2>
@@ -29,109 +29,16 @@
 
         @foreach (var group in Model.Items)
         {
-            <h4>
-                @if (GroupEditMode)
-                {
-                    <MatTextField @bind-Value="@group.Name" HelperText="Groupname" Label="Name" OnFocusOut="@(e=> SaveGroupName(group.Id))"></MatTextField>
-                }
-                else
-                {
-                    @group.Name
-                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(group.Id))" Label=""></MatButton>
-                }
-                : Total weight: @group.Weight @Model.WeightPrefix
-
-            </h4>
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Name</th>
-                        <th>Amount</th>
-                        <th>Weight</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                @foreach (var item in group.Items)
-                {
-                    <tr>
-                        <td>@item.Name</td>
-                        <th>@item.Amount</th>
-                        <td>@item.Weight @item.WeightPrefix</td>
-                        <td>
-                            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroupItem(group.Id,item.Id))" Label=""></MatButton>
-                            <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteGroupItem(group.Id,item.Id))" Label=""></MatButton>
-                        </td>
-                    </tr>
-                }
-                <tr>
-                    <td colspan="4">
-                        <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> OpenAddProductDialog(group.Id))" Label="Add product"></MatButton>
-                    </td>
-                </tr>
-            </table>
+            <PackListGroupComponent Model="@group" ListModel="@Model" UserId="@GetUserId()" />           
         }
         <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
 
-        <MatDialog @bind-IsOpen="@dialogIsOpen">
-            <MatDialogTitle>Meny</MatDialogTitle>
-            <MatDialogContent>
-                <MatTextField @bind-Value="@productModalModel.Name" HelperText="Product Name" Label="Name"></MatTextField>
-                <MatTextField @bind-Value="@productModalModel.Weight" HelperText="Product Name" Label="Name"></MatTextField>
-                <br />
-
-            </MatDialogContent>
-            <MatDialogActions>
-                <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
-                <MatButton OnClick="@OkClick">Save</MatButton>
-            </MatDialogActions>
-        </MatDialog>
-        <MatDialog @bind-IsOpen="@dialogAddProductIsOpen">
-            <MatDialogTitle>Meny</MatDialogTitle>
-            <MatDialogContent>
-                <h2>Add product</h2>
-                <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddNewProduct" Label="Add new product"></MatButton>
-                <table>
-                    <thead class="thead-dark">
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in dialogAddProductProducts)
-                    {
-                        <tr>
-                            <td> <MatCheckbox @bind-Checked="@item.Selected" Label=""></MatCheckbox></td>
-                            <td>@item.Name</td>
-                        </tr>
-                    }
-                </table>
-            </MatDialogContent>
-            <MatDialogActions>
-                <MatButton OnClick="@(e => { dialogAddProductIsOpen = false; })">Cancel</MatButton>
-                <MatButton OnClick="@AddProductDialogOkClick">Add products</MatButton>
-            </MatDialogActions>
-        </MatDialog>
-
-
-
-
-
-
+       
         @code {
             [Parameter]
             public PackListViewModel Model { get; set; }
-
             string tempListName = "";
-            string tempGroupName = "";
             bool ListEditMode = false;
-            bool dialogIsOpen = false;
-            bool dialogEditMode = false;
-            bool dialogAddProductIsOpen = false;
-            bool GroupEditMode = false;
-            Guid dialogEditId;
-            Guid dialogAddProductGroupId;
-            PackListItemViewModel productModalModel = new PackListItemViewModel();
-            List<AddProductListItemViewModel> dialogAddProductProducts = new List<AddProductListItemViewModel>();
             async Task AddGroup()
             {
                 await _packListService.AddGroup(Model.Id, "New Group");
@@ -139,29 +46,6 @@
             async Task AddGroupItem(Guid groupId)
             {
                 await _packListService.AddGroupItem(Model.Id, groupId, "New Item", GetUserId());
-            }
-            async Task EditGroupItem(Guid groupId, Guid productId)
-            {
-                var model = Model.Items.First(x => x.Id == groupId);
-                var product = model.Items.First(x => x.Id == productId);
-                dialogIsOpen = true;
-                dialogEditMode = true;
-                productModalModel = product;
-            }
-            async Task DeleteGroupItem(Guid groupId, Guid productId)
-            {
-                await this._packListService.DeleteProduct(Model.Id, groupId, productId);
-
-            }
-            async Task OkClick()
-            {
-                var id = Guid.NewGuid();
-                if (dialogEditMode)
-                {
-                    id = dialogEditId;
-                }
-                dialogIsOpen = false;
-                await this._packListService.UpdateProduct(productModalModel);
             }
             async Task DeleteList()
             {
@@ -180,48 +64,9 @@
                 }
                 ListEditMode = false;
             }
-            async Task EditGroup(Guid groupId)
-            {
-                var group = Model.Items.First(x => x.Id == groupId);
-                tempGroupName = group.Name;
-                GroupEditMode = true;
-            }
-            async Task SaveGroupName(Guid groupId)
-            {
-                var group = Model.Items.First(x => x.Id == groupId);
-
-                if (tempGroupName != group.Name)
-                {
-                    await this._packListService.UpdateGroup(Model.Id, group);
-                }
-                GroupEditMode = false;
-            }
-            async Task OpenAddProductDialog(Guid groupId)
-            {
-                dialogAddProductGroupId = groupId;
-                dialogAddProductProducts = (await this._packListService.GetAddableProducts(GetUserId())).ToList();
-                dialogAddProductIsOpen = true;
-
-
-            }
             private Guid GetUserId()
             {
                 var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 return userId;
-            }
-            async Task AddNewProduct()
-            {
-                dialogAddProductProducts.Add(new AddProductListItemViewModel
-                {
-                    Id = Guid.NewGuid(),
-                    IsNew = true,
-                    Name = "New product",
-                    Selected = true
-                });
-            }
-            async Task AddProductDialogOkClick()
-            {
-                await _packListService.AddProducts(GetUserId(), Model.Id, dialogAddProductGroupId, dialogAddProductProducts);
-                dialogAddProductIsOpen = false;
             }
         }
