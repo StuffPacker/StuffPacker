@@ -13,21 +13,25 @@
 }
 else
 {
-    <h1>Packlists</h1>
-    <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+        </div>
+        <h1>Packlists</h1>
+        <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
+    </div>
+    <div class="row">
+        @foreach (var item in PackListDataState.Value.PackLists)
+            {
+        <div class="col-sm-6" style="border:solid 1px #eee">
+            <StuffPacker.Components.PackListComponents.PackListComponent Model="item" />
+        </div>
+            }
+    </div>
+</div>
+   
     
 
-    <div class="container-fluid">
-        <div class="row">
-            @foreach (var item in PackListDataState.Value.PackLists)
-            {
-                <div class="col-5 m-2" style="border:solid 1px #eee">
-                    <StuffPacker.Components.PackListComponents.PackListComponent Model="item" />
-
-                </div>
-            }
-        </div>
-    </div>
 }
 <MatDialog @bind-IsOpen="@dialogIsOpen">
 

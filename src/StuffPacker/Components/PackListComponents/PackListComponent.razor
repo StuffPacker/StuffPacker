@@ -2,29 +2,31 @@
 @using Microsoft.AspNetCore.Http;
 @inject StuffPacker.Services.IPackListService _packListService;
 @inject IHttpContextAccessor _httpContextAccessor;
-    <div style="width:100%">
-
-        <div style="width:60%; float:left;">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-8">
             <h2>
                 @if (ListEditMode)
                 {
-                    <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
+                <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
                 }
                 else
                 {
-                    @Model.Name
-                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
-                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
+                @Model.Name
+                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditList())" Label=""></MatButton>
+                <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e=> DeleteList())" Label=""></MatButton>
                 }
 
             </h2>
             <b>Total weight: @Model.Weight @Model.WeightPrefix</b>
         </div>
-        <div style="width:40%; float:right; padding-top:0;">
+        <div class="col-sm-4">
             <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
         </div>
-        <div style="clear:both;"></div>
     </div>
+</div>    
+
+
         @foreach (var group in Model.Items)
         {
             <h4>
