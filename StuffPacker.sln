@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{926958
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Contract", "src\Shared\Shared.Contract\Shared.Contract.csproj", "{F3760DDD-F01D-43DF-A021-8075DAB159A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StuffPacker.Persistence.Tests", "src\Site\StuffPacker.Persistence.Tests\StuffPacker.Persistence.Tests.csproj", "{D24614E0-C9A5-4CAA-9EEF-B82455C06B63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StuffPacker.Persistence.Tests", "src\Site\StuffPacker.Persistence.Tests\StuffPacker.Persistence.Tests.csproj", "{D24614E0-C9A5-4CAA-9EEF-B82455C06B63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

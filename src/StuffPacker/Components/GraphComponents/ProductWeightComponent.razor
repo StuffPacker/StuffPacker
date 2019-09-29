@@ -1,0 +1,17 @@
+﻿
+@using Syncfusion.EJ2.Blazor.Charts
+
+    <EjsAccumulationChart>
+        <AccumulationChartLegendSettings Visible="true"></AccumulationChartLegendSettings>
+        <AccumulationChartSeriesCollection>
+            <AccumulationChartSeries DataSource="@Groups" XName="Name" YName="Weight" Name="Name">
+                <AccumulationDataLabelSettings Visible="true" Name="WeightAndToken"></AccumulationDataLabelSettings>
+            </AccumulationChartSeries>
+        </AccumulationChartSeriesCollection>
+    </EjsAccumulationChart>
+
+
+@code {
+    [Parameter]
+    public List<PackListGroupViewModel> Groups { get; set; }
+}
