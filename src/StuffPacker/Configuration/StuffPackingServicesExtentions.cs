@@ -15,7 +15,8 @@ namespace StuffPacker.Configuration
             services.AddScoped<IPackListService, PackListService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IProductMapper, ProductMapper>();
-            
+            services.AddScoped<IProductService, ProductService>();                       
+
             services.AddStuffPackerPersistence(configuration);
             return services;
         }

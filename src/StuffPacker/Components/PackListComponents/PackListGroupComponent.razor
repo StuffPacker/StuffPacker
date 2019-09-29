@@ -1,0 +1,132 @@
+﻿@inject StuffPacker.Services.IPackListService _packListService;
+
+@if (Maximized)
+{
+    <h4>
+        <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
+        @if (GroupEditMode)
+        {
+            <MatTextField @bind-Value="@Model.Name" HelperText="Groupname" Label="Name" OnFocusOut="@(e=> SaveGroupName(Model.Id))"></MatTextField>
+        }
+        else
+        {
+            @Model.Name
+            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
+        }
+        : Total weight: @Model.Weight @ListModel.WeightPrefix
+
+    </h4>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Weight</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <th>@item.Amount</th>
+                <td>@item.Weight @item.WeightPrefix</td>
+                <td>
+                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4">
+                <AddProductToListComponent GroupId="@Model.Id" UserId="@UserId" ListId="@ListModel.Id" />
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+<div style="background-color:lightgray;">
+    <h4>
+        <MatButton Icon="keyboard_arrow_down"  Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
+        @Model.Name
+        : Total weight: @Model.Weight @ListModel.WeightPrefix
+    </h4>
+</div>
+   
+}
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Meny</MatDialogTitle>
+    <MatDialogContent>
+        <MatTextField @bind-Value="@productModalModel.Name" HelperText="Product Name" Label="Name"></MatTextField>
+        <MatTextField @bind-Value="@productModalModel.Weight" HelperText="Product Name" Label="Name"></MatTextField>
+        <br />
+
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@OkClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+@code {
+
+    [Parameter]
+    public PackListGroupViewModel Model { get; set; }
+
+    [Parameter]
+    public PackListViewModel ListModel { get; set; }
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    string tempGroupName = "";
+    bool dialogIsOpen = false;
+    bool dialogEditMode = false;
+    bool GroupEditMode = false;
+    bool Maximized = true;
+    Guid dialogEditId;
+    PackListItemViewModel productModalModel = new PackListItemViewModel();
+    async Task EditGroup(Guid groupId)
+    {
+        var group = ListModel.Items.First(x => x.Id == groupId);
+        tempGroupName = group.Name;
+        GroupEditMode = true;
+    }
+    async Task EditGroupItem(Guid groupId, Guid productId)
+    {
+        var model = ListModel.Items.First(x => x.Id == groupId);
+        var product = model.Items.First(x => x.Id == productId);
+        dialogIsOpen = true;
+        dialogEditMode = true;
+        productModalModel = product;
+    }
+    async Task DeleteGroupItem(Guid groupId, Guid productId)
+    {
+        await this._packListService.DeleteProduct(ListModel.Id, groupId, productId);
+
+    }
+    async Task SaveGroupName(Guid groupId)
+    {
+        var group = ListModel.Items.First(x => x.Id == groupId);
+
+        if (tempGroupName != group.Name)
+        {
+            await this._packListService.UpdateGroup(ListModel.Id, group);
+        }
+        GroupEditMode = false;
+    }
+    async Task OkClick()
+    {
+        var id = Guid.NewGuid();
+        if (dialogEditMode)
+        {
+            id = dialogEditId;
+        }
+        dialogIsOpen = false;
+        await this._packListService.UpdateProduct(productModalModel);
+    }
+    void ExpandColaps()
+    {
+        Maximized = !Maximized;
+    }
+}
