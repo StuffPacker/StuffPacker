@@ -23,6 +23,13 @@ namespace StuffPacker.Persistence.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task Delete(Guid id)
+        {
+            var modelToUpdate = await _context.Products.FirstOrDefaultAsync(s => s.Id == id);
+            _context.Remove(modelToUpdate);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<ProductModel> Get(Guid id)
         {
             var product = await _context.Products.AsNoTracking()
