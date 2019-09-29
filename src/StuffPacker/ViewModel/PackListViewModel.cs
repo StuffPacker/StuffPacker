@@ -40,11 +40,11 @@ namespace StuffPacker.ViewModel
         public int Amount { get; set; }
 
         public string Name { get; set; }
-       
+
         public string Weight { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
-        public Guid Id { get;  set; }
+        public Guid Id { get; set; }
     }
     public class PackListGroupViewModel
     {
@@ -64,6 +64,11 @@ namespace StuffPacker.ViewModel
                 total = total + (Convert.ToDecimal(item.Amount) * Convert.ToDecimal(item.Weight));
             }
             return total;
+        }
+        public string WeightAndToken => GetWaightAndToken();
+        private string GetWaightAndToken()
+        {
+            return GetTotalWeight().ToString() + "g";
         }
     }
 }
