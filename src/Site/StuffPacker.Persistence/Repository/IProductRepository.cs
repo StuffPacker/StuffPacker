@@ -11,5 +11,6 @@ namespace StuffPacker.Repositories
         Task Add(ProductModel productModel);
         Task Update(ProductModel model);
         Task<IEnumerable<ProductModel>> GetByOwner(Guid userId);
+        Task Delete(Guid id);
     }
 }

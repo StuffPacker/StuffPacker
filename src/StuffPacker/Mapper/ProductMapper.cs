@@ -24,5 +24,21 @@ namespace StuffPacker.Mapper
             }
             return viewModels;
         }
+
+        public IEnumerable<ProductViewModel> MapUserProducts(IEnumerable<ProductModel> products)
+        {
+            var list = new List<ProductViewModel>();
+            foreach (var item in products)
+            {
+                list.Add(new ProductViewModel
+                {
+                    Id=item.Id,
+                    Name=item.Name,
+                    Weight = item.Weight,
+                    WeightPrefix = item.WeightPrefix
+                });
+            }
+            return list;
+        }
     }
 }

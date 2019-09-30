@@ -1,0 +1,51 @@
+﻿@page "/products"
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _httpContextAccessor;
+@inject IProductService _productService;
+@attribute [Authorize]
+<h1>Products</h1>
+@if (ProductList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <MatTable Items="@ProductList" class="mat-elevation-z5" Striped="true" FilterByColumnName="Name" AllowSelection="false">
+                    <MatTableHeader>
+                        <th>Name</th>
+                        <th>Weight</th>
+                        <th></th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Name</td>       
+                        <td>@context.Weight @context.WeightPrefix</td>
+                        <td> <MatIconButton Icon="delete" OnClick="@((e) => DeleteProduct(context.Id))"></MatIconButton></td>
+                    </MatTableRow>
+                </MatTable>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    List<ProductViewModel> ProductList;
+    protected override async Task OnInitializedAsync()
+    {
+        ProductList = (await this._productService.GetById()).ToList();
+    }
+    private Guid GetUserId()
+    {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        return userId;
+    }
+    async Task DeleteProduct(Guid id)
+    {
+        var model = ProductList.Find(x=>x.Id==id);
+        await this._productService.Delete(id);
+        ProductList.Remove(model);
+    }
+}

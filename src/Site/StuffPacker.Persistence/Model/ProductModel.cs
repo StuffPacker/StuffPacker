@@ -19,6 +19,8 @@ namespace StuffPacker.Model
 
         public Guid Id => Entity.Id;
 
+        public Guid? Owner => Entity.Owner;
+
         public void Update(string name)
         {
             Entity.Name = name;
