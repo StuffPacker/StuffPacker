@@ -57,6 +57,7 @@ namespace StuffPacker.Persistence.Repository
         {
             var modelToUpdate = await _context.PackLists.FirstOrDefaultAsync(s => s.Id == model.Id);
             modelToUpdate.Name = model.Name;
+            modelToUpdate.WeightPrefix = model.WeightPrefix.ToString();
             modelToUpdate.Groups = model.Entity.Groups;
             await _context.SaveChangesAsync();
         }

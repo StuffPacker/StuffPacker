@@ -2,11 +2,18 @@
     <Authorized>
         Hello, @context.User.Identity.Name
         <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
+            <button type="submit" class="nav-link btn btn-link d-lg-none" style="color:white;">Log out</button>
+            <button type="submit" class="nav-link btn btn-link d-none d-lg-block">Log out</button>
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <div class=" d-lg-none">
+            <a href="Identity/Account/Register" style="color:white;">Register</a>
+            <a href="Identity/Account/Login" style="color:white;">Log in</a>
+        </div>
+        <div class="d-none d-lg-block">
+            <a href="Identity/Account/Register">Register</a>
+            <a href="Identity/Account/Login">Log in</a>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
