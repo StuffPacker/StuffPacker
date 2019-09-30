@@ -31,7 +31,7 @@ namespace StuffPacker.Services
         public async Task Add(Guid id, string name, Guid userId)
         {
             var model = new PackListModel(id, userId);
-            model.Update(name);
+            model.Update(name,WeightPrefix.Gram);
             await this._packListsRepository.Add(model);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -109,7 +109,7 @@ namespace StuffPacker.Services
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups) });
+                packLists.Add(new PackListViewModel { Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix),WeightPrefix=item.WeightPrefix });
             }
             return packLists;
         }
@@ -123,7 +123,7 @@ namespace StuffPacker.Services
         public async Task Update(PackListViewModel model)
         {
             var item = await this._packListsRepository.Get(model.Id);
-            item.Update(model.Name);
+            item.Update(model.Name,model.WeightPrefix);
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -146,12 +146,12 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
-        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups)
+        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix)
         {
             var list = new List<PackListGroupViewModel>();
             foreach (var item in groups)
             {
-                list.Add(new PackListGroupViewModel { Name = item.Name, Items = await GetItems(item.Items), Id = item.Id });
+                list.Add(new PackListGroupViewModel(weightPrefix) { Name = item.Name, Items = await GetItems(item.Items), Id = item.Id });
             }
             return list;
         }
