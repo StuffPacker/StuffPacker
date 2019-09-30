@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StuffPacker.Persistence;
 
 namespace StuffPacker.Persistence.Migrations
 {
     [DbContext(typeof(StuffPackerDbContext))]
-    partial class StuffPackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190930153731_prefixToList")]
+    partial class prefixToList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,8 +250,8 @@ namespace StuffPacker.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("WeightPrefix")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("WeightPrefix")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

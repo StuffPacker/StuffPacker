@@ -1,5 +1,6 @@
 ﻿@using StuffPacker.ViewModel
 @using Microsoft.AspNetCore.Http;
+
 @inject StuffPacker.Services.IPackListService _packListService;
 @inject IHttpContextAccessor _httpContextAccessor;
 <div class="container-fluid">
@@ -8,65 +9,106 @@
             <h2>
                 @if (ListEditMode)
                 {
-                <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name" OnFocusOut="@SaveListName"></MatTextField>
+                    <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name"></MatTextField>
                 }
                 else
                 {
-                @Model.Name
-                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditList())" Label=""></MatButton>
-                <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteList())" Label=""></MatButton>
+                    @Model.Name
+                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditList())" Label=""></MatButton>
+                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteList())" Label=""></MatButton>
                 }
 
             </h2>
-            <b>Total weight: @Model.Weight @Model.WeightPrefix</b>
+            @if (ListEditMode)
+            {
+                <div style="margin-top:10px;">
+                    <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
+                        @foreach (var item in weightPrefix)
+                        {
+                            <MatBlazor.MatOption @attributes="@(GetSelected(weightPrefixValue == item))" Id="@item">
+                                @item
+                            </MatBlazor.MatOption>
+                        }
+                    </MatBlazor.MatSelect><br />
+                    <MatButton Icon="save" Style="color:green;" OnClick="@SaveList" Label="Save changes"></MatButton>
+                </div>
+            }
+            else
+            {
+                <b>Total weight: @Model.WeightAndToken()</b>
+            }
+
         </div>
         <div class="col-sm-4">
             <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
         </div>
     </div>
-</div>    
+</div>
 
 
-        @foreach (var group in Model.Items)
+@foreach (var group in Model.Items)
+{
+    <PackListGroupComponent Model="@group" ListModel="@Model" UserId="@GetUserId()" />
+
+}
+<MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+
+
+@code {
+    [Parameter]
+    public PackListViewModel Model { get; set; }
+
+    public string weightPrefixValue { get; set; }
+    List<string> weightPrefix = new List<string>();
+    string tempListName = "";
+    bool ListEditMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        weightPrefixValue = Model.WeightPrefix.ToString();
+    }
+
+
+
+    Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
+
+    async Task AddGroup()
+    {
+        await _packListService.AddGroup(Model.Id, "New Group");
+    }
+    async Task AddGroupItem(Guid groupId)
+    {
+        await _packListService.AddGroupItem(Model.Id, groupId, "New Item", GetUserId());
+    }
+    async Task DeleteList()
+    {
+        await this._packListService.DeleteList(Model.Id);
+    }
+    async Task EditList()
+    {
+        tempListName = Model.Name;
+        weightPrefix = WeightPrefixHelper.GetWeightPrefix();
+        ListEditMode = true;
+    }
+    async Task SaveList()
+    {
+        if (weightPrefixValue == null)
         {
-            <PackListGroupComponent Model="@group" ListModel="@Model" UserId="@GetUserId()" />           
+            weightPrefixValue = Model.WeightPrefix.ToString();
         }
-        <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+        if (tempListName != Model.Name || weightPrefixValue != Model.WeightPrefix.ToString())
+        {
+            WeightPrefix enumValue = (WeightPrefix)Enum.Parse(typeof(WeightPrefix), weightPrefixValue, true);
 
-       
-        @code {
-            [Parameter]
-            public PackListViewModel Model { get; set; }
-            string tempListName = "";
-            bool ListEditMode = false;
-            async Task AddGroup()
-            {
-                await _packListService.AddGroup(Model.Id, "New Group");
-            }
-            async Task AddGroupItem(Guid groupId)
-            {
-                await _packListService.AddGroupItem(Model.Id, groupId, "New Item", GetUserId());
-            }
-            async Task DeleteList()
-            {
-                await this._packListService.DeleteList(Model.Id);
-            }
-            async Task EditList()
-            {
-                tempListName = Model.Name;
-                ListEditMode = true;
-            }
-            async Task SaveListName()
-            {
-                if (tempListName != Model.Name)
-                {
-                    await this._packListService.Update(Model);
-                }
-                ListEditMode = false;
-            }
-            private Guid GetUserId()
-            {
-                var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                return userId;
-            }
+            Model.WeightPrefix = enumValue;
+            await this._packListService.Update(Model);
         }
+        ListEditMode = false;
+    }
+    private Guid GetUserId()
+    {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        return userId;
+    }
+
+}

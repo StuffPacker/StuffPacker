@@ -24,6 +24,8 @@ namespace StuffPacker.Model
 
         public IEnumerable<PackListGroupModel> Groups => GetGroups();
 
+        public WeightPrefix WeightPrefix => (WeightPrefix) Enum.Parse(typeof(WeightPrefix), Entity.WeightPrefix, true);
+
         private IEnumerable<PackListGroupModel> GetGroups()
         {
             var groups = new List<PackListGroupModel>();
@@ -36,9 +38,10 @@ namespace StuffPacker.Model
 
         }
 
-        public void Update(string name)
+        public void Update(string name,WeightPrefix weightPrefix)
         {
             Entity.Name = name;
+            Entity.WeightPrefix = weightPrefix.ToString();
         }
         public void AddGroup(Guid id,string name)
         {
