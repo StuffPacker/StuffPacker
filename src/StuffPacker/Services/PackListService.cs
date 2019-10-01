@@ -52,7 +52,7 @@ namespace StuffPacker.Services
 
             var entity = new ProductEntity(productId, userId);
             var productModel = new ProductModel(entity);
-            productModel.Update(name);
+            productModel.Update(name,Convert.ToDecimal(0),WeightPrefix.Gram);
             await this._productRepository.Add(productModel);
 
             var model = await this._packListsRepository.Get(listId);
@@ -72,7 +72,7 @@ namespace StuffPacker.Services
                 {
                     var entity = new ProductEntity(productId, userId);
                     var productModel = new ProductModel(entity);
-                    productModel.Update(item.Name);
+                    productModel.Update(item.Name,Convert.ToDecimal(0),WeightPrefix.Gram);
                     await this._productRepository.Add(productModel);
                 }
                
@@ -120,6 +120,18 @@ namespace StuffPacker.Services
             return _productMapper.Map(userProducts);
         }
 
+        public async Task<PackListViewModel> GetList(Guid listId)
+        {
+            var packList =  await this._packListsRepository.Get(listId);
+            if (packList == null)
+            {
+                return new PackListViewModel(); 
+            }
+           
+          return      new PackListViewModel { Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix), WeightPrefix = packList.WeightPrefix };
+          
+        }
+
         public async Task Update(PackListViewModel model)
         {
             var item = await this._packListsRepository.Get(model.Id);
@@ -141,7 +153,7 @@ namespace StuffPacker.Services
             // var listModel = await this._packListsRepository.Get(listId);
             // var group = listModel.Groups.First(x=>x.Id==GroupId);
             var product = await this._productRepository.Get(model.Id);
-            product.Update(model.Name, Convert.ToDecimal(model.Weight));
+            product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix);
             await this._productRepository.Update(product);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
