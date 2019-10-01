@@ -66,10 +66,10 @@
     [Parameter]
     public PackListViewModel Model { get; set; }
 
-     [Parameter]
+    [Parameter]
     public bool PreviewMode { get; set; }
 
-    
+
 
 
     public string weightPrefixValue { get; set; }
@@ -121,8 +121,23 @@
     }
     private Guid GetUserId()
     {
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        return userId;
+        //TODO Handle this nicer
+        try
+        {
+            var u = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if(string.IsNullOrEmpty(u))
+            {
+                return Guid.Empty;
+            }
+            var userId = Guid.Parse(u);
+            return userId;
+        }
+        catch (Exception)
+        {
+
+            return Guid.Empty;
+        }
+
     }
 
 }
