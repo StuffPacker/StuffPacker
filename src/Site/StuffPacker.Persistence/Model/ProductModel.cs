@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Contract;
+using System;
 
 namespace StuffPacker.Model
 {
@@ -21,15 +22,17 @@ namespace StuffPacker.Model
 
         public Guid? Owner => Entity.Owner;
 
-        public void Update(string name)
+        public void Update(string name, decimal weight,WeightPrefix weightPrefix)
         {
             Entity.Name = name;
-        }
-
-        public void Update(string name, decimal weight)
-        {
-            Entity.Name = name;
+            Entity.WeightPrefix = weightPrefix;
+            if(weightPrefix!= WeightPrefix.Gram)
+            {
+                weight = WeightHelper.ConvertToGram(weight,weightPrefix);
+            }
             Entity.Weight = weight;
         }
+
+       
     }
 }

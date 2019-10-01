@@ -1,0 +1,16 @@
+﻿@page "/PackListViewer/{idin}"
+@inject StuffPacker.Services.IPackListService _packListService;
+
+<StuffPacker.Components.PackListComponents.PackListComponent PreviewMode="true" Model="listModel" />
+
+@code {
+    [Parameter]
+    public string idin { get; set; }
+    PackListViewModel listModel = new PackListViewModel();
+    protected override async Task OnInitializedAsync()
+    {
+        Guid id = Guid.Parse(idin);
+      listModel=  await _packListService.GetList(id);
+
+    }
+}

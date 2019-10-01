@@ -1,7 +1,8 @@
 ﻿using Shared.Contract;
+using StuffPacker;
 using System;
 
-namespace StuffPacker.ViewModel
+namespace Shared.Contract
 {
     public static class WeightHelper
     {
@@ -38,12 +39,25 @@ namespace StuffPacker.ViewModel
             }
             if (weight > Convert.ToDecimal(0))
             {
-                return "1" + sufix;
+                return Convert.ToDecimal(0.01).ToString() + sufix;
             }
 
             return "0" + sufix;
 
         }
+
+        public static decimal ConvertFromGram(decimal weight, WeightPrefix weightPrefix)
+        {
+            return  GetConvertedWeight(weight, weightPrefix);
+        }
+
+        public static decimal ConvertToGram(decimal weight, WeightPrefix weightPrefix)
+        {          
+                    return WeightConverter.GetConvertedWeightToGram(weight,weightPrefix);
+               
+            
+        }
+
         private static decimal GetConvertedWeight(decimal gram, WeightPrefix weightPrefix)
         {
             if (weightPrefix == WeightPrefix.Gram)
