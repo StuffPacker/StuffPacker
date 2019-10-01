@@ -14,8 +14,12 @@
                 else
                 {
                     @Model.Name
-                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditList())" Label=""></MatButton>
-                    <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteList())" Label=""></MatButton>
+                    if (!PreviewMode)
+                    {
+                        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditList())" Label=""></MatButton>
+                        <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteList())" Label=""></MatButton>
+                    }
+
                 }
 
             </h2>
@@ -48,15 +52,25 @@
 
 @foreach (var group in Model.Items)
 {
-    <PackListGroupComponent Model="@group" ListModel="@Model" UserId="@GetUserId()" />
+    <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" />
 
 }
+@if(!PreviewMode)
+{
 <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+}
+
 
 
 @code {
     [Parameter]
     public PackListViewModel Model { get; set; }
+
+     [Parameter]
+    public bool PreviewMode { get; set; }
+
+    
+
 
     public string weightPrefixValue { get; set; }
     List<string> weightPrefix = new List<string>();

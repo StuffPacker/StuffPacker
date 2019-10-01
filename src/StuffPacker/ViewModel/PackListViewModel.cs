@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Shared.Contract;
+using System;
 using System.Collections.Generic;
 
 namespace StuffPacker.ViewModel
 {
     public class PackListViewModel
     {
+        public PackListViewModel()
+        {
+            Items = new List<PackListGroupViewModel>();
+        }
         public string Name { get; set; }
 
         public Guid Id { get; set; }

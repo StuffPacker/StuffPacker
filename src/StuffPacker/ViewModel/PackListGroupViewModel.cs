@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Contract;
+using System;
 using System.Collections.Generic;
 
 namespace StuffPacker.ViewModel
