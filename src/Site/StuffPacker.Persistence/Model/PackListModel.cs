@@ -26,6 +26,10 @@ namespace StuffPacker.Model
 
         public WeightPrefix WeightPrefix => (WeightPrefix) Enum.Parse(typeof(WeightPrefix), Entity.WeightPrefix, true);
 
+        public bool IsPublic => Entity.IsPublic;
+
+        public Guid UserId => Entity.UserId;
+
         private IEnumerable<PackListGroupModel> GetGroups()
         {
             var groups = new List<PackListGroupModel>();
@@ -38,10 +42,11 @@ namespace StuffPacker.Model
 
         }
 
-        public void Update(string name,WeightPrefix weightPrefix)
+        public void Update(string name,WeightPrefix weightPrefix,bool isPublic)
         {
             Entity.Name = name;
             Entity.WeightPrefix = weightPrefix.ToString();
+            Entity.IsPublic = isPublic;
         }
         public void AddGroup(Guid id,string name)
         {

@@ -7,11 +7,8 @@ namespace StuffPacker.Persistence.Migrations
 
     public class StuffPackerDbMigrationContextFactory : IDesignTimeDbContextFactory<StuffPackerDbContext>
     {
-        private readonly ICurrentUser _currentUser;
-        public StuffPackerDbMigrationContextFactory(ICurrentUser currentUser)
-        {
-            _currentUser = currentUser;
-        }
+        
+       
         public StuffPackerDbContext CreateDbContext(string[] args)
         {
             var migration_cs =
@@ -20,7 +17,21 @@ namespace StuffPacker.Persistence.Migrations
             var optionsBuilder = new DbContextOptionsBuilder<StuffPackerDbContext>();
             optionsBuilder.UseSqlServer(migration_cs);
 
-            return new StuffPackerDbContext(optionsBuilder.Options,_currentUser);
+            return new StuffPackerDbContext(optionsBuilder.Options,new CurrentMigrationUser());
+        }
+    }
+    public class CurrentMigrationUser : ICurrentUser
+    {
+        public bool IsAuthenticated => false;
+
+        public string GetUserName()
+        {
+            return "Migrator";
+        }
+
+        public UserType GetUserType()
+        {
+            return UserType.System;
         }
     }
 }

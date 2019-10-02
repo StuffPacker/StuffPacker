@@ -6,6 +6,30 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-8">
+            @if (!PreviewMode)
+            {
+                if (Model.IsPublic)
+                {
+                    <MatButton Icon="visibility" Style="color:darkslategrey;" Label="Public"></MatButton>
+                    if (showLink)
+                    {
+                        <div style="background-color:#eee;">
+                            <MatButton Icon="keyboard_arrow_up" OnClick="@ShowLink" Style="color:black;"></MatButton><a style="color:darkgreen;" href="@packListUrl" target="_blank">This is your public link</a><MatButton Icon="highlight_off" OnClick="@RemovePublic" Style="color:darkred;"></MatButton>
+                            </div>
+
+                        
+                    }
+                    else
+                    {
+                        <MatButton Icon="keyboard_arrow_down" OnClick="@ShowLink" Style="color:black;"></MatButton>
+                    }
+
+                }
+                else
+                {
+                    <MatButton Icon="visibility_off" Style="color:black;" OnClick="@MakePublic" Label="Make public"></MatButton>
+                }
+            }
             <h2>
                 @if (ListEditMode)
                 {
@@ -69,22 +93,26 @@
     [Parameter]
     public bool PreviewMode { get; set; }
 
-
-
-
     public string weightPrefixValue { get; set; }
     List<string> weightPrefix = new List<string>();
     string tempListName = "";
     bool ListEditMode = false;
-
+    bool showLink = false;
+    string packListUrl;
     protected override async Task OnInitializedAsync()
     {
         weightPrefixValue = Model.WeightPrefix.ToString();
+        packListUrl = $"/packlistviewer/{Model.Id}";
     }
 
 
 
     Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
+
+    async Task ShowLink()
+    {
+        showLink = !showLink;
+    }
 
     async Task AddGroup()
     {
@@ -104,6 +132,21 @@
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();
         ListEditMode = true;
     }
+    async Task MakePublic()
+    {
+        Model.IsPublic = true;
+        await this._packListService.Update(Model);
+
+    }
+      async Task RemovePublic()
+    {
+        Model.IsPublic = false;
+        await this._packListService.Update(Model);
+
+    }
+
+    
+
     async Task SaveList()
     {
         if (weightPrefixValue == null)

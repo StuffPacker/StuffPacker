@@ -1,4 +1,9 @@
 ﻿@page "/PackListViewer/{idin}"
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Components;
+@inject IHttpContextAccessor _httpContextAccessor;
+@inject NavigationManager NavigationManager
+
 @inject StuffPacker.Services.IPackListService _packListService;
 
 <StuffPacker.Components.PackListComponents.PackListComponent PreviewMode="true" Model="listModel" />
@@ -10,7 +15,29 @@
     protected override async Task OnInitializedAsync()
     {
         Guid id = Guid.Parse(idin);
-      listModel=  await _packListService.GetList(id);
+        PackListViewModel tmpList = await _packListService.GetList(id);
+        if (!tmpList.IsPublic)
+        {
+            if (GetUserId() != tmpList.UserId)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        listModel = tmpList;
+
+    }
+    private Guid GetUserId()
+    {
+        try
+        {
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return userId;
+        }
+        catch (Exception)
+        {
+
+            return Guid.Empty;
+        }
 
     }
 }
