@@ -59,6 +59,7 @@ namespace StuffPacker.Persistence.Repository
             modelToUpdate.Name = model.Name;
             modelToUpdate.WeightPrefix = model.WeightPrefix.ToString();
             modelToUpdate.Groups = model.Entity.Groups;
+            modelToUpdate.IsPublic = model.Entity.IsPublic;
             await _context.SaveChangesAsync();
         }
 

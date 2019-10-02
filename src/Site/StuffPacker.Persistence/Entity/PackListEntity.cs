@@ -15,6 +15,8 @@ namespace StuffPacker.Model
         public Guid UserId { get; set; }
 
         public string WeightPrefix  { get;set;}
+        public bool IsPublic { get;  set; }
+
         public PackListEntity(Guid id,Guid userId)
         {
             Id = id;
