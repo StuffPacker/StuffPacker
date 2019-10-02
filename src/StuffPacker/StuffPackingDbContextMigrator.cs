@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Contract;
 using StuffPacker.Persistence;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,25 @@ namespace StuffPacker
 
 
             using (var stoConnectDbContext =
-                new StuffPackerDbContext(optionsBuilder.Options))
+                new StuffPackerDbContext(optionsBuilder.Options, new CurrentMigratorUser()))
             {
                 if (!stoConnectDbContext.AllMigrationsApplied())
                     stoConnectDbContext.Database.Migrate();
             }
+        }
+    }
+    public class CurrentMigratorUser : ICurrentUser
+    {
+        public bool IsAuthenticated => throw new NotImplementedException();
+
+        public string GetUserName()
+        {
+            return "Migrator";
+        }
+
+        public UserType GetUserType()
+        {
+            return UserType.System;
         }
     }
 }
