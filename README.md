@@ -1,9 +1,18 @@
 ## Stuff Packer for manage your stuff the right way
 
-Stuff packer helps you to orgenize your items in a easy way.
+Sometimes it can be difficult to know what to pack in your bag, it can also be difficult to know the weight of the bag.
+With this tool you can organize your packing into lists and categories, get full controle of your gadgets and get a good overview of the weight.
+
+If you pack with this tool, you will soon discover that you can save weight and space on several things.
+
+Here is an example of a winter bag in the system.
+[Winter bag](https://stuffpackerprod.azurewebsites.net/packlistviewer/1B3C56EB-04B9-4A7D-9DDA-3E79E121D150)
+
+### Register and start creating lists today.
+[Register here](https://stuffpackerprod.azurewebsites.net/Identity/Account/Register)
 
 ## Beta
-- [Beta website](https://stuffpackerprod.azurewebsites.net)
+- [Beta website](http://stuffpacker.online)
 
 ## Prerequisites
 
