@@ -31,7 +31,7 @@ namespace StuffPacker.Services
         public async Task Add(Guid id, string name, Guid userId)
         {
             var model = new PackListModel(id, userId);
-            model.Update(name,WeightPrefix.Gram);
+            model.Update(name,WeightPrefix.Gram,false);
             await this._packListsRepository.Add(model);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -109,7 +109,7 @@ namespace StuffPacker.Services
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix),WeightPrefix=item.WeightPrefix });
+                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix),WeightPrefix=item.WeightPrefix });
             }
             return packLists;
         }
@@ -128,14 +128,14 @@ namespace StuffPacker.Services
                 return new PackListViewModel(); 
             }
            
-          return      new PackListViewModel { Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix), WeightPrefix = packList.WeightPrefix };
+          return      new PackListViewModel {IsPublic=packList.IsPublic,UserId=packList.UserId ,Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix), WeightPrefix = packList.WeightPrefix };
           
         }
 
         public async Task Update(PackListViewModel model)
         {
             var item = await this._packListsRepository.Get(model.Id);
-            item.Update(model.Name,model.WeightPrefix);
+            item.Update(model.Name,model.WeightPrefix,model.IsPublic);
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
