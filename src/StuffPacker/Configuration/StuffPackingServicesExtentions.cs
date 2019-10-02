@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Shared.Contract;
 using StuffPacker.Mapper;
 using StuffPacker.Persistence.Configuration;
 using StuffPacker.Repositories;
@@ -15,7 +16,9 @@ namespace StuffPacker.Configuration
             services.AddScoped<IPackListService, PackListService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IProductMapper, ProductMapper>();
-            services.AddScoped<IProductService, ProductService>();                       
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICurrentUser, CurrentUser>();
+
 
             services.AddStuffPackerPersistence(configuration);
             return services;
