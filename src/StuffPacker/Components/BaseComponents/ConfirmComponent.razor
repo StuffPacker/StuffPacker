@@ -1,0 +1,35 @@
+﻿<MatDialog @bind-IsOpen="@Model.DialogIsOpen">
+    <MatDialogContent>
+
+        <p class="text-center">
+            <MatIcon Style="font-size:150px; color:coral;" Icon="warning"></MatIcon>
+        </p>
+
+
+        <p class="text-center"><h3>@Model.Header</h3></p>
+        <p class="text-center">
+            <MatButton Style="color:black;" OnClick="@CancelCllick">Cancel</MatButton>
+            <MatButton Style="color:coral;" OnClick="@OkClick">@Model.OkButtonText</MatButton>
+            </p>
+
+    </MatDialogContent>
+    
+</MatDialog>
+
+@code {
+    [Parameter]
+    public ConfirmComponentViewModel Model { get; set; }
+
+    async Task OkClick()
+    {
+        await Model.OnOkClick();
+      
+        Model.DialogIsOpen = false;
+    }
+    async Task CancelCllick()
+    {
+         await Model.OnCancelClick();
+        Model.DialogIsOpen = false;
+    }
+
+}

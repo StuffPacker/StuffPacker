@@ -22,16 +22,25 @@ else
                     <MatTableRow>
                         <td>@context.Name</td>       
                         <td>@context.Weight @context.WeightPrefix</td>
-                        <td> <MatIconButton Icon="delete" OnClick="@((e) => DeleteProduct(context.Id))"></MatIconButton></td>
+                        <td>
+                            @*<MatIconButton Icon="delete" OnClick="@((e) => DeleteProduct(context.Id))"></MatIconButton>*@
+                            <MatIconButton Icon="delete" OnClick="@((e) => {
+                                                                        confirmModel.DialogIsOpen = true;
+                                                                        confirmModel.Header = $"Are you sure you want to delete {context.Name}?";
+                                                                        confirmModel.OkButtonText = "Delete";
+                                                                        confirmModel.OnOkClick = async () => await DeleteProduct(context.Id);
+                                                                    })"></MatIconButton>
+                        </td>
                     </MatTableRow>
                 </MatTable>
             </div>
         </div>
     </div>
 }
-
+<StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 
 @code {
+    ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
     List<ProductViewModel> ProductList;
     protected override async Task OnInitializedAsync()
     {
@@ -42,10 +51,12 @@ else
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         return userId;
     }
-    async Task DeleteProduct(Guid id)
+    async Task<string> DeleteProduct(Guid id)
     {
         var model = ProductList.Find(x=>x.Id==id);
         await this._productService.Delete(id);
         ProductList.Remove(model);
+        base.StateHasChanged();
+        return "";
     }
 }
