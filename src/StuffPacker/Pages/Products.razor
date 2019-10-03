@@ -20,9 +20,10 @@ else
                         <th></th>
                     </MatTableHeader>
                     <MatTableRow>
-                        <td>@context.Name</td>       
+                        <td>@context.Name</td>
                         <td>@context.Weight @context.WeightPrefix</td>
                         <td>
+                            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
                             @*<MatIconButton Icon="delete" OnClick="@((e) => DeleteProduct(context.Id))"></MatIconButton>*@
                             <MatIconButton Icon="delete" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
@@ -38,13 +39,19 @@ else
     </div>
 }
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
+<StuffPacker.Components.PackListComponents.ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
+
 
 @code {
     ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
     List<ProductViewModel> ProductList;
+    ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
+    List<string> weightPrefix = new List<string>();
+
     protected override async Task OnInitializedAsync()
     {
         ProductList = (await this._productService.GetById()).ToList();
+        weightPrefix = WeightPrefixHelper.GetWeightPrefix();
     }
     private Guid GetUserId()
     {
@@ -53,10 +60,27 @@ else
     }
     async Task<string> DeleteProduct(Guid id)
     {
-        var model = ProductList.Find(x=>x.Id==id);
+        var model = ProductList.Find(x => x.Id == id);
         await this._productService.Delete(id);
         ProductList.Remove(model);
         base.StateHasChanged();
         return "";
+    }
+    async Task EditProduct(Guid productId)
+    {
+
+        var product = ProductList.First(x => x.Id == productId);
+        productUpdateComponentViewModel.EditMode = true;
+        productUpdateComponentViewModel.ConvertedWeight=product.ConvertedWeight;
+        productUpdateComponentViewModel.WeightPrefixValue = product.WeightPrefix.ToString();
+        productUpdateComponentViewModel.ProductModel = product;
+        productUpdateComponentViewModel.OnAfterOkClick = OnAfterOkClick;
+        productUpdateComponentViewModel.DialogIsOpen = true;
+    }
+    async Task<string> OnAfterOkClick()
+    {  
+        ProductList = (await this._productService.GetById()).ToList();
+        base.StateHasChanged();
+        return string.Empty;
     }
 }

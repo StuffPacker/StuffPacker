@@ -15,7 +15,7 @@ namespace StuffPacker.Services
         Task AddGroup(Guid listId,string name);
         Task AddGroupItem(Guid listId, Guid groupId, string name, Guid userId);
 
-        Task UpdateProduct(PackListItemViewModel model);
+        Task UpdateProduct(ProductViewModel model);
 
         Task DeleteProduct(Guid listId,Guid groupId,Guid productId);
 
