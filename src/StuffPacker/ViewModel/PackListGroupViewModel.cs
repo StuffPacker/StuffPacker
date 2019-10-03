@@ -22,7 +22,7 @@ namespace StuffPacker.ViewModel
 
         public decimal Weight => GetTotalWeight();
 
-        public IEnumerable<PackListItemViewModel> Items { get; set; }
+        public IEnumerable<ProductViewModel> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
 

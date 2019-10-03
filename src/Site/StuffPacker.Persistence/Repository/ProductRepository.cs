@@ -42,14 +42,16 @@ namespace StuffPacker.Persistence.Repository
         }
 
         public async Task<IEnumerable<ProductModel>> GetByOwner(Guid userId)
-        {
-            var products = await _context.Products.AsNoTracking().Where(x=>x.Owner==userId).ToListAsync();
-            var list = new List<ProductModel>();
-            foreach (var item in products)
-            {
-                list.Add(new ProductModel(item));
-            }
-            return list;
+        {           
+                var products = await _context.Products.AsNoTracking().Where(x => x.Owner == userId).ToListAsync();
+                var list = new List<ProductModel>();
+                foreach (var item in products)
+                {
+                    list.Add(new ProductModel(item));
+                }
+                return list;
+          
+         
         }
 
         public async Task Update(ProductModel model)

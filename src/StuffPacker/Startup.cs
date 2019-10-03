@@ -35,7 +35,7 @@ namespace StuffPacker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<HttpClient>();
-            services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
             services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<StuffPackerDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
