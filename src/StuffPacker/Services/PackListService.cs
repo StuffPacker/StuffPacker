@@ -148,10 +148,8 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
-        public async Task UpdateProduct(PackListItemViewModel model)
+        public async Task UpdateProduct(ProductViewModel model)
         {
-            // var listModel = await this._packListsRepository.Get(listId);
-            // var group = listModel.Groups.First(x=>x.Id==GroupId);
             var product = await this._productRepository.Get(model.Id);
             product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix);
             await this._productRepository.Update(product);
@@ -168,9 +166,9 @@ namespace StuffPacker.Services
             return list;
         }
 
-        private async Task<IEnumerable<PackListItemViewModel>> GetItems(IEnumerable<Guid> items)
+        private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<Guid> items)
         {
-            var list = new List<PackListItemViewModel>();
+            var list = new List<ProductViewModel>();
 
             foreach (var item in items)
             {
@@ -184,10 +182,10 @@ namespace StuffPacker.Services
                     var p = await this._productRepository.Get(item);
                     if (p != null)
                     {
-                        list.Add(new PackListItemViewModel
+                        list.Add(new ProductViewModel
                         {
                             Name = p.Name,
-                            Weight = p.Weight.ToString(),
+                            Weight = p.Weight,
                             WeightPrefix = p.WeightPrefix,
                             Amount = 1,
                             Id = p.Id

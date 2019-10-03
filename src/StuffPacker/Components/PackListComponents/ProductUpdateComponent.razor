@@ -1,0 +1,54 @@
+﻿@inject StuffPacker.Services.IPackListService _packListService;
+<MatDialog @bind-IsOpen="@Model.DialogIsOpen">
+    <MatDialogTitle>Update product</MatDialogTitle>
+    <MatDialogContent>
+        <MatTextField @bind-Value="@Model.ProductModel.Name" Label="Name"></MatTextField>
+        <MatTextField @bind-Value="@Model.ConvertedWeight" Label="Weight"></MatTextField>
+        <MatBlazor.MatSelect Label="Prefix" @bind-Value="Model.WeightPrefixValue">
+            @foreach (var item in WeightPrefixes)
+            {
+                <MatBlazor.MatOption @attributes="@(GetSelected(Model.WeightPrefixValue == item))" Id="@item">
+                    @item
+                </MatBlazor.MatOption>
+            }
+        </MatBlazor.MatSelect>
+        <br />
+
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { Model.DialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@OkClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+@code {
+    [Parameter]
+    public ProductUpdateComponentViewModel Model { get; set; }
+
+    [Parameter]
+    public List<string> WeightPrefixes { get; set; }
+
+
+
+    Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
+
+
+    async Task OkClick()
+    {
+        var id = Guid.NewGuid();
+        if (Model.EditMode)
+        {
+            id = Model.ProductModel.Id;
+        }
+
+        WeightPrefix enumValue = (WeightPrefix)Enum.Parse(typeof(WeightPrefix), Model.WeightPrefixValue, true);
+        Model.ProductModel.WeightPrefix = enumValue;
+        Model.ProductModel.Weight = Convert.ToDecimal(Model.ConvertedWeight);
+        Model.ProductModel.Id = id;
+        await this._packListService.UpdateProduct(Model.ProductModel);
+         await Model.OnAfterOkClick();
+        Model.DialogIsOpen = false;
+
+
+        
+    }
+}

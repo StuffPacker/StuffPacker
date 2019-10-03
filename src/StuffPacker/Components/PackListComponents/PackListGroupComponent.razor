@@ -69,27 +69,14 @@ else
 </div>
    
 }
-<MatDialog @bind-IsOpen="@dialogIsOpen">
-    <MatDialogTitle>Meny</MatDialogTitle>
-    <MatDialogContent>
-        <MatTextField @bind-Value="@productModalModel.Name"  Label="Name"></MatTextField>
-        <MatTextField @bind-Value="@convertedWeight"  Label="Weight"></MatTextField>
-        <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
-            @foreach (var item in weightPrefix)
-            {
-                <MatBlazor.MatOption @attributes="@(GetSelected(weightPrefixValue == item))" Id="@item">
-                    @item
-                </MatBlazor.MatOption>
-            }
-        </MatBlazor.MatSelect>
-        <br />
+@if(!PreviewMode)
+{
+    <ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
+}
 
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
-        <MatButton OnClick="@OkClick">Save</MatButton>
-    </MatDialogActions>
-</MatDialog>
+
+
+
 @code {
 
     [Parameter]
@@ -101,21 +88,17 @@ else
     [Parameter]
     public Guid UserId { get; set; }
 
-      [Parameter]
+    [Parameter]
     public bool PreviewMode { get; set; }
 
-    string convertedWeight = "";
-    public string weightPrefixValue { get; set; }
+    ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
+
+
+
     string tempGroupName = "";
-    bool dialogIsOpen = false;
-    bool dialogEditMode = false;
     bool GroupEditMode = false;
     bool Maximized = true;
-    Guid dialogEditId;
     List<string> weightPrefix = new List<string>();
-    PackListItemViewModel productModalModel = new PackListItemViewModel();
-
-    Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -135,11 +118,11 @@ else
     {
         var model = ListModel.Items.First(x => x.Id == groupId);
         var product = model.Items.First(x => x.Id == productId);
-        convertedWeight = product.ConvertedWeight;
-        weightPrefixValue = product.WeightPrefix.ToString();
-        dialogIsOpen = true;
-        dialogEditMode = true;
-        productModalModel = product;
+        productUpdateComponentViewModel.EditMode = true;
+        productUpdateComponentViewModel.ConvertedWeight=product.ConvertedWeight;
+        productUpdateComponentViewModel.WeightPrefixValue = product.WeightPrefix.ToString();
+        productUpdateComponentViewModel.ProductModel = product;
+        productUpdateComponentViewModel.DialogIsOpen = true;
     }
     async Task DeleteGroupItem(Guid groupId, Guid productId)
     {
@@ -156,20 +139,7 @@ else
         }
         GroupEditMode = false;
     }
-    async Task OkClick()
-    {
-        var id = Guid.NewGuid();
-        if (dialogEditMode)
-        {
-            id = dialogEditId;
-        }
-        dialogIsOpen = false;
-        WeightPrefix enumValue = (WeightPrefix)Enum.Parse(typeof(WeightPrefix), weightPrefixValue, true);
 
-        productModalModel.WeightPrefix = enumValue;
-        productModalModel.Weight = convertedWeight;
-        await this._packListService.UpdateProduct(productModalModel);
-    }
     void ExpandColaps()
     {
         Maximized = !Maximized;
