@@ -22,6 +22,9 @@ namespace StuffPacker.Persistence
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<PackListEntity> PackLists { get; set; }
 
+        public DbSet<PersonalizedProductEntity> PersonalizedProducts { get; set; }
+        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

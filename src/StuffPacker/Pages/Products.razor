@@ -12,31 +12,47 @@ else
 {
     <div class="container-fluid">
         <div class="row">
+            @foreach (var item in CategoryList)
+            {
             <div class="col-12">
-                <MatTable Items="@ProductList" class="mat-elevation-z5" Striped="true" FilterByColumnName="Name" AllowSelection="false">
-                    <MatTableHeader>
-                        <th>Name</th>
-                        <th>Weight</th>
-                        <th></th>
-                    </MatTableHeader>
-                    <MatTableRow>
-                        <td>@context.Name</td>
-                        <td>@context.Weight @context.WeightPrefix</td>
-                        <td>
-                            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
-                            @*<MatIconButton Icon="delete" OnClick="@((e) => DeleteProduct(context.Id))"></MatIconButton>*@
-                            <MatIconButton Icon="delete" OnClick="@((e) => {
+                @if (item.Maximized)
+                {
+                    <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
+                    <h4>@item.Name</h4>
+                    <MatTable Items="@ProductList.Where(x=>x.Category==item.Name).ToList()" class="mat-elevation-z5" Striped="true" FilterByColumnName="Name" AllowSelection="false">
+                        <MatTableHeader>
+                            <th>Name</th>
+                            <th>Weight</th>
+                            <th></th>
+                        </MatTableHeader>
+                        <MatTableRow>
+                            <td>@context.Name</td>
+                            <td>@context.Weight @context.WeightPrefix</td>
+                            <td>
+                                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
+                                <MatIconButton Icon="delete" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {context.Name}?";
                                                                         confirmModel.OkButtonText = "Delete";
                                                                         confirmModel.OnOkClick = async () => await DeleteProduct(context.Id);
                                                                     })"></MatIconButton>
-                        </td>
-                    </MatTableRow>
-                </MatTable>
+                            </td>
+                        </MatTableRow>
+                    </MatTable>
+                }
+                else
+                {
+                    <div style="background-color:lightgray;">
+                        <h4>
+                            <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
+                            @item.Name
+                        </h4>
+                    </div>
+                }
             </div>
+            }
         </div>
-    </div>
+        </div>
 }
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 <StuffPacker.Components.PackListComponents.ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
@@ -47,12 +63,36 @@ else
     List<ProductViewModel> ProductList;
     ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
     List<string> weightPrefix = new List<string>();
+    List<ProductListCategoryViewModel> CategoryList = new List<ProductListCategoryViewModel>();
+
 
     protected override async Task OnInitializedAsync()
     {
-        ProductList = (await this._productService.GetById()).ToList();
+
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();
+        await LoadList();
+
+
     }
+
+    async Task LoadList()
+    {
+        ProductList = (await this._productService.GetById()).ToList();
+        var list = new List<ProductListCategoryViewModel>();
+        var t = ProductList.Select(s => s.Category).Distinct();
+        foreach (var item in t)
+        {
+            list.Add(new ProductListCategoryViewModel { Name=item});
+        }
+        CategoryList = list;
+    }
+
+    void ExpandColaps(string name)
+    {
+        var item = CategoryList.First(x=>x.Name==name);
+        item.Maximized = !item.Maximized;
+    }
+
     private Guid GetUserId()
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -66,6 +106,8 @@ else
         base.StateHasChanged();
         return "";
     }
+
+
     async Task EditProduct(Guid productId)
     {
 
@@ -78,8 +120,8 @@ else
         productUpdateComponentViewModel.DialogIsOpen = true;
     }
     async Task<string> OnAfterOkClick()
-    {  
-        ProductList = (await this._productService.GetById()).ToList();
+    {
+        await LoadList();
         base.StateHasChanged();
         return string.Empty;
     }

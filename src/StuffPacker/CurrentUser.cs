@@ -30,5 +30,24 @@ namespace StuffPacker
         {
             throw new NotImplementedException();
         }
+
+        public Guid GetUserId()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(UserName) && IsAuthenticated)
+                {
+                    return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                return Guid.Empty;
+            }
+            catch (Exception)
+            {
+
+                return Guid.Empty;
+            }
+
+           
+        }
     }
 }

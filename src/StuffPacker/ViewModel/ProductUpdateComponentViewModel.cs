@@ -19,7 +19,10 @@ namespace StuffPacker.ViewModel
         public string ConvertedWeight { get; set; }
 
         public string WeightPrefixValue { get; set; }
-              
+
+        
+
+
 
         public Func<Task<string>> OnAfterOkClick { get; set; }
 
