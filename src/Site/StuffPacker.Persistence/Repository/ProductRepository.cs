@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Contract;
 using StuffPacker.Model;
+using StuffPacker.Persistence.Model;
 using StuffPacker.Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,11 @@ namespace StuffPacker.Persistence.Repository
     public class ProductRepository : IProductRepository
     {
         private readonly StuffPackerDbContext _context;
-
-        public ProductRepository(StuffPackerDbContext context)
+        private readonly ICurrentUser _currentUser;
+        public ProductRepository(StuffPackerDbContext context, ICurrentUser currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         public async Task Add(ProductModel model)
@@ -54,13 +57,30 @@ namespace StuffPacker.Persistence.Repository
          
         }
 
-        public async Task Update(ProductModel model)
+        public async Task Update(ProductModel model,PersonalizedProductModel pModel)
         {
-            var modelToUpdate = await _context.Products.FirstOrDefaultAsync(s => s.Id == model.Id);
-            modelToUpdate.Name = model.Name;
-            modelToUpdate.Weight = model.Entity.Weight;
-            modelToUpdate.WeightPrefix = model.Entity.WeightPrefix;
-            await _context.SaveChangesAsync();
+          
+                var modelToUpdate = await _context.Products.FirstOrDefaultAsync(s => s.Id == model.Id);
+                modelToUpdate.Name = model.Name;
+                modelToUpdate.Weight = model.Entity.Weight;
+                modelToUpdate.WeightPrefix = model.Entity.WeightPrefix;
+
+
+                var personalizedProductsModel = await _context.PersonalizedProducts.FirstOrDefaultAsync(x => x.ProductId == model.Id && x.UserId == _currentUser.GetUserId());
+                if (personalizedProductsModel != null)
+                {
+                    personalizedProductsModel.Category = pModel.Category;
+                }
+                else
+                {
+                    PersonalizedProductModel pp = new PersonalizedProductModel(Guid.NewGuid(), _currentUser.GetUserId(), model.Id);
+                    pp.Update(pModel.Category);
+                    _context.Add(pp.Entity);
+                }
+
+                await _context.SaveChangesAsync();
+           
+          
         }
     }
 }

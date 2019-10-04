@@ -10,6 +10,8 @@ namespace StuffPacker.ViewModel
         public decimal Weight { get;  set; }
         public WeightPrefix WeightPrefix { get;  set; }
 
+        public string Category { get; set; }
+
         public ProductViewModel()
         {
             WeightPrefix = WeightPrefix.Gram;

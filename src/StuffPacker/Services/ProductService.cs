@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using StuffPacker.Mapper;
+using StuffPacker.Persistence.Repository;
 using StuffPacker.Repositories;
 using StuffPacker.ViewModel;
 
@@ -15,11 +16,13 @@ namespace StuffPacker.Services
         private readonly IProductRepository _productRepository;
         private readonly IProductMapper _productMapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ProductService(IProductRepository productRepository, IProductMapper productMapper, IHttpContextAccessor httpContextAccessor)
+        private readonly IPersonalizedProductRepository _personalizedProductRepository;
+        public ProductService(IProductRepository productRepository, IProductMapper productMapper, IHttpContextAccessor httpContextAccessor, IPersonalizedProductRepository personalizedProductRepository)
         {
             _productRepository = productRepository;
             _productMapper = productMapper;
             _httpContextAccessor = httpContextAccessor;
+            _personalizedProductRepository = personalizedProductRepository;
         }
 
         public async Task Delete(Guid productId)
@@ -35,7 +38,8 @@ namespace StuffPacker.Services
         public async Task<IEnumerable<ProductViewModel>> GetById()
         {
             var products = await _productRepository.GetByOwner(GetUserId());
-            return _productMapper.MapUserProducts(products);
+            var personalizedProductModels = await _personalizedProductRepository.GetByUser(GetUserId());
+            return _productMapper.MapUserProducts(products,personalizedProductModels);
         }
 
         private Guid GetUserId()
