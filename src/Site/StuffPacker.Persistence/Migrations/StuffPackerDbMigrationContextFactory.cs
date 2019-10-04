@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Shared.Contract;
 
@@ -23,6 +24,11 @@ namespace StuffPacker.Persistence.Migrations
     public class CurrentMigrationUser : ICurrentUser
     {
         public bool IsAuthenticated => false;
+
+        public Guid GetUserId()
+        {
+           return Guid.Empty;
+        }
 
         public string GetUserName()
         {

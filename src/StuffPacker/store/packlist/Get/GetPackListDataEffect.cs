@@ -1,5 +1,6 @@
 ﻿using Blazor.Fluxor;
 using Microsoft.AspNetCore.Http;
+using Shared.Contract;
 using StuffPacker.Services;
 using System;
 using System.Linq;
@@ -13,12 +14,12 @@ namespace StuffPacker.store.packlist.Get
     {
         private readonly IPackListService _packListService;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUser _currentUser;
 
-        public GetPackListDataEffect(IPackListService packListService, IHttpContextAccessor httpContextAccessor)
+        public GetPackListDataEffect(IPackListService packListService, ICurrentUser currentUser)
         {
             _packListService = packListService;
-            _httpContextAccessor = httpContextAccessor;
+            _currentUser = currentUser;
         }
 
         protected async override Task HandleAsync(GetPackListDataAction action, IDispatcher dispatcher)
@@ -26,9 +27,9 @@ namespace StuffPacker.store.packlist.Get
             try
             {
 
-                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = _currentUser.GetUserId();
 
-                var packLists = await _packListService.Get(Guid.Parse(userId));
+                var packLists = await _packListService.Get(userId);
                 dispatcher.Dispatch(new GetPackListDataSuccessAction(packLists.ToArray()));
             }
             catch (Exception e)

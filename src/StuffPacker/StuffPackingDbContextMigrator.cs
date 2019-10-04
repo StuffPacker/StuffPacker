@@ -3,13 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Contract;
 using StuffPacker.Persistence;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StuffPacker
 {
-   
+
     public class StuffPackingDbContextMigrator
     {
         public void Migrate(IServiceScope serviceScope, string connectionString)
@@ -32,6 +29,11 @@ namespace StuffPacker
     public class CurrentMigratorUser : ICurrentUser
     {
         public bool IsAuthenticated => throw new NotImplementedException();
+
+        public Guid GetUserId()
+        {
+            return Guid.Empty;
+        }
 
         public string GetUserName()
         {

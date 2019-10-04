@@ -1,6 +1,9 @@
-﻿using StuffPacker.Mapper;
+﻿using Shared.Contract;
+using StuffPacker.Mapper;
 using StuffPacker.Model;
 using StuffPacker.Model.Messaging;
+using StuffPacker.Persistence.Model;
+using StuffPacker.Persistence.Repository;
 using StuffPacker.Repositories;
 using StuffPacker.ViewModel;
 using System;
@@ -20,12 +23,18 @@ namespace StuffPacker.Services
 
         private readonly IProductMapper _productMapper;
 
-        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper)
+        private readonly IPersonalizedProductRepository _personalizedProductRepository;
+
+        private readonly ICurrentUser _currentUser;
+
+        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper, IPersonalizedProductRepository personalizedProductRepository, ICurrentUser currentUser)
         {
             _packListsRepository = packListsRepository;
             _productRepository = productRepository;
             _messageService = messageService;
             _productMapper = productMapper;
+            _personalizedProductRepository = personalizedProductRepository;
+            _currentUser = currentUser;
         }
 
         public async Task Add(Guid id, string name, Guid userId)
@@ -150,9 +159,17 @@ namespace StuffPacker.Services
 
         public async Task UpdateProduct(ProductViewModel model)
         {
+            var userId = _currentUser.GetUserId();
             var product = await this._productRepository.Get(model.Id);
             product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix);
-            await this._productRepository.Update(product);
+
+            var pModel = await _personalizedProductRepository.Get(userId,model.Id);
+            if(pModel==null)
+            {
+                pModel = new PersonalizedProductModel(Guid.Empty,userId,model.Id);
+            }
+            pModel.Update(model.Category);
+            await this._productRepository.Update(product,pModel);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
@@ -169,7 +186,7 @@ namespace StuffPacker.Services
         private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<Guid> items)
         {
             var list = new List<ProductViewModel>();
-
+            var personalizedProductList = await _personalizedProductRepository.GetByUser(_currentUser.GetUserId());
             foreach (var item in items)
             {
                 var itemExist = list.Find(x => x.Id == item);
@@ -180,6 +197,12 @@ namespace StuffPacker.Services
                 else
                 {
                     var p = await this._productRepository.Get(item);
+                    var pp = personalizedProductList.FirstOrDefault(x=>x.ProductId==item);
+                    var category = "";
+                    if(pp!=null)
+                    {
+                        category = pp.Category;
+                    }
                     if (p != null)
                     {
                         list.Add(new ProductViewModel
@@ -188,7 +211,8 @@ namespace StuffPacker.Services
                             Weight = p.Weight,
                             WeightPrefix = p.WeightPrefix,
                             Amount = 1,
-                            Id = p.Id
+                            Id = p.Id,
+                            Category=category
                         });
                     }
 

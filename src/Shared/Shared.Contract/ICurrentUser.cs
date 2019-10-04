@@ -10,6 +10,8 @@ namespace Shared.Contract
 
         string GetUserName();
 
+        Guid GetUserId();
+
         UserType GetUserType();
     }
 }

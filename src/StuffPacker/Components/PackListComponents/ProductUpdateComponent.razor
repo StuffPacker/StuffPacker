@@ -4,6 +4,7 @@
     <MatDialogContent>
         <MatTextField @bind-Value="@Model.ProductModel.Name" Label="Name"></MatTextField>
         <MatTextField @bind-Value="@Model.ConvertedWeight" Label="Weight"></MatTextField>
+        <MatTextField @bind-Value="@Model.ProductModel.Category" Label="Category"></MatTextField>
         <MatBlazor.MatSelect Label="Prefix" @bind-Value="Model.WeightPrefixValue">
             @foreach (var item in WeightPrefixes)
             {

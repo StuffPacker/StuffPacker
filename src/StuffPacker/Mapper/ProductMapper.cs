@@ -1,5 +1,7 @@
 ﻿using StuffPacker.Model;
+using StuffPacker.Persistence.Model;
 using StuffPacker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,29 +15,38 @@ namespace StuffPacker.Mapper
             userProducts = userProducts.OrderBy(x => x.Name).ToList();
             foreach (var item in userProducts)
             {
+              
                 viewModels.Add(new AddProductListItemViewModel
                 {
                     Id = item.Id,
                     IsNew = false,
                     Selected = false,
-                    Name = item.Name
+                    Name = item.Name,                    
                 });
 
             }
             return viewModels;
         }
 
-        public IEnumerable<ProductViewModel> MapUserProducts(IEnumerable<ProductModel> products)
+        public IEnumerable<ProductViewModel> MapUserProducts(IEnumerable<ProductModel> products,IEnumerable<PersonalizedProductModel> personalizedProductModels)
         {
             var list = new List<ProductViewModel>();
             foreach (var item in products)
             {
+                var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id);
+                var category = "";
+                if(pp!=null)
+                {
+                    category= pp.Category; 
+                }
+                
                 list.Add(new ProductViewModel
                 {
                     Id=item.Id,
                     Name=item.Name,
                     Weight = item.Weight,
-                    WeightPrefix = item.WeightPrefix
+                    WeightPrefix = item.WeightPrefix,
+                    Category= category
                 });
             }
             return list;
