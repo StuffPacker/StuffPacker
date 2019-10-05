@@ -1,42 +1,71 @@
 ﻿@inject StuffPacker.Services.IPackListService _packListService;
 
+<style>
+    .mdc-dialog .mdc-dialog__surface
+    {
+        
+    }
+</style>
 <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> OpenAddProductDialog(GroupId))" Label="Add product"></MatButton>
 <MatDialog @bind-IsOpen="@dialogAddProductIsOpen">
-        <MatDialogContent>
-        <h2>Add product</h2>
-        <MatTextField @bind-Value="@addProductDialogName" Label="Name"></MatTextField><MatButton Icon="add_circle" Style="color:green;" OnClick="@AddNewProduct" Label="Add"></MatButton>
-        <br />
-        <hr />
-        <table>
-            <thead class="thead-dark">
-                <tr>
-                    <th></th>
-                    <th>
-                        Name
-                        @*<br />*@
-                        @*<MatTextField @bind-Value="@filterText" @onkeyup="@FilterProducts" Label="filtertext"></MatTextField>*@
-                    </th>
-                </tr>
-            </thead>
-            @foreach (var item in GetProductList())
-            {
-                <tr>
-                    <td> <MatCheckbox @bind-Checked="@item.Selected" Label=""></MatCheckbox></td>
-                    <td>@item.Name</td>
-                </tr>
-            }
-        </table>
+    <MatDialogContent>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h2>Add product</h2>
+                    <MatTextField @bind-Value="@addProductDialogName" Label="Name"></MatTextField><MatButton Icon="add_circle" Style="color:green;" OnClick="@AddNewProduct" Label="Add"></MatButton>
+                    <br />
+                    <hr />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    Name<br /><input style="width:50px;" @bind-value="FilterName" @bind-value:event="oninput" />
+                                </th>
+                                <th>
+                                    Wight<br />&nbsp;
+                                </th>
+                                <th>
+                                    Category<br /><input style="width:50px;"  @bind-value="FilterCategory" @bind-value:event="oninput" />
+                                </th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in FilteredList)
+                        {
+                            <tr>
+                                <td> <MatCheckbox @bind-Checked="@item.Selected" Label=""></MatCheckbox></td>
+                                <td>@item.Name</td>
+                                <td>
+                                    @item.WeightAndToken
+
+                                </td>
+                                <td>
+                                    @item.Category
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+       
+     
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogAddProductIsOpen = false; })">Cancel</MatButton>
-        <MatButton OnClick="@AddProductDialogOkClick">Add products</MatButton>
+        <MatButton Style="color:black;" OnClick="@(e => { dialogAddProductIsOpen = false; })">Cancel</MatButton>
+        <MatButton Style="color:green;" OnClick="@AddProductDialogOkClick">Add products</MatButton>
     </MatDialogActions>
 </MatDialog>
 @code {
     bool dialogAddProductIsOpen = false;
     string addProductDialogName = "";
     Guid dialogAddProductGroupId;
-    string filterText = "";
 
     [Parameter]
     public Guid GroupId { get; set; }
@@ -49,9 +78,19 @@
 
     List<AddProductListItemViewModel> dialogAddProductProducts = new List<AddProductListItemViewModel>();
     List<AddProductListItemViewModel> dialogAddProductProductsDefault = new List<AddProductListItemViewModel>();
+
+    string FilterName { get; set; } = "";
+    string FilterCategory { get; set; } = "";
+
+
+
+
+    List<AddProductListItemViewModel> FilteredList => GetProductList();
+
     async Task OpenAddProductDialog(Guid groupId)
     {
-        filterText = "";
+        FilterName = string.Empty;
+        FilterCategory = string.Empty;
         dialogAddProductGroupId = groupId;
         dialogAddProductProducts = (await this._packListService.GetAddableProducts(UserId)).ToList();
         dialogAddProductProductsDefault = dialogAddProductProducts;
@@ -65,36 +104,22 @@
     }
     async Task AddNewProduct()
     {
-        dialogAddProductProducts.Add(new AddProductListItemViewModel
-        {
-            Id = Guid.NewGuid(),
-            IsNew = true,
-            Name = addProductDialogName,
-            Selected = true
-        });
+        dialogAddProductProducts.Add(new AddProductListItemViewModel(Guid.NewGuid(),addProductDialogName,true,true,0,WeightPrefix.Gram,string.Empty));
         addProductDialogName = "";
     }
-    private List<AddProductListItemViewModel> GetProductList()
+    private List<AddProductListItemViewModel>    GetProductList()
     {
-        if(!string.IsNullOrEmpty(filterText))
+        var list = dialogAddProductProducts;
+
+        if (!string.IsNullOrEmpty(FilterName))
         {
-            return dialogAddProductProducts.Where(x=>x.Name.ToLower().Contains(filterText.ToLower())).ToList();
+            list = list.Where(x => x.Name.ToLower().Contains(FilterName.ToLower())).ToList();
         }
-        return dialogAddProductProducts;
-    }
-          
-    void FilterProducts(KeyboardEventArgs e)
-    {
-        var filter = filterText.ToLower();
-        filter = filter + e.Key;
-        
-        if(!string.IsNullOrEmpty(filterText))
+         if (!string.IsNullOrEmpty(FilterCategory))
         {
-            dialogAddProductProducts= dialogAddProductProductsDefault.Where(x=>x.Name.ToLower().Contains(filter)).ToList();
+            list = list.Where(x => x.Category.ToLower().Contains(FilterCategory.ToLower())).ToList();
         }
-        else
-        {
-            dialogAddProductProducts = dialogAddProductProductsDefault;
-        }
+
+        return list;
     }
 }

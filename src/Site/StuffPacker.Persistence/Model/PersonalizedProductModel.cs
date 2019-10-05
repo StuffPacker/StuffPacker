@@ -25,6 +25,8 @@ namespace StuffPacker.Persistence.Model
 
         public Guid ProductId => Entity.ProductId;
 
+        public Guid UserId => Entity.UserId;
+
         public void Update(string category)
         {
             Entity.Category = category;
