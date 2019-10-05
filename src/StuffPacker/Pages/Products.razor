@@ -55,7 +55,7 @@ else
         </div>
 }
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
-<StuffPacker.Components.PackListComponents.ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
+<StuffPacker.Components.PackListComponents.ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" OnAfterOkClick="ClickHandler" />
 
 
 @code {
@@ -115,14 +115,12 @@ else
         productUpdateComponentViewModel.EditMode = true;
         productUpdateComponentViewModel.ConvertedWeight=product.ConvertedWeight;
         productUpdateComponentViewModel.WeightPrefixValue = product.WeightPrefix.ToString();
-        productUpdateComponentViewModel.ProductModel = product;
-        productUpdateComponentViewModel.OnAfterOkClick = OnAfterOkClick;
+        productUpdateComponentViewModel.ProductModel = product;     
         productUpdateComponentViewModel.DialogIsOpen = true;
     }
-    async Task<string> OnAfterOkClick()
+   
+      async Task ClickHandler(string newMessage)
     {
-        await LoadList();
-        base.StateHasChanged();
-        return string.Empty;
+       await LoadList();
     }
 }

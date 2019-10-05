@@ -28,6 +28,7 @@
     [Parameter]
     public List<string> WeightPrefixes { get; set; }
 
+     [Parameter] public EventCallback<string> OnAfterOkClick { get; set; }
 
 
     Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
@@ -45,10 +46,9 @@
         Model.ProductModel.WeightPrefix = enumValue;
         Model.ProductModel.Weight = Convert.ToDecimal(Model.ConvertedWeight);
         Model.ProductModel.Id = id;
-        await this._packListService.UpdateProduct(Model.ProductModel);
-         await Model.OnAfterOkClick();
+        await this._packListService.UpdateProduct(Model.ProductModel);        
         Model.DialogIsOpen = false;
-
+       await OnAfterOkClick.InvokeAsync("");
 
         
     }
