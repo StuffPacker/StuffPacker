@@ -7,8 +7,7 @@ namespace StuffPacker.ViewModel
     {
         public ProductUpdateComponentViewModel()
         {
-            ProductModel = new ProductViewModel();
-            OnAfterOkClick = onAfterOkClick;
+            ProductModel = new ProductViewModel();           
         }
         public bool DialogIsOpen { get; set; }
 
@@ -20,15 +19,6 @@ namespace StuffPacker.ViewModel
 
         public string WeightPrefixValue { get; set; }
 
-        
-
-
-
-        public Func<Task<string>> OnAfterOkClick { get; set; }
-
-        private async Task<string> onAfterOkClick()
-        {
-            return string.Empty;
-        }
+     
     }
 }
