@@ -1,4 +1,5 @@
-﻿using StuffPacker.Model;
+﻿using Shared.Contract;
+using StuffPacker.Model;
 using StuffPacker.Persistence.Model;
 using StuffPacker.ViewModel;
 using System;
@@ -9,20 +10,20 @@ namespace StuffPacker.Mapper
 {
     public class ProductMapper : IProductMapper
     {
-        public IEnumerable<AddProductListItemViewModel> Map(IEnumerable<ProductModel> userProducts)
+        private readonly ICurrentUser _currentUSer;
+        public ProductMapper(ICurrentUser currentUSer)
+        {
+            _currentUSer = currentUSer;
+        }
+
+        public IEnumerable<AddProductListItemViewModel> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels )
         {
             var viewModels = new List<AddProductListItemViewModel>();
             userProducts = userProducts.OrderBy(x => x.Name).ToList();
             foreach (var item in userProducts)
             {
-              
-                viewModels.Add(new AddProductListItemViewModel
-                {
-                    Id = item.Id,
-                    IsNew = false,
-                    Selected = false,
-                    Name = item.Name,                    
-                });
+                var pp = personalizedProductModels.FirstOrDefault(x => x.ProductId == item.Id && x.UserId == _currentUSer.GetUserId());
+                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,item.Weight,item.WeightPrefix,pp.Category));
 
             }
             return viewModels;
@@ -33,7 +34,7 @@ namespace StuffPacker.Mapper
             var list = new List<ProductViewModel>();
             foreach (var item in products)
             {
-                var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id);
+                var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id && x.UserId== _currentUSer.GetUserId());
                 var category = "";
                 if(pp!=null)
                 {
