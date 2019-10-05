@@ -2,7 +2,7 @@
 
 @if (Maximized)
 {
-    <h4>
+    <b style="font-size:large">
         <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
         @if (GroupEditMode)
         {
@@ -13,13 +13,12 @@
             @Model.Name
             if (!PreviewMode)
             {
-                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
+                <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
             }
 
         }
-        : Total weight:  @Model.WeightAndToken
-
-    </h4>
+    </b>
+    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndToken</b></span>
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
@@ -40,8 +39,8 @@
                 <td>
                     @if (!PreviewMode)
                     {
-                        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
-                        <MatButton Icon="remove_circle" Style="color:darkred;" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        <MatButton Icon="remove_circle" Style="color:darkred;" Class="sp-mdc-button" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
                     }
 
                 </td>
@@ -60,12 +59,12 @@
 }
 else
 {
-<div style="background-color:lightgray;">
-    <h4>
+<div style="background-color:#eee; border:solid 1px #ccc; padding:3px;">
+    <b style="font-size:large">
         <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
-        @Model.Name
-        : Total weight: @Model.WeightAndToken
-    </h4>
+        @Model.Name        
+    </b>
+    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndToken</b></span>
 </div>
    
 }

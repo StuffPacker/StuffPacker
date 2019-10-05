@@ -17,28 +17,40 @@ else
             <div class="col-12">
                 @if (item.Maximized)
                 {
+
+
+
+
+
+
                     <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
                     <h4>@item.Name</h4>
-                    <MatTable Items="@ProductList.Where(x=>x.Category==item.Name).ToList()" class="mat-elevation-z5" Striped="true" FilterByColumnName="Name" AllowSelection="false">
-                        <MatTableHeader>
-                            <th>Name</th>
-                            <th>Weight</th>
-                            <th></th>
-                        </MatTableHeader>
-                        <MatTableRow>
-                            <td>@context.Name</td>
-                            <td>@context.Weight @context.WeightPrefix</td>
-                            <td>
-                                <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
-                                <MatIconButton Icon="delete" OnClick="@((e) => {
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Weight</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        @foreach (var context in ProductList.Where(x=>x.Category==item.Name).ToList())
+                        {
+                            <tr>
+                                <td>@context.Name</td>
+                                <td>@context.Weight @context.WeightPrefix</td>
+                                <td>
+                                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
+                                    <MatIconButton Icon="delete" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {context.Name}?";
                                                                         confirmModel.OkButtonText = "Delete";
                                                                         confirmModel.OnOkClick = async () => await DeleteProduct(context.Id);
                                                                     })"></MatIconButton>
-                            </td>
-                        </MatTableRow>
-                    </MatTable>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
                 }
                 else
                 {
