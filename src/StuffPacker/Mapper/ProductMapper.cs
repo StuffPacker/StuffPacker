@@ -23,7 +23,12 @@ namespace StuffPacker.Mapper
             foreach (var item in userProducts)
             {
                 var pp = personalizedProductModels.FirstOrDefault(x => x.ProductId == item.Id && x.UserId == _currentUSer.GetUserId());
-                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,item.Weight,item.WeightPrefix,pp.Category));
+                var category = "";
+                if (pp != null)
+                {
+                    category = pp.Category;
+                }
+                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,item.Weight,item.WeightPrefix, category));
 
             }
             return viewModels;
