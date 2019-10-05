@@ -126,7 +126,8 @@ namespace StuffPacker.Services
         public async Task<IEnumerable<AddProductListItemViewModel>> GetAddableProducts(Guid userId)
         {
             var userProducts = await this._productRepository.GetByOwner(userId);
-            return _productMapper.Map(userProducts);
+            var personalizedProductModels = await this._personalizedProductRepository.GetByUser(userId);
+            return _productMapper.Map(userProducts, personalizedProductModels);
         }
 
         public async Task<PackListViewModel> GetList(Guid listId)

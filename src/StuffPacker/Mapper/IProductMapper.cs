@@ -7,7 +7,7 @@ namespace StuffPacker.Mapper
 {
     public interface IProductMapper
     {
-        IEnumerable<AddProductListItemViewModel> Map(IEnumerable<ProductModel> userProducts);
+        IEnumerable<AddProductListItemViewModel> Map(IEnumerable<ProductModel> userProducts, IEnumerable<PersonalizedProductModel> personalizedProductModels);
         IEnumerable<ProductViewModel> MapUserProducts(IEnumerable<ProductModel> products, IEnumerable<PersonalizedProductModel> personalizedProductModels);
     }
 }

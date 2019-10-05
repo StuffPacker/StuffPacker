@@ -79,6 +79,7 @@ else
 
 @code {
 
+
     [Parameter]
     public PackListGroupViewModel Model { get; set; }
 
@@ -93,7 +94,7 @@ else
 
     ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
 
-
+  
 
     string tempGroupName = "";
     bool GroupEditMode = false;
@@ -105,7 +106,8 @@ else
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();
     }
 
-
+   
+    
 
 
     async Task EditGroup(Guid groupId)
