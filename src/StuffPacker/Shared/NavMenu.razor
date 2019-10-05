@@ -1,18 +1,27 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Stuff Packer</a>
+﻿<div class="top-row pl-2 navbar navbar-dark">
+    <span class="navbar-brand">Stuff Packer</span>
+    <AuthorizeView>
+        <Authorized>
+            <span class="d-lg-none" style="color:#ffffff; font-size:x-small;">@context.User.Identity.Name</span>
+            <form method="post" action="Identity/Account/LogOut">
+                <button type="submit" class="nav-link btn btn-link d-lg-none" style="color:white;">Log out</button>
+            </form>
+        </Authorized>
+        <NotAuthorized>
+            <div class=" d-lg-none">
+                <a href="Identity/Account/Register" style="color:white;">Register</a>&nbsp;
+                <a href="Identity/Account/Login" style="color:white;">Log in</a>
+            </div>           
+        </NotAuthorized>
+    </AuthorizeView>
+
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="d-sm-none" style="color: white;">
-                <LoginDisplay />
-            </div>
-        </div>
-    </div>
+  
     
     <ul class="nav flex-column">
         <li class="nav-item px-3">
