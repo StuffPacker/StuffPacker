@@ -1,11 +1,6 @@
 ﻿@inject StuffPacker.Services.IPackListService _packListService;
 
-<style>
-    .mdc-dialog .mdc-dialog__surface
-    {
-        
-    }
-</style>
+
 <MatButton Icon="add_circle" Style="color:green;" OnClick="@(e=> OpenAddProductDialog(GroupId))" Label="Add product"></MatButton>
 <MatDialog @bind-IsOpen="@dialogAddProductIsOpen">
     <MatDialogContent>

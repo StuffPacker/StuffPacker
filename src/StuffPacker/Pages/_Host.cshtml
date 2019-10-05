@@ -29,6 +29,14 @@
     @Html.EmbeddedBlazorContent()
 </head>
 <body>
+    <style>
+        .sp-mdc-button{min-width:0px; padding:0px;}
+        .material-icons .mdc-button__icon{margin-right:1px;}
+        .main .top-row{position:inherit}
+        .table td {padding:.3rem;}
+        .table .thead-dark th {color:#CBFD03;}
+
+    </style>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
     </app>
