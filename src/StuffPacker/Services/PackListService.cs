@@ -118,7 +118,7 @@ namespace StuffPacker.Services
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix),WeightPrefix=item.WeightPrefix });
+                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix,item.UserId),WeightPrefix=item.WeightPrefix });
             }
             return packLists;
         }
@@ -138,7 +138,7 @@ namespace StuffPacker.Services
                 return new PackListViewModel(); 
             }
            
-          return      new PackListViewModel {IsPublic=packList.IsPublic,UserId=packList.UserId ,Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix), WeightPrefix = packList.WeightPrefix };
+          return      new PackListViewModel {IsPublic=packList.IsPublic,UserId=packList.UserId ,Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix,packList.UserId), WeightPrefix = packList.WeightPrefix };
           
         }
 
@@ -174,20 +174,20 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
-        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix)
+        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix,Guid userId)
         {
             var list = new List<PackListGroupViewModel>();
             foreach (var item in groups)
             {
-                list.Add(new PackListGroupViewModel(weightPrefix) { Name = item.Name, Items = await GetItems(item.Items), Id = item.Id });
+                list.Add(new PackListGroupViewModel(weightPrefix) { Name = item.Name, Items = await GetItems(item.Items,userId), Id = item.Id });
             }
             return list;
         }
 
-        private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<Guid> items)
+        private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<Guid> items,Guid userId)
         {
             var list = new List<ProductViewModel>();
-            var personalizedProductList = await _personalizedProductRepository.GetByUser(_currentUser.GetUserId());
+            var personalizedProductList = await _personalizedProductRepository.GetByUser(userId);
             foreach (var item in items)
             {
                 var itemExist = list.Find(x => x.Id == item);
