@@ -5,7 +5,7 @@
 @inject IHttpContextAccessor _httpContextAccessor;
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             @if (!PreviewMode)
             {
                 if (Model.IsPublic)
@@ -15,9 +15,9 @@
                     {
                         <div style="background-color:#eee;">
                             <MatButton Icon="keyboard_arrow_up" OnClick="@ShowLink" Style="color:black;"></MatButton><a style="color:darkgreen;" href="@packListUrl" target="_blank">This is your public link</a><MatButton Icon="highlight_off" OnClick="@RemovePublic" Style="color:darkred;"></MatButton>
-                            </div>
+                        </div>
 
-                        
+
                     }
                     else
                     {
@@ -67,11 +67,14 @@
             }
 
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">           
             <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
         </div>
+        <div class="col-sm-3">
+            <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@GetTypesGraph(Model.Items.ToList())" />
+        </div>
+        </div>
     </div>
-</div>
 
 
 @foreach (var group in Model.Items)
@@ -105,7 +108,38 @@
         packListUrl = $"/packlistviewer/{Model.Id}";
     }
 
+    List<PackListGroupViewModel>  GetTypesGraph(List<PackListGroupViewModel> input)
+    {
+        var wearables = new List<ProductViewModel>();
+        var consumables = new List<ProductViewModel>();
+        var others = new List<ProductViewModel>();
+        foreach (var item in input)
+        {
+            var tw = item.Items.Where(x => x.Wearable).ToList();
+            if(tw.Any())
+            {
+                wearables.AddRange(tw);
+            }
+            var tc = item.Items.Where(x => x.Consumables).ToList();
+            if(tc.Any())
+            {
+                consumables.AddRange(tc);
+            }
+            var to = item.Items.Where(x => x.Wearable == false && x.Consumables == false).ToList();
+            if(to.Any())
+            {
+                others.AddRange(to);
+            }
 
+        }
+
+        var list = new List<PackListGroupViewModel>();
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Wearable",Items= wearables});
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Consumables",Items=consumables});
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Other",Items=others});
+
+        return list;
+    }
 
     Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
 
@@ -138,14 +172,14 @@
         await this._packListService.Update(Model);
 
     }
-      async Task RemovePublic()
+    async Task RemovePublic()
     {
         Model.IsPublic = false;
         await this._packListService.Update(Model);
 
     }
 
-    
+
 
     async Task SaveList()
     {

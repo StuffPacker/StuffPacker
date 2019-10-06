@@ -7,10 +7,16 @@ namespace StuffPacker.ViewModel
     {
         public string Name { get; set; }
         public Guid Id { get; set; }
-        public decimal Weight { get;  set; }
-        public WeightPrefix WeightPrefix { get;  set; }
+        public decimal Weight { get; set; }
+        public WeightPrefix WeightPrefix { get; set; }
 
         public string Category { get; set; }
+
+        public bool Star { get; set; }
+        public bool Wearable { get; set; }
+        public bool Consumables { get; set; }
+
+        public string Description { get; set; }
 
         public ProductViewModel()
         {
@@ -24,7 +30,7 @@ namespace StuffPacker.ViewModel
         }
         public int Amount { get; set; }
 
-       
+
 
         public string ConvertedWeight => GetConvertedWeight();
 

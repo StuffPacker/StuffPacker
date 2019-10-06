@@ -17,14 +17,10 @@ else
             <div class="col-12">
                 @if (item.Maximized)
                 {
-
-
-
-
-
-
-                    <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
-                    <h4>@item.Name</h4>
+                    <h4>
+                        <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
+                        @item.Name
+                    </h4>
                     <table class="table table-striped">
                         <thead class="thead-dark">
                             <tr>
@@ -33,11 +29,11 @@ else
                                 <th></th>
                             </tr>
                         </thead>
-                        @foreach (var context in ProductList.Where(x=>x.Category==item.Name).ToList())
+                        @foreach (var context in ProductList.Where(x => x.Category == item.Name).ToList())
                         {
                             <tr>
                                 <td>@context.Name</td>
-                                <td>@context.Weight @context.WeightPrefix</td>
+                                <td>@context.WeightAndToken</td>
                                 <td>
                                     <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
                                     <MatIconButton Icon="delete" OnClick="@((e) => {

@@ -41,9 +41,15 @@ namespace StuffPacker.Mapper
             {
                 var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id && x.UserId== _currentUSer.GetUserId());
                 var category = "";
-                if(pp!=null)
+                var star = false;
+                var consumables = false;
+                var wearable = false;
+                if (pp!=null)
                 {
-                    category= pp.Category; 
+                    category= pp.Category;
+                     star = pp.Star;
+                     consumables = pp.Consumables;
+                     wearable = pp.Wearable;
                 }
                 
                 list.Add(new ProductViewModel
@@ -52,7 +58,11 @@ namespace StuffPacker.Mapper
                     Name=item.Name,
                     Weight = item.Weight,
                     WeightPrefix = item.WeightPrefix,
-                    Category= category
+                    Category= category,
+                    Star=star,
+                    Consumables= consumables,
+                    Wearable= wearable,
+                    Description=item.Description
                 });
             }
             return list;
