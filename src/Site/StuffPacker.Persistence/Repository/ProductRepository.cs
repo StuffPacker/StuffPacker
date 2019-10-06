@@ -64,17 +64,20 @@ namespace StuffPacker.Persistence.Repository
                 modelToUpdate.Name = model.Name;
                 modelToUpdate.Weight = model.Entity.Weight;
                 modelToUpdate.WeightPrefix = model.Entity.WeightPrefix;
-
+            modelToUpdate.Description = model.Entity.Description;
 
                 var personalizedProductsModel = await _context.PersonalizedProducts.FirstOrDefaultAsync(x => x.ProductId == model.Id && x.UserId == _currentUser.GetUserId());
                 if (personalizedProductsModel != null)
                 {
                     personalizedProductsModel.Category = pModel.Category;
+                personalizedProductsModel.Star = pModel.Star;
+                personalizedProductsModel.Wearable = pModel.Wearable;
+                personalizedProductsModel.Consumables = pModel.Consumables;
                 }
                 else
                 {
                     PersonalizedProductModel pp = new PersonalizedProductModel(Guid.NewGuid(), _currentUser.GetUserId(), model.Id);
-                    pp.Update(pModel.Category);
+                    pp.Update(pModel.Category,pModel.Star,pModel.Wearable,pModel.Consumables);
                     _context.Add(pp.Entity);
                 }
 

@@ -18,5 +18,8 @@ namespace StuffPacker.Persistence.Entity
         public Guid ProductId { get; set; }
 
         public string Category { get; set; }
+        public bool Star { get;  set; }
+        public bool Consumables { get;  set; }
+        public bool Wearable { get;  set; }
     }
 }

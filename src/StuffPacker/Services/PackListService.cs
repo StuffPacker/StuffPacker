@@ -61,7 +61,7 @@ namespace StuffPacker.Services
 
             var entity = new ProductEntity(productId, userId);
             var productModel = new ProductModel(entity);
-            productModel.Update(name,Convert.ToDecimal(0),WeightPrefix.Gram);
+            productModel.Update(name,Convert.ToDecimal(0),WeightPrefix.Gram,string.Empty);
             await this._productRepository.Add(productModel);
 
             var model = await this._packListsRepository.Get(listId);
@@ -81,7 +81,7 @@ namespace StuffPacker.Services
                 {
                     var entity = new ProductEntity(productId, userId);
                     var productModel = new ProductModel(entity);
-                    productModel.Update(item.Name,Convert.ToDecimal(0),WeightPrefix.Gram);
+                    productModel.Update(item.Name,Convert.ToDecimal(0),WeightPrefix.Gram,string.Empty);
                     await this._productRepository.Add(productModel);
                 }
                
@@ -162,14 +162,14 @@ namespace StuffPacker.Services
         {
             var userId = _currentUser.GetUserId();
             var product = await this._productRepository.Get(model.Id);
-            product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix);
+            product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix,model.Description);
 
             var pModel = await _personalizedProductRepository.Get(userId,model.Id);
             if(pModel==null)
             {
                 pModel = new PersonalizedProductModel(Guid.Empty,userId,model.Id);
             }
-            pModel.Update(model.Category);
+            pModel.Update(model.Category,model.Star,model.Wearable,model.Consumables);
             await this._productRepository.Update(product,pModel);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -200,9 +200,14 @@ namespace StuffPacker.Services
                     var p = await this._productRepository.Get(item);
                     var pp = personalizedProductList.FirstOrDefault(x=>x.ProductId==item);
                     var category = "";
-                    if(pp!=null)
+                    bool star = false;
+                    bool wearable = false;
+                    bool consumables = false;
+                    if (pp!=null)
                     {
                         category = pp.Category;
+                        wearable = pp.Wearable;
+                        consumables = pp.Consumables;
                     }
                     if (p != null)
                     {
@@ -213,7 +218,11 @@ namespace StuffPacker.Services
                             WeightPrefix = p.WeightPrefix,
                             Amount = 1,
                             Id = p.Id,
-                            Category=category
+                            Category=category,
+                            Star=star,
+                            Wearable= wearable,
+                            Consumables= consumables,
+                            Description=p.Description
                         });
                     }
 

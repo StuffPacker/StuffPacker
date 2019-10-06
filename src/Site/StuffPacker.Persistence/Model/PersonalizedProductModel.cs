@@ -27,9 +27,21 @@ namespace StuffPacker.Persistence.Model
 
         public Guid UserId => Entity.UserId;
 
-        public void Update(string category)
+
+        public bool Star => Entity.Star;
+        public bool Consumables => Entity.Consumables;
+        public bool Wearable => Entity.Wearable;
+
+
+
+
+
+        public void Update(string category, bool star, bool wearable, bool consumables)
         {
             Entity.Category = category;
+            Entity.Star = star;
+            Entity.Wearable = wearable;
+            Entity.Consumables = consumables;
         }
     }
 }
