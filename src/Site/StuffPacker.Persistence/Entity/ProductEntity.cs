@@ -11,6 +11,7 @@ namespace StuffPacker.Model
         public WeightPrefix WeightPrefix { get; set; }
 
         public Guid? Owner { get; set; }
+        public string Description { get; set; }
 
         public ProductEntity(Guid id,Guid? owner)
         {

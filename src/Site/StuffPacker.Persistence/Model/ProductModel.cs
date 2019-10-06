@@ -14,6 +14,8 @@ namespace StuffPacker.Model
 
         public string Name => Entity.Name;
 
+        public string Description => Entity.Description;
+
         public decimal Weight => Entity.Weight;
 
         public WeightPrefix WeightPrefix => Entity.WeightPrefix;
@@ -22,7 +24,7 @@ namespace StuffPacker.Model
 
         public Guid? Owner => Entity.Owner;
 
-        public void Update(string name, decimal weight,WeightPrefix weightPrefix)
+        public void Update(string name, decimal weight,WeightPrefix weightPrefix,string description)
         {
             Entity.Name = name;
             Entity.WeightPrefix = weightPrefix;
@@ -31,6 +33,7 @@ namespace StuffPacker.Model
                 weight = WeightHelper.ConvertToGram(weight,weightPrefix);
             }
             Entity.Weight = weight;
+            Entity.Description = description;
         }
 
        
