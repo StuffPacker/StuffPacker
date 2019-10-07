@@ -14,31 +14,57 @@
             if (!PreviewMode)
             {
                 <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
+                <MatButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) => {
+                                                                        confirmModel.DialogIsOpen = true;
+                                                                        confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
+                                                                        confirmModel.OkButtonText = "Delete";
+                                                                        confirmModel.OnOkClick = async () => await DeleteGroup();
+                                                                    })"></MatButton>
             }
 
         }
     </b>
-    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndToken</b></span>
+    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndTokenShort</b></span>
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>Name</th>
                 <th>Amount</th>
                 <th>Weight</th>
+                <th>Info</th>
                 <th></th>
             </tr>
         </thead>
         @foreach (var item in Model.Items)
         {
             <tr>
-                <td>@item.Name</td>
+                <td>                 
+                   
+                        @item.Name                  
+
+                </td>
                 <th>@item.Amount</th>
                 <td>
-                    @item.WeightAndToken
+                    @item.WeightAndTokenShort
+                </td>
+                <td>
+                    @if (item.Star)
+                    {
+                        <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })"  Icon="star"></MatIcon>
+                    }
+                    @if (item.Wearable)
+                    {
+                        <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" Icon="accessibility_new"></MatIcon>
+                    }
+                    @if (item.Consumables)
+                    {
+                        <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
+                    }
                 </td>
                 <td>
                     @if (!PreviewMode)
                     {
+
                         <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
                         <MatButton Icon="remove_circle" Style="color:darkred;" Class="sp-mdc-button" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
                     }
@@ -64,7 +90,7 @@ else
         <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
         @Model.Name        
     </b>
-    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndToken</b></span>
+    <span style="font-size:small;"><b>: Total weight:  @Model.WeightAndTokenShort</b></span>
 </div>
    
 }
@@ -72,7 +98,7 @@ else
 {
     <ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
 }
-
+<StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 
 
 
@@ -92,8 +118,8 @@ else
     public bool PreviewMode { get; set; }
 
     ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
+    ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
 
-  
 
     string tempGroupName = "";
     bool GroupEditMode = false;
@@ -105,8 +131,8 @@ else
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();
     }
 
-   
-    
+
+
 
 
     async Task EditGroup(Guid groupId)
@@ -144,5 +170,11 @@ else
     void ExpandColaps()
     {
         Maximized = !Maximized;
+    }
+    async Task<string> DeleteGroup()
+    {
+        await this._packListService.DeleteGroup(ListModel.Id,Model.Id);
+
+        return string.Empty;
     }
 }

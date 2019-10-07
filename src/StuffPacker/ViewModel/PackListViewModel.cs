@@ -19,9 +19,10 @@ namespace StuffPacker.ViewModel
 
         public decimal Weight => GetTotalWeight();
 
-        public string WeightAndToken()
+        public string WeightAndTokenShort => WeightAndToken(true);
+        public string WeightAndToken(bool shortToken=false)
         {
-            return WeightHelper.GetRoundedWeight(GetTotalWeight(), true, WeightPrefix);
+            return WeightHelper.GetRoundedWeight(GetTotalWeight(), true, WeightPrefix,shortToken);
         }
 
 

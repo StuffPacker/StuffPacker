@@ -87,5 +87,13 @@ namespace StuffPacker.Model
             g.Name = name;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
         }
+
+        public void DeleteGroup(Guid groupId)
+        {
+            var all = (GetGroups().ToList());
+            var g = all.First(x => x.Id == groupId);
+            all.Remove(g);
+            Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
+        }
     }
 }

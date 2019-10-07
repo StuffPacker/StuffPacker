@@ -6,7 +6,7 @@ namespace Shared.Contract
 {
     public static class WeightHelper
     {
-        public static string GetRoundedWeight(decimal weight, bool withSufix, WeightPrefix weightPrefix)
+        public static string GetRoundedWeight(decimal weight, bool withSufix, WeightPrefix weightPrefix, bool shortToken = false)
         {
 
             weight = GetConvertedWeight(weight, weightPrefix);
@@ -17,6 +17,12 @@ namespace Shared.Contract
             if (withSufix)
             {
                 sufix = " " + weightPrefix.ToString();
+                if (shortToken)
+                {
+                    sufix = " " + GetShortToken(weightPrefix);
+                }
+               
+               
             }
             int value = Convert.ToInt32(@Math.Round(weight, 0));
             if (value > 0)
@@ -44,6 +50,20 @@ namespace Shared.Contract
 
             return "0" + sufix;
 
+        }
+
+        private static string GetShortToken(WeightPrefix weightPrefix)
+        {
+           switch(weightPrefix)
+            {
+                case WeightPrefix.Gram:
+                    return "g";
+                case WeightPrefix.Pound:
+                    return "lb";
+                case WeightPrefix.Ounce:
+                    return "oz";
+            }
+            return string.Empty;
         }
 
         public static decimal ConvertFromGram(decimal weight, WeightPrefix weightPrefix)

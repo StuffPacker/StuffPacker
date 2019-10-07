@@ -25,25 +25,42 @@ else
                         <thead class="thead-dark">
                             <tr>
                                 <th>Name</th>
+                                <th>Amount</th>
                                 <th>Weight</th>
+                                <th>Info</th>
                                 <th></th>
                             </tr>
                         </thead>
                         @foreach (var context in ProductList.Where(x => x.Category == item.Name).ToList())
                         {
-                            <tr>
-                                <td>@context.Name</td>
-                                <td>@context.WeightAndToken</td>
-                                <td>
-                                    <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
-                                    <MatIconButton Icon="delete" OnClick="@((e) => {
+                    <tr>
+                        <td>@context.Name</td>
+                        <th>@context.Amount</th>
+                        <td>@context.WeightAndTokenShort</td>
+                        <td>
+                            @if (context.Star)
+                            {
+                                <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" Icon="star"></MatIcon>
+                            }
+                            @if (context.Wearable)
+                            {
+                                <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" Icon="accessibility_new"></MatIcon>
+                            }
+                            @if (context.Consumables)
+                            {
+                                <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
+                            }
+                        </td>
+                        <td>
+                            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
+                            <MatIconButton Icon="delete" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {context.Name}?";
                                                                         confirmModel.OkButtonText = "Delete";
                                                                         confirmModel.OnOkClick = async () => await DeleteProduct(context.Id);
                                                                     })"></MatIconButton>
-                                </td>
-                            </tr>
+                        </td>
+                    </tr>
                         }
 
                     </table>

@@ -41,7 +41,15 @@
                     if (!PreviewMode)
                     {
                         <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditList())" Label=""></MatButton>
-                        <MatButton Icon="remove_circle" Style="color:darkred;" Class="sp-mdc-button" OnClick="@(e => DeleteList())" Label=""></MatButton>
+                        <MatIconButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) => {
+                                                                        confirmModel.DialogIsOpen = true;
+                                                                        confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
+                                                                        confirmModel.OkButtonText = "Delete";
+                                                                        confirmModel.OnOkClick = async () => await DeleteList();
+                                                                    })"></MatIconButton>
+
+
+
                     }
 
                 }
@@ -63,18 +71,19 @@
             }
             else
             {
-                <b>Total weight: @Model.WeightAndToken()</b>
+                <b>Total weight: @Model.WeightAndTokenShort</b>
             }
 
         </div>
-        <div class="col-sm-3">           
+        <div class="col-sm-3">
             <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
         </div>
         <div class="col-sm-3">
             <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@GetTypesGraph(Model.Items.ToList())" />
         </div>
-        </div>
     </div>
+</div>
+
 
 
 @foreach (var group in Model.Items)
@@ -82,13 +91,13 @@
     <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" />
 
 }
-@if(!PreviewMode)
+@if (!PreviewMode)
 {
-<MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+    <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
 }
 
 
-
+<StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 @code {
     [Parameter]
     public PackListViewModel Model { get; set; }
@@ -96,6 +105,7 @@
     [Parameter]
     public bool PreviewMode { get; set; }
 
+     ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
     public string weightPrefixValue { get; set; }
     List<string> weightPrefix = new List<string>();
     string tempListName = "";
@@ -108,7 +118,7 @@
         packListUrl = $"/packlistviewer/{Model.Id}";
     }
 
-    List<PackListGroupViewModel>  GetTypesGraph(List<PackListGroupViewModel> input)
+    List<PackListGroupViewModel> GetTypesGraph(List<PackListGroupViewModel> input)
     {
         var wearables = new List<ProductViewModel>();
         var consumables = new List<ProductViewModel>();
@@ -116,17 +126,17 @@
         foreach (var item in input)
         {
             var tw = item.Items.Where(x => x.Wearable).ToList();
-            if(tw.Any())
+            if (tw.Any())
             {
                 wearables.AddRange(tw);
             }
             var tc = item.Items.Where(x => x.Consumables).ToList();
-            if(tc.Any())
+            if (tc.Any())
             {
                 consumables.AddRange(tc);
             }
             var to = item.Items.Where(x => x.Wearable == false && x.Consumables == false).ToList();
-            if(to.Any())
+            if (to.Any())
             {
                 others.AddRange(to);
             }
@@ -134,9 +144,9 @@
         }
 
         var list = new List<PackListGroupViewModel>();
-        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Wearable",Items= wearables});
-        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Consumables",Items=consumables});
-        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name="Other",Items=others});
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name = "Wearable", Items = wearables });
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name = "Consumables", Items = consumables });
+        list.Add(new PackListGroupViewModel(Model.WeightPrefix) { Name = "Other", Items = others });
 
         return list;
     }
@@ -156,9 +166,10 @@
     {
         await _packListService.AddGroupItem(Model.Id, groupId, "New Item", GetUserId());
     }
-    async Task DeleteList()
+    async Task<string> DeleteList()
     {
         await this._packListService.DeleteList(Model.Id);
+        return string.Empty;
     }
     async Task EditList()
     {
@@ -202,7 +213,7 @@
         try
         {
             var u = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if(string.IsNullOrEmpty(u))
+            if (string.IsNullOrEmpty(u))
             {
                 return Guid.Empty;
             }
