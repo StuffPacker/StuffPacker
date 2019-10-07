@@ -92,6 +92,14 @@ namespace StuffPacker.Services
 
         }
 
+        public async Task DeleteGroup(Guid listId, Guid groupId)
+        {
+            var item = await this._packListsRepository.Get(listId);
+            item.DeleteGroup(groupId);
+            await this._packListsRepository.Update(item);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
         public async Task DeleteList(Guid listId)
         {
             var item = await this._packListsRepository.Get(listId);
@@ -208,6 +216,7 @@ namespace StuffPacker.Services
                         category = pp.Category;
                         wearable = pp.Wearable;
                         consumables = pp.Consumables;
+                        star = pp.Star;
                     }
                     if (p != null)
                     {

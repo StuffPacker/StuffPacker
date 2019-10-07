@@ -7,15 +7,17 @@ namespace StuffPacker.ViewModel
     public class PackListGroupViewModel
     {
         public string WeightAndToken => GetWeightAndToken();
+
+        public string WeightAndTokenShort => GetWeightAndToken(true);
         public PackListGroupViewModel(WeightPrefix weightPrefix)
         {
             WeightPrefix = weightPrefix;
         }
         public string Name { get; set; }
 
-        public string GetWeightAndToken()
+        public string GetWeightAndToken(bool shortToken=false)
         {
-            return WeightHelper.GetRoundedWeight(GetTotalWeight(), true, WeightPrefix);
+            return WeightHelper.GetRoundedWeight(GetTotalWeight(), true, WeightPrefix,shortToken);
         }
 
         public Guid Id { get; set; }
