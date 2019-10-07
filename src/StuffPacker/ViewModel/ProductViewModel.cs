@@ -24,9 +24,10 @@ namespace StuffPacker.ViewModel
             Amount = 1;
         }
         public string WeightAndToken => GetWeightAndToken();
-        public string GetWeightAndToken()
+        public string WeightAndTokenShort => GetWeightAndToken(true);
+        public string GetWeightAndToken(bool shortToken= false)
         {
-            return WeightHelper.GetRoundedWeight(Convert.ToDecimal(Weight), true, WeightPrefix);
+            return WeightHelper.GetRoundedWeight(Convert.ToDecimal(Weight), true, WeightPrefix, shortToken);
         }
         public int Amount { get; set; }
 

@@ -6,27 +6,27 @@
         <br />
         @if (Model.ProductModel.Star)
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeStar" Style="color:#ff6a00; font-size:x-small;" Icon="star_rate"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" OnClick="@ChangeStar" Style="color:#ff6a00; font-size:x-small;" Icon="star_rate"></MatIconButton>
         }
         else
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeStar" Style="color:dimgray; font-size:x-small;" Icon="star_rate"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" OnClick="@ChangeStar" Style="color:dimgray; font-size:x-small;" Icon="star_rate"></MatIconButton>
         }
         @if (Model.ProductModel.Wearable)
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeWearable" Style="color:darkgreen; font-size:x-small;" Icon="accessibility_new"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" OnClick="@ChangeWearable" Style="color:darkgreen; font-size:x-small;" Icon="accessibility_new"></MatIconButton>
         }
         else
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeWearable" Style="color:dimgray; font-size:x-small;" Icon="accessibility_new"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" OnClick="@ChangeWearable" Style="color:dimgray; font-size:x-small;" Icon="accessibility_new"></MatIconButton>
         }
         @if (Model.ProductModel.Consumables)
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeConsumables" Style="color:darkgreen; font-size:x-small;" Icon="fastfood"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" OnClick="@ChangeConsumables" Style="color:darkgreen; font-size:x-small;" Icon="fastfood"></MatIconButton>
         }
         else
         {
-            <MatIconButton Class=".sp-mdc-button" OnClick="@ChangeConsumables" Style="color:dimgray; font-size:x-small;" Icon="fastfood"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" OnClick="@ChangeConsumables" Style="color:dimgray; font-size:x-small;" Icon="fastfood"></MatIconButton>
         }
         <br />
         <div class="container-fluid" style="padding:0px;">
