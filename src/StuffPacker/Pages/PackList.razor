@@ -59,7 +59,7 @@ else
         PackListDataState.Subscribe(this);
         Dispatcher.Dispatch(new GetPackListDataAction());
     }
-    async Task OpenAddDialog()
+    void OpenAddDialog()
     {
         dialogIsOpen = true;
         dialogEditMode = false;

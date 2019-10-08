@@ -1,0 +1,30 @@
+﻿@using global::Shared.Contract
+@inject ICurrentUser _currentUser
+@inject IUserService _userService
+<h3>@name</h3>
+
+@code {
+    [Parameter]
+    public Guid MemberId { get; set; }
+
+
+    string name=string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        var userProfile = await _currentUser.GetProfile();
+
+
+
+        if (userProfile == null)
+        {
+            var profile = await _userService.GetUserProfile(_currentUser.GetUserId());
+            userProfile = profile;
+            _currentUser.SetProfile(userProfile);
+        }
+
+
+
+
+        name = userProfile.NickName;
+    }
+}

@@ -15,6 +15,11 @@ namespace StuffPacker.Persistence.Configuration
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IPackListsRepository, PackListsRepository>();
             services.AddScoped<IPersonalizedProductRepository, PersonalizedProductRepository>();
+            services.AddScoped<IFriendRepository, FriendRepository>();
+            services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+
+
+       
             
             return services;
         }

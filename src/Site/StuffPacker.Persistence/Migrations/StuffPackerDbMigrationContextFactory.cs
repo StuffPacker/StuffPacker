@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Shared.Contract;
@@ -25,6 +27,16 @@ namespace StuffPacker.Persistence.Migrations
     {
         public bool IsAuthenticated => false;
 
+        public Task<IEnumerable<FriendViewModel>> GetFriends()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserProfile> GetProfile()
+        {
+            throw new NotImplementedException();
+        }
+
         public Guid GetUserId()
         {
            return Guid.Empty;
@@ -38,6 +50,16 @@ namespace StuffPacker.Persistence.Migrations
         public UserType GetUserType()
         {
             return UserType.System;
+        }
+
+        public void SetFriends(IEnumerable<FriendViewModel> friends)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetProfile(UserProfile profile)
+        {
+            throw new NotImplementedException();
         }
     }
 }

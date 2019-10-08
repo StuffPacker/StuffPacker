@@ -1,0 +1,46 @@
+﻿@page "/members/{userId}"
+
+@using StuffPacker.Services
+@using System.Linq
+@using global::Shared.Contract
+@inject IMemberService _memberService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+
+ @if (ItsMe)
+ {
+<StuffPacker.Components.Members.MembersMeComponent MemberId="uId" />
+ }
+ else
+ {
+
+    
+     if (friend != null)
+     {
+<StuffPacker.Components.Members.MembersComponent MemberId="uId" />
+     }
+     NavigationManager.NavigateTo("/");
+ }
+
+
+
+@code {
+    [Parameter]
+    public string userId { get; set; }
+
+    bool ItsMe = false;
+    Guid uId;
+    FriendViewModel friend;
+    protected override async Task OnInitializedAsync()
+    {
+        uId = Guid.Parse(userId);
+        ItsMe = this._memberService.ItsMe(uId);
+        if(!ItsMe)
+        {
+             var friends = await this._memberService.GetFriends();
+             friend = friends.FirstOrDefault(x => x.UserId == uId);
+        }
+
+    }
+}
