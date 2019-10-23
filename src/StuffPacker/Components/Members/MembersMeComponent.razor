@@ -1,0 +1,71 @@
+﻿@using global::Shared.Contract
+@using StuffPacker.store.packlist.Get
+@using StuffPacker.store.packlist
+@using System.Linq
+@inject ICurrentUser _currentUser
+@inject IUserService _userService
+@inject IState<PackListDataState> PackListDataState
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1">
+            <img alt="User Image" src="/img/user.png" />
+        </div>
+        <div class="col-md">
+            <h3>@nickName</h3>
+            @fullName
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <MemberFollowComponent Title="I´m Following" Members="@following" NoMemberText="<p>You are not following anyone jet</p>" />
+        <MemberFollowComponent Title="Following Me" Members="@followers" NoMemberText="<p>No one is following you</p>" />
+        <StuffPacker.Components.PackListComponents.PackListsReferensListComponent Lists="lists" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid MemberId { get; set; }
+
+
+    string nickName = string.Empty;
+    string fullName = string.Empty;
+    List<FollowMemberViewModel> following = new List<FollowMemberViewModel>();
+    List<FollowMemberViewModel> followers = new List<FollowMemberViewModel>();
+
+    List<PackListViewModel> lists = new List<PackListViewModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        PackListDataState.Subscribe(this);
+        var userProfile = await _currentUser.GetProfile();
+
+        if (userProfile == null)
+        {
+            var profile = await _userService.GetUserProfile(_currentUser.GetUserId());
+            userProfile = profile;
+            _currentUser.SetProfile(userProfile);
+        }
+
+        nickName = userProfile.NickName;
+        fullName = userProfile.FirstName + " " + userProfile.LastName;
+        if (_currentUser.GetFollowing() == null)
+        {
+            var members = await this._userService.GetFollowing(_currentUser.GetUserId());
+            _currentUser.SetFollowing(members.ToList());
+        }
+        following = _currentUser.GetFollowing().ToList();
+        if (_currentUser.GetFollowers() == null)
+        {
+            var members = await this._userService.GetFollowers(_currentUser.GetUserId());
+            _currentUser.SetFollowers(members.ToList());
+        }
+        followers = _currentUser.GetFollowers().ToList();
+        if(PackListDataState.Value.PackLists!=null)
+        {
+             lists = (PackListDataState.Value.PackLists).ToList();
+        }
+       
+    }
+}

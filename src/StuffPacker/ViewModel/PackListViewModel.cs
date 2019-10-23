@@ -17,6 +17,7 @@ namespace StuffPacker.ViewModel
         public bool IsPublic { get; set; }
         public Guid Id { get; set; }
 
+        public DateTimeOffset Modified { get; set; }
         public decimal Weight => GetTotalWeight();
 
         public string WeightAndTokenShort => WeightAndToken(true);

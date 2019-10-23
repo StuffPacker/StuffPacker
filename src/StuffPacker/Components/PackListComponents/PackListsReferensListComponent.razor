@@ -1,0 +1,28 @@
+﻿@using System.Linq
+
+    <div class="col-md-4">
+        <h3>Pack lists</h3>
+        @if (Lists.Any())
+        {
+    <table class="table table-striped">
+        @foreach (var item in Lists)
+        {
+            <tr>
+                <td><a target="_blank" href="@($"/packlistviewer/{item.Id}")">@item.Name</a></td>
+                <td>@(item.Items.Count()+" Items")</td>
+                <td>@item.Modified.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }       
+    </table>
+        }
+        else
+        {
+            <p>There is no lists :(</p>
+        }
+    </div>
+  
+
+    @code {
+        [Parameter]
+        public IEnumerable<PackListViewModel> Lists { get; set; }
+    }

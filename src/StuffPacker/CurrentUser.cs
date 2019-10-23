@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Shared.Contract;
+using StuffPacker.Services;
+using StuffPacker.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace StuffPacker
 {
@@ -14,6 +18,10 @@ namespace StuffPacker
         }
 
         private string UserName;
+        private IEnumerable<FriendViewModel> FriendsList;
+        private List<FollowMemberViewModel> Following;
+        private List<FollowMemberViewModel> Followers;
+        private UserProfile UserProfile;
 
         public bool IsAuthenticated => _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
 
@@ -21,14 +29,17 @@ namespace StuffPacker
         {
             if (string.IsNullOrEmpty(UserName) && IsAuthenticated)
             {
-                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                
+                var n= _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                UserName = n;
+                return n;
             }
             return "";
         }
 
         public UserType GetUserType()
         {
-            throw new NotImplementedException();
+            return UserType.User;
         }
 
         public Guid GetUserId()
@@ -48,6 +59,48 @@ namespace StuffPacker
             }
 
            
+        }
+
+        public async Task<IEnumerable<FriendViewModel>> GetFriends()
+        {
+            return FriendsList;
+
+          
+        }
+
+        public async Task<UserProfile> GetProfile()
+        {
+            return UserProfile;           
+        }
+
+        public void SetFriends(IEnumerable<FriendViewModel> friends)
+        {
+            FriendsList = friends;
+        }
+
+        public void SetProfile(UserProfile profile)
+        {
+            UserProfile = profile;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowing()
+        {
+            return Following;
+        }
+
+        public void SetFollowing(List<FollowMemberViewModel> members)
+        {
+            Following = members;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowers()
+        {
+            return Followers;
+        }
+
+        public void SetFollowers(List<FollowMemberViewModel> members)
+        {
+            Followers = members;
         }
     }
 }

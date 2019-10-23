@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using global::Shared.Contract
 @inject Blazor.Fluxor.IStore Store
+@inject ICurrentUser  _currentUser
+@inject NavigationManager NavigationManager
 @Store.Initialize()
 <div class="sidebar">
     <NavMenu />
@@ -8,16 +11,17 @@
     <div class="top-row px-4">
         <AuthorizeView>
             <Authorized>
-                Hello, @context.User.Identity.Name
+                Hello, @context.User.Identity.Name <MatIconButton Class=".sp-mdc-button" Icon="account_circle" OnClick="@GoToUser"></MatIconButton>
+
                 <form method="post" action="Identity/Account/LogOut">
                     <button type="submit" class="nav-link btn btn-link d-lg-none" style="color:white;">Log out</button>
                     <button type="submit" class="nav-link btn btn-link d-none d-lg-block" style="color:black;">Log out</button>
                 </form>
             </Authorized>
-            <NotAuthorized>              
+            <NotAuthorized>
                 <div class="d-none d-lg-block">
-                    <a  style="color:#000000;" href="Identity/Account/Register">Register</a>
-                    <a  style="color:#000000;" href="Identity/Account/Login">Log in</a>
+                    <a style="color:#000000;" href="Identity/Account/Register">Register</a>
+                    <a style="color:#000000;" href="Identity/Account/Login">Log in</a>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
@@ -28,3 +32,16 @@
     </div>
 </div>
 <StuffPacker.Components.SiteComponents.UiUpdateComponent />
+
+
+@code
+{
+    void GoToUser()
+    {
+        var userId = _currentUser.GetUserId();
+        if (userId != null && userId != Guid.Empty)
+        {
+            NavigationManager.NavigateTo("/members/" + userId);
+        }
+    }
+}

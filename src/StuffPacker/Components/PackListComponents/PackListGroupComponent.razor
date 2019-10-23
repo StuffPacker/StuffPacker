@@ -135,13 +135,13 @@ else
 
 
 
-    async Task EditGroup(Guid groupId)
+    void EditGroup(Guid groupId)
     {
         var group = ListModel.Items.First(x => x.Id == groupId);
         tempGroupName = group.Name;
         GroupEditMode = true;
     }
-    async Task EditGroupItem(Guid groupId, Guid productId)
+ void EditGroupItem(Guid groupId, Guid productId)
     {
         var model = ListModel.Items.First(x => x.Id == groupId);
         var product = model.Items.First(x => x.Id == productId);
