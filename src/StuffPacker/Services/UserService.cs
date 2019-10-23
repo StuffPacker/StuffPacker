@@ -30,7 +30,15 @@ namespace StuffPacker.Services
         public async Task<IEnumerable<FollowMemberViewModel>> GetFollowers(Guid userId)
         {
             var members = await this._followRepository.GetFollowers(userId);
+            if (members == null)
+            {
+                members = new List<FollowModel>();
+            }
             var following = await this._followRepository.GetFollowing(userId);
+            if (following == null)
+            {
+                following = new List<FollowModel>();
+            }
             return await _followMapper.Map(members,false,following.Select(x=>x.FollowUserId));
 
         }
