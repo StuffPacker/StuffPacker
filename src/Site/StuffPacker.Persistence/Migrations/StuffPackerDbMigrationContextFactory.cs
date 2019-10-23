@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Shared.Contract;
+using StuffPacker.ViewModel;
 
 namespace StuffPacker.Persistence.Migrations
 {
@@ -26,6 +27,16 @@ namespace StuffPacker.Persistence.Migrations
     public class CurrentMigrationUser : ICurrentUser
     {
         public bool IsAuthenticated => false;
+
+        public IEnumerable<FollowMemberViewModel> GetFollowers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowing()
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<IEnumerable<FriendViewModel>> GetFriends()
         {
@@ -50,6 +61,16 @@ namespace StuffPacker.Persistence.Migrations
         public UserType GetUserType()
         {
             return UserType.System;
+        }
+
+        public void SetFollowers(List<FollowMemberViewModel> members)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetFollowing(List<FollowMemberViewModel> members)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetFriends(IEnumerable<FriendViewModel> friends)

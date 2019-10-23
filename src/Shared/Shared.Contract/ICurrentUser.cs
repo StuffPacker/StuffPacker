@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StuffPacker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,10 @@ namespace Shared.Contract
         Task<UserProfile> GetProfile();
         void SetFriends(IEnumerable<FriendViewModel> friends);
         void SetProfile(UserProfile profile);
+
+       IEnumerable<FollowMemberViewModel> GetFollowing();
+        void SetFollowing(List<FollowMemberViewModel> members);
+        IEnumerable<FollowMemberViewModel> GetFollowers();
+        void SetFollowers(List<FollowMemberViewModel> members);
     }
 }

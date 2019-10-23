@@ -22,10 +22,11 @@ namespace StuffPacker.Persistence
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<PackListEntity> PackLists { get; set; }
         public DbSet<PersonalizedProductEntity> PersonalizedProducts { get; set; }
-        
+
         public DbSet<FriendEntity> Friends { get; set; }
-        public DbSet<UserProfileEntity> UserProfiles { get; set;
-        }
+        public DbSet<UserProfileEntity> UserProfiles { get; set; }
+
+        public DbSet<FollowEntity> Follows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,7 +53,7 @@ namespace StuffPacker.Persistence
                     ((SoftDeleteEntityBase)entityEntry.Entity).CreatedBy = GetUser();
                 }
             }
-            
+
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 

@@ -9,7 +9,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        Dispatcher.Dispatch(new GetPackListDataAction());
 
         _subscriber = _subscriber ?? SubscribeForMessageUpdates(UpdateCount);
 

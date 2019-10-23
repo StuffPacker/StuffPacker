@@ -21,7 +21,10 @@ namespace StuffPacker.Configuration
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IMemberMapper, MemberMapper>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFollowMapper, FollowMapper>();
+
             
+
             services.AddStuffPackerPersistence(configuration);
             return services;
         }

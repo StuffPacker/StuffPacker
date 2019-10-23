@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Shared.Contract;
 using StuffPacker.Services;
+using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -18,6 +19,8 @@ namespace StuffPacker
 
         private string UserName;
         private IEnumerable<FriendViewModel> FriendsList;
+        private List<FollowMemberViewModel> Following;
+        private List<FollowMemberViewModel> Followers;
         private UserProfile UserProfile;
 
         public bool IsAuthenticated => _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
@@ -78,6 +81,26 @@ namespace StuffPacker
         public void SetProfile(UserProfile profile)
         {
             UserProfile = profile;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowing()
+        {
+            return Following;
+        }
+
+        public void SetFollowing(List<FollowMemberViewModel> members)
+        {
+            Following = members;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowers()
+        {
+            return Followers;
+        }
+
+        public void SetFollowers(List<FollowMemberViewModel> members)
+        {
+            Followers = members;
         }
     }
 }

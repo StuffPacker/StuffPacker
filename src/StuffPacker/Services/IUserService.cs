@@ -1,4 +1,5 @@
 ﻿using Shared.Contract;
+using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,8 @@ namespace StuffPacker.Services
     {
         Task<IEnumerable<FriendViewModel>> GetFriends(Guid guid);
         Task<UserProfile> GetUserProfile(Guid guid);
+
+        Task<IEnumerable<FollowMemberViewModel>> GetFollowing(Guid userId);
+        Task<IEnumerable<FollowMemberViewModel>> GetFollowers(Guid userId);
     }
 }

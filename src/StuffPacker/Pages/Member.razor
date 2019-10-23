@@ -14,13 +14,7 @@
  }
  else
  {
-
-    
-     if (friend != null)
-     {
-<StuffPacker.Components.Members.MembersComponent MemberId="uId" />
-     }
-     NavigationManager.NavigateTo("/");
+<StuffPacker.Components.Members.MembersComponent MemberId="uId" />  
  }
 
 
@@ -32,15 +26,35 @@
     bool ItsMe = false;
     Guid uId;
     FriendViewModel friend;
+
+
+
     protected override async Task OnInitializedAsync()
+    {
+
+
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        await LoadPage();
+
+
+
+    }
+    private async Task LoadPage()
     {
         uId = Guid.Parse(userId);
         ItsMe = this._memberService.ItsMe(uId);
         if(!ItsMe)
         {
-             var friends = await this._memberService.GetFriends();
-             friend = friends.FirstOrDefault(x => x.UserId == uId);
+            //  var friends = await this._memberService.GetFriends();
+            //  friend = friends.FirstOrDefault(x => x.UserId == uId);
         }
+    }
+    private async void OnLocationChanged(object sender, LocationChangedEventArgs args)
+    {
 
+
+       await LoadPage();
+         StateHasChanged();
     }
 }

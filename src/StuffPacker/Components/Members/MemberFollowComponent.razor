@@ -1,0 +1,59 @@
+﻿
+<div class="col-md-4" >
+    <div>
+        <h2>@Title</h2>
+        @if (Members.Any())
+        {
+            <table style="width:100%;">
+                @foreach (var item in Members)
+                {
+                    var fullname = $"{item.FirstName} {item.LastName}";
+                    var userLink = $"/members/{item.Id}";
+                    <tr style="border-bottom:solid 1px #ccc;">
+                        <td><img src="/img/user.png" title="user image" style="width:35px;" alt="user image" /></td>
+                        <td>
+                            <NavLink href="@userLink">@item.NickName</NavLink>
+                            <br />
+                            @fullname
+                        </td>
+                        <td style="text-align:right;">
+                            @if (item.Following)
+                            {
+                                <button type="button" class="btn btn-outline-danger ">UnFollow</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark">Follow</button>
+                            }
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </table>
+        }
+        else
+        {            
+            @((MarkupString)NoMemberText)
+        }
+
+    </div>   
+</div>
+
+@code {
+        [Parameter]
+        public string Title { get; set; }
+
+     [Parameter]
+        public string NoMemberText { get; set; }
+
+        [Parameter]
+        public List<FollowMemberViewModel> Members{get;set;}
+
+
+
+
+}

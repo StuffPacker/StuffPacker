@@ -13,5 +13,7 @@ namespace StuffPacker.Persistence.Model
         }
         public UserProfileEntity Entity{get;set;}
         public string NickName => Entity.NickName;
+        public string FirstName => Entity.FirstName;
+        public string LastName=>Entity.LastName;
     }
 }

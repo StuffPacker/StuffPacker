@@ -1,6 +1,55 @@
-﻿<h3>MembersComponent</h3>
+﻿@using global::Shared.Contract
+@inject IUserService _userService
+@inject IPackListService _packListService;
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1">
+            <img alt="User Image" src="/img/user.png" />
+        </div>
+        <div class="col-md">
+            <h3>@nickName</h3>
+            @fullName
+        </div>
+    </div>
+</div>
 
+<div class="container-fluid">    
+    <div class="row">
+        <MemberFollowComponent Title="Following" Members="@following" NoMemberText="@noFollowText" />
+        <StuffPacker.Components.PackListComponents.PackListsReferensListComponent  Lists="lists" />
+    </div>
+</div>
 @code {
     [Parameter]
     public Guid MemberId { get; set; }
+
+    string nickName=string.Empty;
+    string fullName=string.Empty;
+    string noFollowText = string.Empty;
+    List<FollowMemberViewModel> following = new List<FollowMemberViewModel>();
+    List<PackListViewModel> lists = new List<PackListViewModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        var userProfile = await _userService.GetUserProfile(MemberId);
+
+        if (userProfile == null)
+        {
+
+        }
+
+        nickName = userProfile.NickName;
+        fullName = userProfile.FirstName + " " + userProfile.LastName;
+
+        noFollowText = $"{nickName} is not followoing annyone";
+
+        following = (await this._userService.GetFollowing(MemberId)).ToList();
+
+        var l = await this._packListService.Get(MemberId);
+        l = l.Where(x => x.IsPublic).ToList();
+        if(l.Any())
+        {
+            lists = l.ToList();
+        }
+
+    }
 }

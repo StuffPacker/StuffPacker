@@ -17,10 +17,11 @@ namespace StuffPacker.Persistence.Configuration
             services.AddScoped<IPersonalizedProductRepository, PersonalizedProductRepository>();
             services.AddScoped<IFriendRepository, FriendRepository>();
             services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            services.AddScoped<IFollowRepository, FollowRepository>();
 
-
-       
             
+
+
             return services;
         }
     }

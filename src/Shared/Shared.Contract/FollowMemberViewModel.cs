@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace StuffPacker.Persistence.Entity
+namespace StuffPacker.ViewModel
 {
-    public class UserProfileEntity:SoftDeleteEntityBase
+    public class FollowMemberViewModel
     {
-        public Guid Id { get; set; }        
+        public Guid Id { get; set; }
         public string NickName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        
+        public bool Following { get; set; }
     }
 }
