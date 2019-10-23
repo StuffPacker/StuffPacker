@@ -4,7 +4,7 @@
     {
         Unknown = 0,
         System = 1,
-        Admin = 2
-
+        Admin = 2,
+            User=3
     }
 }

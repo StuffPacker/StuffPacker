@@ -126,7 +126,7 @@ namespace StuffPacker.Services
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix,item.UserId),WeightPrefix=item.WeightPrefix });
+                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix,item.UserId),WeightPrefix=item.WeightPrefix,Modified=item.Modified });
             }
             return packLists;
         }

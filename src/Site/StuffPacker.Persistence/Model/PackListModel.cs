@@ -20,6 +20,8 @@ namespace StuffPacker.Model
 
         public Guid Id => Entity.Id;
 
+        public DateTimeOffset Modified => Entity.Modified;
+
         public string Name => Entity.Name;
 
         public IEnumerable<PackListGroupModel> Groups => GetGroups();

@@ -153,7 +153,7 @@
 
     Func<bool, Dictionary<string, object>> GetSelected = selected => selected ? new Dictionary<string, object>() { { "selected", true } } : null;
 
-    async Task ShowLink()
+    void ShowLink()
     {
         showLink = !showLink;
     }
@@ -171,7 +171,7 @@
         await this._packListService.DeleteList(Model.Id);
         return string.Empty;
     }
-    async Task EditList()
+    void EditList()
     {
         tempListName = Model.Name;
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();

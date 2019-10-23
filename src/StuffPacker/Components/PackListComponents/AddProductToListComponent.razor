@@ -97,7 +97,7 @@
         await _packListService.AddProducts(UserId, ListId, dialogAddProductGroupId, dialogAddProductProducts);
         dialogAddProductIsOpen = false;
     }
-    async Task AddNewProduct()
+    void AddNewProduct()
     {
         dialogAddProductProducts.Add(new AddProductListItemViewModel(Guid.NewGuid(),addProductDialogName,true,true,0,WeightPrefix.Gram,string.Empty));
         addProductDialogName = "";
