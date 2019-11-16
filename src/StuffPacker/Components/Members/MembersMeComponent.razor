@@ -2,7 +2,7 @@
 @using StuffPacker.store.packlist.Get
 @using StuffPacker.store.packlist
 @using System.Linq
-@inject ICurrentUser _currentUser
+@inject ICurrentUserProvider _currentUserProvider
 @inject IUserService _userService
 @inject IState<PackListDataState> PackListDataState
 <div class="container-fluid">
@@ -19,8 +19,8 @@
 
 <div class="container-fluid">
     <div class="row">
-        <MemberFollowComponent Title="I´m Following" Members="@following" NoMemberText="<p>You are not following anyone jet</p>" />
-        <MemberFollowComponent Title="Following Me" Members="@followers" NoMemberText="<p>No one is following you</p>" />
+        <MemberFollowComponent Title="I´m Following" Members="@following" Following="true" NoMemberText="<p>You are not following anyone jet</p>" OnFollowChange="ReloadFollow" />
+        <MemberFollowComponent Title="Following Me" Members="@followers" Following="false" NoMemberText="<p>No one is following you</p>" OnFollowChange="ReloadFollow"  />
         <StuffPacker.Components.PackListComponents.PackListsReferensListComponent Lists="lists" />
     </div>
 </div>
@@ -39,33 +39,31 @@
     protected override async Task OnInitializedAsync()
     {
         PackListDataState.Subscribe(this);
-        var userProfile = await _currentUser.GetProfile();
+        var userProfile = await _currentUserProvider.GetProfile();
 
-        if (userProfile == null)
-        {
-            var profile = await _userService.GetUserProfile(_currentUser.GetUserId());
-            userProfile = profile;
-            _currentUser.SetProfile(userProfile);
-        }
+       
 
         nickName = userProfile.NickName;
         fullName = userProfile.FirstName + " " + userProfile.LastName;
-        if (_currentUser.GetFollowing() == null)
-        {
-            var members = await this._userService.GetFollowing(_currentUser.GetUserId());
-            _currentUser.SetFollowing(members.ToList());
-        }
-        following = _currentUser.GetFollowing().ToList();
-        if (_currentUser.GetFollowers() == null)
-        {
-            var members = await this._userService.GetFollowers(_currentUser.GetUserId());
-            _currentUser.SetFollowers(members.ToList());
-        }
-        followers = _currentUser.GetFollowers().ToList();
+
+         following = (await _currentUserProvider.GetFollowing()).ToList();      
+        followers = (await _currentUserProvider.GetFollowers()).ToList();
+      
+       
         if(PackListDataState.Value.PackLists!=null)
         {
              lists = (PackListDataState.Value.PackLists).ToList();
         }
        
+    }
+
+     private async Task ReloadFollow()
+    {
+        await this._currentUserProvider.ReloadFollowers();
+         await this._currentUserProvider.ReloadFollowing();
+
+          following = (await _currentUserProvider.GetFollowing()).ToList();      
+        followers = (await _currentUserProvider.GetFollowers()).ToList();
+        StateHasChanged();
     }
 }

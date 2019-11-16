@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contract;
+using StuffPacker.Components.Personalize;
 using StuffPacker.Mapper;
 using StuffPacker.Persistence.Configuration;
 using StuffPacker.Repositories;
@@ -23,8 +24,9 @@ namespace StuffPacker.Configuration
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFollowMapper, FollowMapper>();
 
+            services.AddTransient<IMemberPersonalize, MemberPersonalize>();
+            services.AddTransient<ICurrentUserProvider, CurrentUserProvider>();
             
-
             services.AddStuffPackerPersistence(configuration);
             return services;
         }

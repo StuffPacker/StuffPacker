@@ -10,6 +10,8 @@ namespace StuffPacker.Persistence.Repository
     {
         Task<UserProfileModel> Get(Guid userId);
 
+        Task<IEnumerable<UserProfileModel>> Get();
+
         Task Add(UserProfileModel model);
     }
 }

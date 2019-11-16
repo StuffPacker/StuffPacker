@@ -5,6 +5,7 @@ using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace StuffPacker.Mapper
 {
@@ -16,13 +17,14 @@ namespace StuffPacker.Mapper
             _currentUSer = currentUSer;
         }
 
-        public IEnumerable<AddProductListItemViewModel> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels )
+        public async Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels )
         {
             var viewModels = new List<AddProductListItemViewModel>();
             userProducts = userProducts.OrderBy(x => x.Name).ToList();
+            var curentUserId =  _currentUSer.GetUserId();
             foreach (var item in userProducts)
             {
-                var pp = personalizedProductModels.FirstOrDefault(x => x.ProductId == item.Id && x.UserId == _currentUSer.GetUserId());
+                var pp = personalizedProductModels.FirstOrDefault(x => x.ProductId == item.Id && x.UserId == curentUserId);
                 var category = "";
                 if (pp != null)
                 {
@@ -34,12 +36,13 @@ namespace StuffPacker.Mapper
             return viewModels;
         }
 
-        public IEnumerable<ProductViewModel> MapUserProducts(IEnumerable<ProductModel> products,IEnumerable<PersonalizedProductModel> personalizedProductModels)
+        public async Task<IEnumerable<ProductViewModel>> MapUserProducts(IEnumerable<ProductModel> products,IEnumerable<PersonalizedProductModel> personalizedProductModels)
         {
             var list = new List<ProductViewModel>();
+            var curentUserId =  _currentUSer.GetUserId();
             foreach (var item in products)
             {
-                var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id && x.UserId== _currentUSer.GetUserId());
+                var pp=personalizedProductModels.FirstOrDefault(x=>x.ProductId==item.Id && x.UserId== curentUserId);
                 var category = "";
                 var star = false;
                 var consumables = false;

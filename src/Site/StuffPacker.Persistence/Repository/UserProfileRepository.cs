@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,17 @@ namespace StuffPacker.Persistence.Repository
                 return null;
             }
             return new UserProfileModel(product);
+        }
+
+        public async Task<IEnumerable<UserProfileModel>> Get()
+        {
+            var users = await _context.UserProfiles.AsNoTracking().Where(x => x.Deleted.HasValue == false).ToListAsync();
+            var list = new List<UserProfileModel>();
+            foreach (var item in users)
+            {
+                list.Add(new UserProfileModel(item));
+            }
+            return list;
         }
     }
 }
