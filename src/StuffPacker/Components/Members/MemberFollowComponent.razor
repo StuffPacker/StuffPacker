@@ -1,6 +1,7 @@
 ﻿@using ViewModel.Members
 
 @inject IMemberService _memberService
+@inject ICurrentUserProvider _currentUserProvider
 <div class="col-md-4">
     <div>
         <h2>@Title</h2>
@@ -19,27 +20,33 @@
                             @fullname
                         </td>
                         <td style="text-align:right;">
-                            @if(Following)
+                            @if (item.Id != _currentUserProvider.GetUserId)
                             {
-                            if (item.Following)
-                            {
-                                <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
-                            }
-                            }
-                            else
-                            {
-                        
+                                if (Following)
+                                {
+                                    if (item.Following)
+                                    {
+                                        <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
+                                    }
+                                }
+                                else
+                                {
 
-                            if (item.Following)
-                            {
-                                <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
+
+                                    if (item.Following)
+                                    {
+                                        <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
+                                    }
+                                    else
+                                    {
+                                        <MatButton Class="btn btn-outline-dark" OnClick="@( async e => { await Follow(item.Id); })">Follow</MatButton>
+                                    }
+
+                                }
                             }
-                            else
-                            {
-                                <MatButton Class="btn btn-outline-dark" OnClick="@( async e => { await Follow(item.Id); })">Follow</MatButton>
-                            }
-                       
-                            }
+
+
+
 
 
 

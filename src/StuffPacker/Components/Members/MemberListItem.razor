@@ -8,7 +8,7 @@
         <figure class="card card-product">
             <div class="img-wrap"><img src="@Member.UserImgPath"></div>
             <figcaption class="info-wrap">
-                <h4 class="title">@Member.NickName</h4>
+                <h4 class="title"><a href="@("/members/"+Member.UserId)">@Member.NickName</a></h4>
                 <p class="desc">@Member.FullName</p>
                 <div class="rating-wrap">
                     <div class="label-rating">@Member.Packlists Packlists</div>
