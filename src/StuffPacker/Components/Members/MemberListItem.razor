@@ -1,0 +1,63 @@
+﻿@using ViewModel.Members
+
+@inject IMemberService _memberService
+@inject ICurrentUserProvider _currentUserProvider
+@if (Member != null)
+{
+    <div class="col-md-4">
+        <figure class="card card-product">
+            <div class="img-wrap"><img src="@Member.UserImgPath"></div>
+            <figcaption class="info-wrap">
+                <h4 class="title">@Member.NickName</h4>
+                <p class="desc">@Member.FullName</p>
+                <div class="rating-wrap">
+                    <div class="label-rating">@Member.Packlists Packlists</div>
+                    <div class="label-rating">@Member.Products Products </div>
+                </div>
+            </figcaption>
+            <div class="bottom-wrap">
+                @if (!Member.ItsMe)
+                {
+                    @if (Member.Following)
+                    {
+                        <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(Member.UserId); })">UnFollow</MatButton>
+
+                    }
+                    else
+                    {
+                        <MatButton Class="btn btn-outline-dark" OnClick="@( async e => { await Follow(Member.UserId); })">Follow</MatButton>
+                    }
+                }
+
+
+            </div>
+        </figure>
+
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public MemberListItemViewModel Member { get; set; }
+
+
+    protected async Task UnFollow(Guid userId)
+    {
+
+        await _memberService.UnFollow(userId);
+        var item = Member.Following = false;
+        await this._currentUserProvider.ReloadFollowers();
+        await this._currentUserProvider.ReloadFollowing();
+    }
+
+    protected async Task Follow(Guid userId)
+    {
+
+        await _memberService.Follow(userId);
+        var item = Member.Following = true;
+        await this._currentUserProvider.ReloadFollowers();
+        await this._currentUserProvider.ReloadFollowing();
+    }
+
+}

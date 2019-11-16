@@ -12,12 +12,15 @@ namespace StuffPacker
     public class CurrentUser : ICurrentUser
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+
+       
         public CurrentUser(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;           
         }
 
         private string UserName;
+        private Guid userId;
         private IEnumerable<FriendViewModel> FriendsList;
         private List<FollowMemberViewModel> Following;
         private List<FollowMemberViewModel> Followers;
@@ -42,15 +45,17 @@ namespace StuffPacker
             return UserType.User;
         }
 
-        public Guid GetUserId()
+        public  Guid GetUserId()
         {
             try
             {
-                if (string.IsNullOrEmpty(UserName) && IsAuthenticated)
+                if ((userId==null || userId==Guid.Empty) && IsAuthenticated)
                 {
-                    return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    var id= Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    userId = id;                   
+                    return id;
                 }
-                return Guid.Empty;
+                return userId;
             }
             catch (Exception)
             {
@@ -60,6 +65,8 @@ namespace StuffPacker
 
            
         }
+
+      
 
         public async Task<IEnumerable<FriendViewModel>> GetFriends()
         {

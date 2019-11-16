@@ -39,7 +39,7 @@ namespace StuffPacker.Services
         {
             var products = await _productRepository.GetByOwner(GetUserId());
             var personalizedProductModels = await _personalizedProductRepository.GetByUser(GetUserId());
-            return _productMapper.MapUserProducts(products,personalizedProductModels);
+            return await _productMapper.MapUserProducts(products,personalizedProductModels);
         }
 
         private Guid GetUserId()

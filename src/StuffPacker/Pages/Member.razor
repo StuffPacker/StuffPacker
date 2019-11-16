@@ -43,7 +43,7 @@
     private async Task LoadPage()
     {
         uId = Guid.Parse(userId);
-        ItsMe = this._memberService.ItsMe(uId);
+        ItsMe = await this._memberService.ItsMe(uId);
         if(!ItsMe)
         {
             //  var friends = await this._memberService.GetFriends();

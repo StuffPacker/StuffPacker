@@ -53,8 +53,10 @@ namespace StuffPacker.Mapper
                     lastName = uProfile.LastName;
                     nickName = uProfile.NickName;
                     userId = item.UserId;
-                    following = true;
-                   
+                    
+                    //kolla om personen följer eller ej
+                    following = UserIsFollowing.Contains(item.UserId);
+
                 }
 
                 list.Add(new FollowMemberViewModel
