@@ -15,5 +15,9 @@ namespace StuffPacker.Persistence.Model
         public string NickName => Entity.NickName;
         public string FirstName => Entity.FirstName;
         public string LastName=>Entity.LastName;
+
+        public Guid Id => Entity.Id;
+
+        public string UserImgPath => Entity.UserImgPath;
     }
 }

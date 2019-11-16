@@ -36,9 +36,9 @@
 
 @code
 {
-    void GoToUser()
+    async Task GoToUser()
     {
-        var userId = _currentUser.GetUserId();
+        var userId =  _currentUser.GetUserId();
         if (userId != null && userId != Guid.Empty)
         {
             NavigationManager.NavigateTo("/members/" + userId);

@@ -64,7 +64,7 @@ namespace StuffPacker.Services
             var userProfile = await this._userProfileRepository.Get(userId);
             if(userProfile == null)
             {
-                await _userProfileRepository.Add(new Persistence.Model.UserProfileModel(new Persistence.Entity.UserProfileEntity { Id=userId,NickName="-"}));
+                await _userProfileRepository.Add(new Persistence.Model.UserProfileModel(new Persistence.Entity.UserProfileEntity { Id=userId,NickName="-",UserImgPath= "user.png" }));
             }
             userProfile = await this._userProfileRepository.Get(userId);
             return new UserProfile(userProfile.NickName,userProfile.FirstName,userProfile.LastName); 

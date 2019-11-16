@@ -1,5 +1,7 @@
-﻿
-<div class="col-md-4" >
+﻿@using ViewModel.Members
+
+@inject IMemberService _memberService
+<div class="col-md-4">
     <div>
         <h2>@Title</h2>
         @if (Members.Any())
@@ -17,14 +19,29 @@
                             @fullname
                         </td>
                         <td style="text-align:right;">
-                            @if (item.Following)
+                            @if(Following)
                             {
-                                <button type="button" class="btn btn-outline-danger ">UnFollow</button>
+                            if (item.Following)
+                            {
+                                <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
+                            }
                             }
                             else
                             {
-                                <button type="button" class="btn btn-outline-dark">Follow</button>
+                        
+
+                            if (item.Following)
+                            {
+                                <MatButton Class="btn btn-outline-danger" OnClick="@( async e => { await UnFollow(item.Id); })">UnFollow</MatButton>
                             }
+                            else
+                            {
+                                <MatButton Class="btn btn-outline-dark" OnClick="@( async e => { await Follow(item.Id); })">Follow</MatButton>
+                            }
+                       
+                            }
+
+
 
 
                         </td>
@@ -36,24 +53,44 @@
             </table>
         }
         else
-        {            
+        {
             @((MarkupString)NoMemberText)
         }
 
-    </div>   
+    </div>
 </div>
 
 @code {
-        [Parameter]
-        public string Title { get; set; }
+    [Parameter]
+    public string Title { get; set; }
 
-     [Parameter]
-        public string NoMemberText { get; set; }
+    [Parameter]
+    public string NoMemberText { get; set; }
 
-        [Parameter]
-        public List<FollowMemberViewModel> Members{get;set;}
+    [Parameter]
+    public List<FollowMemberViewModel> Members { get; set; }
+
+    [Parameter]
+    public bool Following { get; set; }
+
+    protected async Task UnFollow(Guid userId)
+    {
+
+        await _memberService.UnFollow(userId);
+        var member = Members.First(x => x.Id == userId);
+        Members.Remove(member);
+         await OnFollowChange.InvokeAsync(new MouseEventArgs());
+    }
+
+    protected async Task Follow(Guid userId)
+    {
+
+        await _memberService.Follow(userId);
 
 
-
+         await OnFollowChange.InvokeAsync(new MouseEventArgs());
+    }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnFollowChange { get; set; }
 
 }

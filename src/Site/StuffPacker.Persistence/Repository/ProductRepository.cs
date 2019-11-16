@@ -65,8 +65,8 @@ namespace StuffPacker.Persistence.Repository
                 modelToUpdate.Weight = model.Entity.Weight;
                 modelToUpdate.WeightPrefix = model.Entity.WeightPrefix;
             modelToUpdate.Description = model.Entity.Description;
-
-                var personalizedProductsModel = await _context.PersonalizedProducts.FirstOrDefaultAsync(x => x.ProductId == model.Id && x.UserId == _currentUser.GetUserId());
+            var userId =  _currentUser.GetUserId();
+                var personalizedProductsModel = await _context.PersonalizedProducts.FirstOrDefaultAsync(x => x.ProductId == model.Id && x.UserId == userId);
                 if (personalizedProductsModel != null)
                 {
                     personalizedProductsModel.Category = pModel.Category;
@@ -76,7 +76,7 @@ namespace StuffPacker.Persistence.Repository
                 }
                 else
                 {
-                    PersonalizedProductModel pp = new PersonalizedProductModel(Guid.NewGuid(), _currentUser.GetUserId(), model.Id);
+                    PersonalizedProductModel pp = new PersonalizedProductModel(Guid.NewGuid(), userId, model.Id);
                     pp.Update(pModel.Category,pModel.Star,pModel.Wearable,pModel.Consumables);
                     _context.Add(pp.Entity);
                 }

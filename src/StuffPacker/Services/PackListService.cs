@@ -135,7 +135,7 @@ namespace StuffPacker.Services
         {
             var userProducts = await this._productRepository.GetByOwner(userId);
             var personalizedProductModels = await this._personalizedProductRepository.GetByUser(userId);
-            return _productMapper.Map(userProducts, personalizedProductModels);
+            return await _productMapper.Map(userProducts, personalizedProductModels);
         }
 
         public async Task<PackListViewModel> GetList(Guid listId)
@@ -168,7 +168,7 @@ namespace StuffPacker.Services
 
         public async Task UpdateProduct(ProductViewModel model)
         {
-            var userId = _currentUser.GetUserId();
+            var userId =  _currentUser.GetUserId();
             var product = await this._productRepository.Get(model.Id);
             product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix,model.Description);
 

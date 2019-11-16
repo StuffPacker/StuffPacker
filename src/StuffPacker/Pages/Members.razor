@@ -1,0 +1,64 @@
+﻿@page "/members"
+@using ViewModel.Members
+@using System.Linq
+
+@inject IMemberService _memberService
+
+@attribute [Authorize]
+    <style>
+        .card-product .img-wrap {
+            border-radius: 3px 3px 0 0;
+            overflow: hidden;
+            position: relative;
+            height: 120px;
+            text-align: center;
+        }
+
+            .card-product .img-wrap img {
+                max-height: 100%;
+                max-width: 100%;
+                object-fit: cover;
+            }
+
+        .card-product .info-wrap {
+            overflow: hidden;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .card-product .bottom-wrap {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .label-rating {
+            margin-right: 10px;
+            color: #333;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .card-product .price-old {
+            color: #999;
+        }
+    </style>
+<h1>Members</h1>
+<div class="container-fluid">
+    <div class="row">
+        @foreach (var item in members)               
+        {
+            <StuffPacker.Components.Members.MemberListItem Member="item" />
+        }
+    </div>
+</div>
+
+@code {
+    List<MemberListItemViewModel> members=new List<MemberListItemViewModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        members = (await _memberService.GetMembers()).ToList();
+    }
+
+
+
+}

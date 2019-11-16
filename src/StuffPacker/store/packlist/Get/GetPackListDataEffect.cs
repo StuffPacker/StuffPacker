@@ -27,7 +27,7 @@ namespace StuffPacker.store.packlist.Get
             try
             {
 
-                var userId = _currentUser.GetUserId();
+                var userId =  _currentUser.GetUserId();
 
                 var packLists = await _packListService.Get(userId);
                 dispatcher.Dispatch(new GetPackListDataSuccessAction(packLists.ToArray()));
