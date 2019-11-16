@@ -18,6 +18,7 @@ namespace StuffPacker
         }
 
         private string UserName;
+        private Guid userId;
         private IEnumerable<FriendViewModel> FriendsList;
         private List<FollowMemberViewModel> Following;
         private List<FollowMemberViewModel> Followers;
@@ -46,11 +47,13 @@ namespace StuffPacker
         {
             try
             {
-                if (string.IsNullOrEmpty(UserName) && IsAuthenticated)
+                if ((userId==null || userId==Guid.Empty) && IsAuthenticated)
                 {
-                    return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    var id= Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    userId = id;
+                    return id;
                 }
-                return Guid.Empty;
+                return userId;
             }
             catch (Exception)
             {
