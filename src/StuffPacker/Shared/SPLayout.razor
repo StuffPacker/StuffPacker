@@ -1,0 +1,67 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<!-- Font Awesome Icons -->
+<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+
+
+<!-- Plugin CSS -->
+<link href="/vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+<!-- Theme CSS - Includes Bootstrap -->
+<link href="/css/creative.min.css" rel="stylesheet">
+
+@Body
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/packlist");
+        }
+
+
+        NavigateToElement();
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    //  private async void OnLocationChanges(object sender, string location) => NavigateToElement();
+    private async void OnLocationChanged(object sender, LocationChangedEventArgs args) => await NavigateToElement();
+
+
+
+    private async Task NavigateToElement()
+    {
+        var url = NavigationManager.Uri;// .GetAbsoluteUri();
+        var fragment = new Uri(url).Fragment;
+
+        if (string.IsNullOrEmpty(fragment))
+        {
+            return;
+        }
+
+        var elementId = fragment.StartsWith("#") ? fragment.Substring(1) : fragment;
+
+        if (string.IsNullOrEmpty(elementId))
+        {
+            return;
+        }
+
+        ScrollToElementId(elementId);
+    }
+
+    private bool ScrollToElementId(string elementId)
+    {
+        return JSRuntime.InvokeAsync<bool>("scrollToElementId", elementId).GetAwaiter().GetResult();
+    }
+}

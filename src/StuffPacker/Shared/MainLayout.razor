@@ -4,6 +4,8 @@
 @inject ICurrentUser  _currentUser
 @inject NavigationManager NavigationManager
 @Store.Initialize()
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
+<link href="/css/site.css" rel="stylesheet" />
 <div class="sidebar">
     <NavMenu />
 </div>
@@ -38,7 +40,7 @@
 {
     async Task GoToUser()
     {
-        var userId =  _currentUser.GetUserId();
+        var userId = _currentUser.GetUserId();
         if (userId != null && userId != Guid.Empty)
         {
             NavigationManager.NavigateTo("/members/" + userId);
