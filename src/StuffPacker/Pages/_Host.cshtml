@@ -6,20 +6,20 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*<meta name="viewport" content="width=device-width, initial-scale=1.0" />*@
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8RL1S43N5"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8RL1S43N5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-  gtag('config', 'G-Q8RL1S43N5');
-</script>
+        gtag('config', 'G-Q8RL1S43N5');
+    </script>
     <title>StuffPacker</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
+   
     <link href="https://cdn.syncfusion.com/ej2/17.3.10/material.css" rel="stylesheet" />
     <script src="https://cdn.syncfusion.com/ej2/17.3.10/dist/ej2.min.js"></script>
     <script src="https://cdn.syncfusion.com/ej2/17.3.10/dist/ejs.interop.min.js"></script>
@@ -27,20 +27,63 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     @Html.EmbeddedBlazorContent()
-</head>
-<body>
-    <style>
-        .sp-mdc-button{min-width:0px; padding:0px;}
-        .material-icons .mdc-button__icon{margin-right:1px;}
-        .main .top-row{position:inherit}
-        .table td {padding:.3rem;}
-        .table .thead-dark th {color:#CBFD03;}
 
+   
+
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="/js/creative.min.js"></script>
+
+
+</head>
+<body id="page-top">
+    <style>
+        .sp-mdc-button {
+            min-width: 0px;
+            padding: 0px;
+        }
+
+        .material-icons .mdc-button__icon {
+            margin-right: 1px;
+        }
+
+        .main .top-row {
+            position: inherit
+        }
+
+        .table td {
+            padding: .3rem;
+        }
+
+        .table .thead-dark th {
+            color: #CBFD03;
+        }
     </style>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
     </app>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        window.scrollToElementId = (elementId) => {
+            console.info('scrolling to element', elementId);
+            var element = document.getElementById(elementId);
+            if (!element) {
+                console.warn('element was not found', elementId);
+                return false;
+            }
+            element.scrollIntoView();
+            return true;
+        }
+    </script>
 </body>
 </html>
