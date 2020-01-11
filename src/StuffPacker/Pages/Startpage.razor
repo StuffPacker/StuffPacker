@@ -1,0 +1,150 @@
+﻿@page "/"
+@layout SPLayout
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container">
+        <img alt="Stuffpacker loggo" src="/backpack.png" /><a class="navbar-brand js-scroll-trigger" href="#page-top">Stuff packer</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto my-2 my-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                </li>
+              
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+                </li>
+                <li>
+                    <a href="/Identity/Account/Login">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Masthead -->
+<header class="masthead">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center justify-content-center text-center">
+            <div class="col-lg-10 align-self-end">
+                <h1 class="text-uppercase text-white font-weight-bold">Your Favorite software to help with packing stuff</h1>
+                <hr class="divider my-4">
+            </div>
+            <div class="col-lg-8 align-self-baseline">
+                <p class="text-white-75 font-weight-light mb-5">
+                    Sometimes it can be difficult to know what to pack in your bag, it can also be difficult to know the weight of the bag.
+                    With this tool you can organize your packing into lists and categories, get full controle of your gadgets and get a good overview of the weight.
+                </p>
+                <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- About Section -->
+<section class="page-section bg-primary" id="about">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="text-white mt-0">We've got what you need!</h2>
+                <hr class="divider light my-4">
+                <p class="text-white-50 mb-4">
+                    If you pack with this tool, you will soon discover that you can save weight and space on several things.
+                    <br /><br />
+                    Here is an example of a winter bag in the system.
+                    <a class="text-white-50" href="https://stuffpackerprod.azurewebsites.net/packlistviewer/1B3C56EB-04B9-4A7D-9DDA-3E79E121D150" target="_blank">Winter bag</a>
+                </p>
+                <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Get Started!</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="page-section" id="services">
+    <div class="container">
+        <h2 class="text-center mt-0">At Your Service</h2>
+        <hr class="divider my-4">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="mt-5">
+                    <i class="fas fa-4x fa-gem text-primary mb-4"></i>
+                    <h3 class="h4 mb-2">Sturdy Themes</h3>
+                    <p class="text-muted mb-0">Our site are updated regularly to keep them bug free!</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="mt-5">
+                    <i class="fas fa-4x fa-laptop-code text-primary mb-4"></i>
+                    <h3 class="h4 mb-2">Up to Date</h3>
+                    <p class="text-muted mb-0">All dependencies are we trying to keep fresh.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="mt-5">
+                    <i class="fas fa-4x fa-globe text-primary mb-4"></i>
+                    <h3 class="h4 mb-2">Ready to Share</h3>
+                    <p class="text-muted mb-0">You can share  your packlists  with the world!</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="mt-5">
+                    <i class="fas fa-4x fa-heart text-primary mb-4"></i>
+                    <h3 class="h4 mb-2">Made with Passion</h3>
+                    <p class="text-muted mb-0">It is really open source and everyone is welcome to jojn us!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Call to Action Section -->
+<section class="page-section bg-dark text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Free To start an account!</h2>
+        <a class="btn btn-light btn-xl" href="/Identity/Account/Register">Register Now!</a>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="page-section" id="contact">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="mt-0">Let's Get In Touch!</h2>
+                <hr class="divider my-4">
+                <p class="text-muted mb-5">Ready to try packing with us? Give us your sugestions on Github or send us an email and we will get back to you as soon as possible!</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 ml-auto text-center mb-5 mb-lg-0">
+                <i class="fab fa-github fa-3x mb-3 text-muted"></i>
+                <div><a href="https://github.com/StuffPacker/StuffPacker" target="_blank">github.com/StuffPacker/StuffPacker</a></div>
+            </div>
+            <div class="col-lg-4 mr-auto text-center">
+                <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
+                <a class="d-block" href="mailto:daniel.berg@l58.se">Mail</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-light py-5">
+    <div class="container">
+        <div class="small text-center text-muted">Copyright &copy; 2020 - Stuffpacker</div>
+    </div>
+</footer>
+
+
+
+@code {
+
+}
