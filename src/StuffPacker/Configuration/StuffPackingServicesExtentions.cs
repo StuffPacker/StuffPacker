@@ -28,6 +28,9 @@ namespace StuffPacker.Configuration
             services.AddTransient<ICurrentUserProvider, CurrentUserProvider>();
             
             services.AddStuffPackerPersistence(configuration);
+
+            services.AddScoped<IAccountService, AccountService>();
+
             return services;
         }
     }
