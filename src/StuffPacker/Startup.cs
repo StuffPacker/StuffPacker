@@ -12,7 +12,7 @@ using StuffPacker.Configuration;
 using StuffPacker.Persistence;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components.Authorization;
-
+using Shared.Mail.Options;
 
 namespace StuffPacker
 {
@@ -35,7 +35,9 @@ namespace StuffPacker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<HttpClient>();
-           // services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            
+          
+
             services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options=> 
             {

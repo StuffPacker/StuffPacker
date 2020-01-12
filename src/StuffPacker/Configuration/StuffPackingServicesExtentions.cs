@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contract;
+using Shared.Mail.Configuration;
+using Shared.Mail.Options;
 using StuffPacker.Components.Personalize;
 using StuffPacker.Mapper;
 using StuffPacker.Persistence.Configuration;
@@ -31,6 +34,9 @@ namespace StuffPacker.Configuration
 
             services.AddScoped<IAccountService, AccountService>();
 
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<MailClientOptions>(configuration.GetSection("MailClientOptions"));
+            services.AddSharedMail(configuration);
             return services;
         }
     }
