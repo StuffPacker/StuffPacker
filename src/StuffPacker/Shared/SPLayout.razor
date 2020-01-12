@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject AuthenticationStateProvider AuthenticationStateProvider
 <!-- Font Awesome Icons -->
 <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
@@ -22,14 +21,6 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/packlist");
-        }
-
 
         NavigateToElement();
         NavigationManager.LocationChanged += OnLocationChanged;
