@@ -37,11 +37,19 @@ namespace StuffPacker
             services.AddScoped<HttpClient>();
            // services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<StuffPackerDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(options=> 
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;                
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+            }).AddEntityFrameworkStores<StuffPackerDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddStuffPackerServices(Configuration, LoggerFactory);
-
+           
             services.AddFluxor(options =>
             {
                 options.UseDependencyInjection(typeof(Startup).Assembly);
