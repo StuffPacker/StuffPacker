@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>dc214e13-fcc1-443d-b887-7f5fef1f68f4</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.Mail\Shared.Mail.csproj" />
     <ProjectReference Include="..\Site\StuffPacker.Persistence\StuffPacker.Persistence.csproj" />
   </ItemGroup>
 

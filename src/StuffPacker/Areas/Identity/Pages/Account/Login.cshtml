@@ -44,9 +44,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div asp-validation-summary="All" class="text-danger"></div>                      
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a>
-                        <br />
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a><br />
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        <br /><br />
                         <a class="btn btn-dark btn-xl" href="/">Cancel</a>
                         <button class="btn btn-primary btn-xl js-scroll-trigger" type="submit">Login</button>
 
@@ -59,7 +60,7 @@
     </div>
 </header>
 
-@*<a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+@*
 <button type="submit" asp-page-handler="SendVerificationEmail" class="btn-link" style="padding:0px;margin:0px;border:0px">Resend email confirmation</button>*@
 
 @section Scripts {
