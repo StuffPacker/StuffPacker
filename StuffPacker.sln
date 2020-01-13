@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Contract", "src\Shar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StuffPacker.Persistence.Tests", "src\Site\StuffPacker.Persistence.Tests\StuffPacker.Persistence.Tests.csproj", "{D24614E0-C9A5-4CAA-9EEF-B82455C06B63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Mail", "src\Shared\Shared.Mail\Shared.Mail.csproj", "{DC1F67F0-584B-4685-8C83-709238748A30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Mail", "src\Shared\Shared.Mail\Shared.Mail.csproj", "{DC1F67F0-584B-4685-8C83-709238748A30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Mail.Tests", "src\Shared\Shared.Mail.Tests\Shared.Mail.Tests.csproj", "{FE5A7D29-FAC8-4DDF-AF7F-69D3E3F672D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Mail.Tests", "src\Shared\Shared.Mail.Tests\Shared.Mail.Tests.csproj", "{FE5A7D29-FAC8-4DDF-AF7F-69D3E3F672D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -19,7 +19,7 @@
     </script>
     <title>StuffPacker</title>
     <base href="~/" />
-   
+
     <link href="https://cdn.syncfusion.com/ej2/17.3.10/material.css" rel="stylesheet" />
     <script src="https://cdn.syncfusion.com/ej2/17.3.10/dist/ej2.min.js"></script>
     <script src="https://cdn.syncfusion.com/ej2/17.3.10/dist/ejs.interop.min.js"></script>
@@ -28,7 +28,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     @Html.EmbeddedBlazorContent()
 
-   
+
 
 
 
@@ -41,8 +41,8 @@
     <script src="/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 
     <!-- Custom scripts for this template -->
-    <script src="/js/creative.min.js"></script>
-
+    <script src="/js/creative.js"></script>
+   
 
 </head>
 <body id="page-top">
@@ -73,6 +73,33 @@
     </app>
 
     <script src="_framework/blazor.server.js"></script>
+    <script type="text/javascript">
+     
+        "use strict";
+        // init globals
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { dataLayer.push(arguments); };
+        // configure first timestamp
+        gtag("js", new Date());
+        var GoogleAnalyticsInterop;
+        (function (GoogleAnalyticsInterop) {
+            function configure(trackingId) {
+                const script = document.createElement("script");
+                script.async = true;
+                script.src = "https://www.googletagmanager.com/gtag/js?id=" + trackingId;
+                document.head.appendChild(script);
+                gtag("config", trackingId);
+                console.log(`[GTAG][${trackingId}] Configured`);
+            }
+            GoogleAnalyticsInterop.configure = configure;
+            function navigate(trackingId, href) {
+                gtag("config", trackingId, { page_path: href });
+                console.log(`[GTAG][${trackingId}] Navigated: ${href}`);
+            }
+            GoogleAnalyticsInterop.navigate = navigate;
+        })(GoogleAnalyticsInterop || (GoogleAnalyticsInterop = {}));
+
+    </script>
     <script>
         window.scrollToElementId = (elementId) => {
             console.info('scrolling to element', elementId);
@@ -84,6 +111,7 @@
             element.scrollIntoView();
             return true;
         }
+
     </script>
 </body>
 </html>
