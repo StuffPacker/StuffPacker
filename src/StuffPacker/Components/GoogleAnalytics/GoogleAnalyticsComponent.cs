@@ -18,15 +18,24 @@ namespace StuffPacker.Components.GoogleAnalytics
         [Inject]
         protected IJSRuntime JSRuntime { get; set; } = null;
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnInitializedAsync();
-
+             base.OnAfterRenderAsync(firstRender);
             NavigationManager.LocationChanged -= OnLocationChanged;
             NavigationManager.LocationChanged += OnLocationChanged;
 
             await JSRuntime.InvokeAsync<string>(GoogleAnalyticsInterop.Configure,
                 TrackingId);
+        }
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            //NavigationManager.LocationChanged -= OnLocationChanged;
+            //NavigationManager.LocationChanged += OnLocationChanged;
+
+            //await JSRuntime.InvokeAsync<string>(GoogleAnalyticsInterop.Configure,
+            //    TrackingId);
         }
 
         public void Dispose()
