@@ -1,5 +1,5 @@
 ﻿<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">       
+    <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
     <NotFound>
@@ -10,4 +10,4 @@
         </CascadingAuthenticationState>
     </NotFound>
 </Router>
-@*<GoogleAnalytics TrackingId="UA-149362716-1" />*@
+<StuffPacker.Components.GoogleAnalytics.GoogleAnalyticsComponent TrackingId="UA-149362716-1" />
