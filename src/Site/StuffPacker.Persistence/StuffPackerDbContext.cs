@@ -27,6 +27,9 @@ namespace StuffPacker.Persistence
         public DbSet<UserProfileEntity> UserProfiles { get; set; }
 
         public DbSet<FollowEntity> Follows { get; set; }
+        public DbSet<ProductGroupEntity> ProductGroups { get; set; }
+        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

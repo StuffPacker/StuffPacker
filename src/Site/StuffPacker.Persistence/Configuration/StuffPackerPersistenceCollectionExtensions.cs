@@ -12,14 +12,14 @@ namespace StuffPacker.Persistence.Configuration
         {
 
 
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IPackListsRepository, PackListsRepository>();
-            services.AddScoped<IPersonalizedProductRepository, PersonalizedProductRepository>();
-            services.AddScoped<IFriendRepository, FriendRepository>();
-            services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-            services.AddScoped<IFollowRepository, FollowRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IPackListsRepository, PackListsRepository>();
+            services.AddTransient<IPersonalizedProductRepository, PersonalizedProductRepository>();
+            services.AddTransient<IFriendRepository, FriendRepository>();
+            services.AddTransient<IUserProfileRepository, UserProfileRepository>();
+            services.AddTransient<IFollowRepository, FollowRepository>();
+            services.AddTransient<IProductGroupRepository, ProductGroupRepository>();
 
-            
 
 
             return services;
