@@ -11,6 +11,11 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Shared.Contract.Provider;
 
 namespace StuffPacker.Areas.Identity.Pages.Account
 {
@@ -21,16 +26,18 @@ namespace StuffPacker.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly ITokenProvider _tokenProvider;
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
             UserManager<IdentityUser> userManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ITokenProvider tokenProvider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _tokenProvider = tokenProvider;
         }
 
         [BindProperty]
@@ -81,7 +88,7 @@ namespace StuffPacker.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             return Page();
         }
-
+        
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -90,30 +97,77 @@ namespace StuffPacker.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
-                if (result.Succeeded)
+
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                if (user != null)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    var passwordIsCorrect = await _userManager.CheckPasswordAsync(user, Input.Password);
+                    if (passwordIsCorrect)
+                    {
+                        var customClaims = new[]
+                        {
+                    new Claim("SpAdminApiToken", GetToken(Guid.Parse(user.Id)))
+                };
+                        //await _customClaimsCookieSignInHelper.SignInUserAsync(user, model.RememberMe, customClaims);
+                        await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, customClaims);
+                        _logger.LogInformation(1, "User logged in.");
+                        return LocalRedirect(returnUrl);
+                    }
                 }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
+
+
+
+                //    var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                
+
+                //if (result.Succeeded)
+                //{
+                //    var user = await _userManager.FindByEmailAsync(Input.Email);
+                //    var token = GetToken(Guid.Parse(user.Id));
+                //    _tokenProvider.AddToken(Guid.Parse(user.Id), token);
+                //    _logger.LogInformation("User logged in.");
+                //    return LocalRedirect(returnUrl);
+                //}
+                //if (result.RequiresTwoFactor)
+                //{
+                //    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                //}
+                //if (result.IsLockedOut)
+                //{
+                //    _logger.LogWarning("User account locked out.");
+                //    return RedirectToPage("./Lockout");
+                //}
+                //else
+                //{
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
-                }
+               // }
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private string GetToken(Guid customerId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("this is the secret key");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                
+                     new Claim("CustomerId",customerId.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var tkn = tokenHandler.WriteToken(token);
+
+            return tkn;
         }
 
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
