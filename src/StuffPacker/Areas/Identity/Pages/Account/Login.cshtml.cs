@@ -104,15 +104,18 @@ namespace StuffPacker.Areas.Identity.Pages.Account
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-
+               
                 if (user != null)
                 {
+                    var tokenC = new Claim("SpAdminApiToken", GetToken(Guid.Parse(user.Id)));
+                   await _userManager.AddClaimAsync(user,tokenC);                 
+
                     var passwordIsCorrect = await _userManager.CheckPasswordAsync(user, Input.Password);
                     if (passwordIsCorrect)
                     {
                         var customClaims = new[]
                         {
-                    new Claim("SpAdminApiToken", GetToken(Guid.Parse(user.Id)))
+                    tokenC
                 };
                         //await _customClaimsCookieSignInHelper.SignInUserAsync(user, model.RememberMe, customClaims);
                         await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, customClaims);

@@ -62,6 +62,10 @@ namespace StuffPacker.Mapper
         private async Task<int> GetPackListCount(Guid id)
         {
             var list = await this._packListsRepository.GetByUser(id);
+            if(list==null)
+            {
+                return 0;
+            }
             return list.Count();
         }
 
