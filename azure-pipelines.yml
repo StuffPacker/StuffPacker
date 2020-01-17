@@ -39,6 +39,14 @@ steps:
     SearchPattern: '**\bin\**\*.pdb'
   continueOnError: true
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish Api'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/Stuffpacker.Api.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
