@@ -1,12 +1,13 @@
 ﻿
 
+using Shared.Contract.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stuffpacker.Api.Services
+namespace StuffPacker.Api.ApiHost.Controllers
 {
     public class PackListService : IPackListService
     {
@@ -19,9 +20,9 @@ namespace Stuffpacker.Api.Services
         //    _personalizedProductRepository = personalizedProductRepository;
         //    _productRepository = productRepository;
         //}
-        //public async Task<IEnumerable<PackListDto>> Get(Guid userId)
-        //{
-        //    var packLists = new List<PackListDto>();
+        public async Task<IEnumerable<PackListDto>> Get(Guid userId)
+        {
+            var packLists = new List<PackListDto>();
         //    var list = await this._packListsRepository.GetByUser(userId);
         //    if (list == null)
         //    {
@@ -31,8 +32,8 @@ namespace Stuffpacker.Api.Services
         //    {
         //        packLists.Add(new PackListDto { UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
         //    }
-        //    return packLists;
-        //}
+            return packLists;
+        }
         //private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
         //{
         //    var list = new List<PackListGroupDto>();
