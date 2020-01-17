@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Contract.Options;
 using StuffPacker.Api.ApiHost.Configuration;
 using StuffPacker.Api.ApiHost.Extensions;
-
+using StuffPacker.Persistence;
 
 namespace StuffPacker.Api.ApiHost
 {
@@ -39,8 +39,8 @@ namespace StuffPacker.Api.ApiHost
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureOptions(services, Configuration);
-            //services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddStuffPackerApiHostServices(Configuration, LoggerFactory);
+            services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddStuffPackerApiHostServices(Configuration, LoggerFactory);
             var key = Encoding.ASCII.GetBytes(SiteOptions.ApiSecret);
             services.AddAuthentication(x =>
             {

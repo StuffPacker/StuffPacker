@@ -15,7 +15,7 @@ namespace StuffPacker.Api.ApiHost.Configuration
     {
         public static IServiceCollection AddStuffPackerApiHostServices(this IServiceCollection services, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-          //  services.AddScoped<ICurrentUser, CurrentUser>();
+            services.AddScoped<ICurrentUser, CurrentUser>();
            // services.AddStuffPackerApiServices(configuration, loggerFactory);
             return services;
         }
