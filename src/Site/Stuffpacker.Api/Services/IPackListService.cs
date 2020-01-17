@@ -1,4 +1,4 @@
-﻿using Shared.Contract.Dtos;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +8,6 @@ namespace Stuffpacker.Api.Services
 {
    public interface IPackListService
     {
-        Task<IEnumerable<PackListDto>> Get(Guid userId);
+      //  Task<IEnumerable<PackListDto>> Get(Guid userId);
     }
 }
