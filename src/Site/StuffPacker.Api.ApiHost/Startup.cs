@@ -13,7 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Contract.Options;
 using StuffPacker.Api.ApiHost.Configuration;
+using StuffPacker.Api.ApiHost.Extensions;
 using StuffPacker.Persistence;
 
 namespace StuffPacker.Api.ApiHost
@@ -26,14 +28,20 @@ namespace StuffPacker.Api.ApiHost
         {
             Configuration = configuration;
         }
-
-            // This method gets called by the runtime. Use this method to add services to the container.
-            // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-            public void ConfigureServices(IServiceCollection services)
+        public SiteOptions SiteOptions { get; set; }
+        public virtual void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
         {
+            SiteOptions=services.ConfigureSingletonIOption<SiteOptions>(Configuration,
+             StuffPackerConfigurationOptionNames.SiteOptions);
+        }
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
+        {
+            ConfigureOptions(services, Configuration);
             services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddStuffPackerApiHostServices(Configuration, LoggerFactory);
-            var key = Encoding.ASCII.GetBytes("this is the secret key");
+            var key = Encoding.ASCII.GetBytes(SiteOptions.ApiSecret);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
