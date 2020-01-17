@@ -39,8 +39,8 @@ namespace StuffPacker.Api.ApiHost
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureOptions(services, Configuration);
-           // services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));            
-            services.AddStuffPackerApiHostServices(Configuration, LoggerFactory);
+            //services.AddDbContext<StuffPackerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));            
+            //services.AddStuffPackerApiHostServices(Configuration, LoggerFactory);
             var key = Encoding.ASCII.GetBytes(SiteOptions.ApiSecret);
             services.AddAuthentication(x =>
             {
