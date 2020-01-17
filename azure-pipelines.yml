@@ -39,6 +39,11 @@ steps:
     SearchPattern: '**\bin\**\*.pdb'
   continueOnError: true
 
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactStagingDirectory)'
+  condition: succeededOrFailed()
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish Api'
   inputs:
@@ -55,10 +60,6 @@ steps:
     projects: '**/StuffPacker.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(build.artifactStagingDirectory)'
-  condition: succeededOrFailed()
+
 
 
