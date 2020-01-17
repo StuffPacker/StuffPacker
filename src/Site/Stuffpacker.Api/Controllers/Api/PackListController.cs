@@ -14,10 +14,10 @@ namespace Stuffpacker.Api.Controllers.Api
     {
         private readonly IPackListService _packListService;
 
-        public PackListController(IPackListService packListService)
-        {
-            _packListService = packListService;
-        }
+        //public PackListController(IPackListService packListService)
+        //{
+        //    _packListService = packListService;
+        //}
 
         [HttpGet("")]
         public async Task<IActionResult> Get()

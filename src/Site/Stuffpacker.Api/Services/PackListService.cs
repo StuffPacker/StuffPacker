@@ -16,12 +16,12 @@ namespace Stuffpacker.Api.Services
         private readonly IPackListsRepository _packListsRepository;
         private readonly IPersonalizedProductRepository _personalizedProductRepository;
         private readonly IProductRepository _productRepository;
-        public PackListService(IPackListsRepository packListsRepository, IPersonalizedProductRepository personalizedProductRepository, IProductRepository productRepository)
-        {
-            _packListsRepository = packListsRepository;
-            _personalizedProductRepository = personalizedProductRepository;
-            _productRepository = productRepository;
-        }
+        //public PackListService(IPackListsRepository packListsRepository, IPersonalizedProductRepository personalizedProductRepository, IProductRepository productRepository)
+        //{
+        //    _packListsRepository = packListsRepository;
+        //    _personalizedProductRepository = personalizedProductRepository;
+        //    _productRepository = productRepository;
+        //}
         public async Task<IEnumerable<PackListDto>> Get(Guid userId)
         {
             var packLists = new List<PackListDto>();
