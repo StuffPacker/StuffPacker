@@ -107,8 +107,15 @@ namespace StuffPacker.Areas.Identity.Pages.Account
                
                 if (user != null)
                 {
-                    var tokenC = new Claim("SpAdminApiToken", GetToken(Guid.Parse(user.Id)));
-                   await _userManager.AddClaimAsync(user,tokenC);                 
+                    var claims = await _userManager.GetClaimsAsync(user);
+                    var c1 = claims.Where(x => x.Type == "SpAdminApiToken").ToList();
+                    if(c1.Any())
+                    {
+                        await _userManager.RemoveClaimsAsync(user,c1);
+                    }
+                  
+                    var tokenC = new Claim("SpAdminApiToken", GetToken(Guid.Parse(user.Id)));                    
+                    await _userManager.AddClaimAsync(user,tokenC);                 
 
                     var passwordIsCorrect = await _userManager.CheckPasswordAsync(user, Input.Password);
                     if (passwordIsCorrect)
@@ -117,7 +124,7 @@ namespace StuffPacker.Areas.Identity.Pages.Account
                         {
                     tokenC
                 };
-                        //await _customClaimsCookieSignInHelper.SignInUserAsync(user, model.RememberMe, customClaims);
+                      
                         await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, customClaims);
                         _logger.LogInformation(1, "User logged in.");
                         return LocalRedirect(returnUrl);
