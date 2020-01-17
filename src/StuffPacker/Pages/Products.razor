@@ -1,10 +1,14 @@
 ﻿@page "/products"
 @using Microsoft.AspNetCore.Http;
+@using System.Linq
+@using StuffPacker.store.UserProduct
 @inject IHttpContextAccessor _httpContextAccessor;
 @inject IProductService _productService;
+@inject IState<UserProductsDataState> ProductsDataState
+@inject IDispatcher Dispatcher
 @attribute [Authorize]
 <h1>Products</h1>
-@if (ProductList == null)
+@if (ProductsDataState.Value.CategoryList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -12,72 +16,81 @@ else
 {
     <div class="container-fluid">
         <div class="row">
-            @foreach (var item in CategoryList)
+            @foreach (var item in ProductsDataState.Value.CategoryList)
             {
-            <div class="col-12">
-                @if (item.Maximized)
-                {
-                    <h4>
-                        <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
-                        @item.Name
-                    </h4>
-                    <table class="table table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Name</th>
-                                <th>Amount</th>
-                                <th>Weight</th>
-                                <th>Info</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        @foreach (var context in ProductList.Where(x => x.Category == item.Name).ToList())
-                        {
-                    <tr>
-                        <td>@context.Name</td>
-                        <th>@context.Amount</th>
-                        <td>@context.WeightAndTokenShort</td>
-                        <td>
-                            @if (context.Star)
+                <div class="col-12">
+                    @if (item.Maximized)
+                    {
+                        <h4>
+
+                            @if (string.IsNullOrEmpty(item.Name))
                             {
-                                <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" Icon="star"></MatIcon>
+                                <b>Uncategorized</b>
                             }
-                            @if (context.Wearable)
+                            else
                             {
-                                <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" Icon="accessibility_new"></MatIcon>
+                                <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@(e=>ExpandCollapse(item.Name))" Label=""></MatButton>
+                                @item.Name
                             }
-                            @if (context.Consumables)
+
+                        </h4>
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Amount</th>
+                                    <th>Weight</th>
+                                    <th>Info</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            @foreach (var context in ProductsDataState.Value.ProductList.Where(x => x.Category == item.Name).ToList())
                             {
-                                <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
-                            }
-                        </td>
-                        <td>
-                            <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
-                            <MatIconButton Icon="delete" OnClick="@((e) => {
+                                <tr>
+                                    <td>@context.Name</td>
+                                    <th>@context.Amount</th>
+                                    <td>@context.WeightAndTokenShort</td>
+                                    <td>
+                                        @if (context.Star)
+                                        {
+                                            <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" Icon="star"></MatIcon>
+                                        }
+                                        @if (context.Wearable)
+                                        {
+                                            <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Wearable" } })" Icon="accessibility_new"></MatIcon>
+                                        }
+                                        @if (context.Consumables)
+                                        {
+                                            <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
+                                        }
+                                    </td>
+                                    <td>
+                                        <MatButton Icon="edit" Style="color:burlywood;" OnClick="@(e => EditProduct(context.Id))" Label=""></MatButton>
+                                        <MatIconButton Icon="delete" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {context.Name}?";
                                                                         confirmModel.OkButtonText = "Delete";
                                                                         confirmModel.OnOkClick = async () => await DeleteProduct(context.Id);
                                                                     })"></MatIconButton>
-                        </td>
-                    </tr>
-                        }
+                                    </td>
+                                </tr>
+                            }
 
-                    </table>
-                }
-                else
-                {
-                    <div style="background-color:lightgray;">
-                        <h4>
-                            <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@(e=>ExpandColaps(item.Name))" Label=""></MatButton>
-                            @item.Name
-                        </h4>
-                    </div>
-                }
-            </div>
+                        </table>
+                    }
+                    else
+                    {
+                        <div style="background-color:lightgray;">
+                            <h4>
+                                <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@(e=>ExpandCollapse(item.Name))" Label=""></MatButton>
+                                @item.Name
+                            </h4>
+                        </div>
+                    }
+                </div>
             }
         </div>
-        </div>
+    </div>
 }
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 <StuffPacker.Components.PackListComponents.ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" OnAfterOkClick="ClickHandler" />
@@ -85,36 +98,47 @@ else
 
 @code {
     ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
-    List<ProductViewModel> ProductList;
+  // List<ProductViewModel> ProductList;
     ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
     List<string> weightPrefix = new List<string>();
-    List<ProductListCategoryViewModel> CategoryList = new List<ProductListCategoryViewModel>();
+  //  List<ProductListCategoryViewModel> CategoryList = new List<ProductListCategoryViewModel>();
 
 
     protected override async Task OnInitializedAsync()
     {
 
         weightPrefix = WeightPrefixHelper.GetWeightPrefix();
-        await LoadList();
+        ProductsDataState.Subscribe(this);
+        Dispatcher.Dispatch(new GetUserProductsDataAction());
 
 
     }
 
     async Task LoadList()
     {
-        ProductList = (await this._productService.GetById()).ToList();
-        var list = new List<ProductListCategoryViewModel>();
-        var t = ProductList.Select(s => s.Category).Distinct();
-        foreach (var item in t)
-        {
-            list.Add(new ProductListCategoryViewModel { Name=item});
-        }
-        CategoryList = list;
+
+
+
+
+
+        //var productGroups = (await _productService.GetProductGroups()).ToList();
+        //var products = await this._productService.GetById();
+        //productGroups.Add(new ProductListCategoryViewModel { Name = "" });
+        //CategoryList = (productGroups).ToList();
+
+        //ProductList = (products).ToList();
+
+
+
     }
 
-    void ExpandColaps(string name)
+    async Task ExpandCollapse(string name)
     {
-        var item = CategoryList.First(x=>x.Name==name);
+        var item = ProductsDataState.Value.CategoryList.First(x => x.Name == name);
+
+        item.Id = await _productService.UpsertProductGroupsExpandCollapse(item.Id, !item.Maximized, name);
+
+
         item.Maximized = !item.Maximized;
     }
 
@@ -125,10 +149,10 @@ else
     }
     async Task<string> DeleteProduct(Guid id)
     {
-        var model = ProductList.Find(x => x.Id == id);
+        var model = ProductsDataState.Value.ProductList.Find(x => x.Id == id);
         await this._productService.Delete(id);
-        ProductList.Remove(model);
-        base.StateHasChanged();
+        //ProductsDataState.ValueProductList.Remove(model);
+        //base.StateHasChanged();
         return "";
     }
 
@@ -136,16 +160,19 @@ else
     async Task EditProduct(Guid productId)
     {
 
-        var product = ProductList.First(x => x.Id == productId);
+        var product = ProductsDataState.Value.ProductList.First(x => x.Id == productId);
         productUpdateComponentViewModel.EditMode = true;
-        productUpdateComponentViewModel.ConvertedWeight=product.ConvertedWeight;
+        productUpdateComponentViewModel.ConvertedWeight = product.ConvertedWeight;
         productUpdateComponentViewModel.WeightPrefixValue = product.WeightPrefix.ToString();
-        productUpdateComponentViewModel.ProductModel = product;     
+        productUpdateComponentViewModel.ProductModel = product;
         productUpdateComponentViewModel.DialogIsOpen = true;
     }
-   
-      async Task ClickHandler(string newMessage)
+
+    async Task ClickHandler(string newMessage)
     {
-       await LoadList();
+
+        //    await LoadList();
+        //    StateHasChanged();
+
     }
 }

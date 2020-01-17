@@ -20,7 +20,7 @@ namespace StuffPacker.Persistence.Repository
         public async Task Add(PackListModel model)
         {
 
-            _context.Add(model.Entity);
+            await _context.AddAsync(model.Entity);
             await _context.SaveChangesAsync();
 
 
@@ -28,17 +28,26 @@ namespace StuffPacker.Persistence.Repository
 
         public async Task<IEnumerable<PackListModel>> GetByUser(Guid userId)
         {
-            var lists = await _context.PackLists.Where(x => x.UserId == userId).AsNoTracking().ToListAsync();
-            if (!lists.Any())
+            try
             {
-                return null;
+                var lists = await _context.PackLists.Where(x => x.UserId == userId).AsNoTracking().ToListAsync();
+                if (!lists.Any())
+                {
+                    return null;
+                }
+                var list = new List<PackListModel>();
+                foreach (var item in lists)
+                {
+                    list.Add(new PackListModel(item));
+                }
+                return list;
             }
-            var list = new List<PackListModel>();
-            foreach (var item in lists)
+            catch (Exception e)
             {
-                list.Add(new PackListModel(item));
+
+                throw;
             }
-            return list;
+         
         }
 
         public async Task<PackListModel> Get(Guid id)

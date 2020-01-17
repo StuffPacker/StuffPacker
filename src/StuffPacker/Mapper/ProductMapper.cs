@@ -36,6 +36,26 @@ namespace StuffPacker.Mapper
             return viewModels;
         }
 
+        public async Task<ProductListCategoryViewModel> MapProductGroup(ProductGroupModel model)
+        {
+            return new ProductListCategoryViewModel
+            {
+                Maximized = model.Maximized,
+                Name = model.Name,
+                Id=model.Id
+            };
+        }
+
+        public async Task<IEnumerable<ProductListCategoryViewModel>> MapProductGroups(IEnumerable<ProductGroupModel> productGroups)
+        {
+            var list = new List<ProductListCategoryViewModel>();
+            foreach (var item in productGroups)
+            {
+                list.Add(await MapProductGroup(item));
+            }
+            return list;
+        }
+
         public async Task<IEnumerable<ProductViewModel>> MapUserProducts(IEnumerable<ProductModel> products,IEnumerable<PersonalizedProductModel> personalizedProductModels)
         {
             var list = new List<ProductViewModel>();

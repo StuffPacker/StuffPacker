@@ -13,6 +13,11 @@ using StuffPacker.Persistence;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components.Authorization;
 using Shared.Mail.Options;
+using Shared.Contract.Options;
+using StuffPacker.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace StuffPacker
 {
@@ -27,13 +32,18 @@ namespace StuffPacker
                 Configuration.GetConnectionString("DefaultConnection");
             new StuffPackingDbContextMigrator().Migrate(null, migrationConnection);
         }
-
+        public virtual void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
+        {
+            services.ConfigureSingletonIOption<SiteOptions>(Configuration,
+             StuffPackerConfigurationOptionNames.SiteOptions);
+        }
         public IConfiguration Configuration { get; }
         private ILoggerFactory LoggerFactory { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureOptions(services, Configuration);
             services.AddScoped<HttpClient>();
             
           
@@ -46,12 +56,18 @@ namespace StuffPacker
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
+                
+                
 
             }).AddEntityFrameworkStores<StuffPackerDbContext>();
+
+
+           
+
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddStuffPackerServices(Configuration, LoggerFactory);
-           
+            services.AddHttpClient();
             services.AddFluxor(options =>
             {
                 options.UseDependencyInjection(typeof(Startup).Assembly);
@@ -84,11 +100,17 @@ namespace StuffPacker
             app.UseAuthentication();
             app.UseAuthorization();
 
+           
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapAreaControllerRoute(
+           "api",
+           "api",
+           "api/{controller=test}/{action=Index}/{id?}");
             });
+
         }
     }
 }

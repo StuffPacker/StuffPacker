@@ -9,5 +9,9 @@ namespace StuffPacker.Services
     {
         Task<IEnumerable<ProductViewModel>> GetById();
         Task Delete(Guid productId);
+
+        Task<IEnumerable<ProductListCategoryViewModel>> GetProductGroups();
+        Task<Guid> UpsertProductGroupsExpandCollapse(Guid id, bool maximized, string name);
+        Task DeleteProductGroup(Guid id);
     }
 }
