@@ -63,7 +63,7 @@ namespace Stuffpacker.Api.Client.ApiClient
 
         private HttpClient CreateHttpClient()
         {
-            var baseAddress = new Uri(_siteOptions.BaseUrl);
+            var baseAddress = new Uri(_siteOptions.ApiBaseUrl);
 
             var client = _httpClientFactory.CreateClient();
 
