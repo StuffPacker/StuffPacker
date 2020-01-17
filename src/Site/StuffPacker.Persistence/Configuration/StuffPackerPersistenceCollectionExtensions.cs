@@ -8,7 +8,8 @@ namespace StuffPacker.Persistence.Configuration
     public static class StuffPackerPersistenceCollectionExtensions
     {
         public static IServiceCollection AddStuffPackerPersistence(this IServiceCollection services,
-           IConfiguration configuration)
+           IConfiguration configuration
+           )
         {
 
 
