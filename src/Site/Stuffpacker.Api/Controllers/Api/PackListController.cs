@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stuffpacker.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +10,9 @@ namespace Stuffpacker.Api.Controllers.Api
     [Route("api/v1/packlist")]
    public  class PackListController:BaseController
     {
-        private readonly IPackListService _packListService;
+       
 
-        public PackListController(IPackListService packListService)
-        {
-            _packListService = packListService;
-        }
+       
 
         [HttpGet("")]
         public async Task<IActionResult> Get()
