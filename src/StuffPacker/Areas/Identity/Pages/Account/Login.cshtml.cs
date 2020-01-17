@@ -16,6 +16,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Shared.Contract.Provider;
+using Shared.Contract.Options;
+using Microsoft.Extensions.Options;
 
 namespace StuffPacker.Areas.Identity.Pages.Account
 {
@@ -27,17 +29,20 @@ namespace StuffPacker.Areas.Identity.Pages.Account
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly ITokenProvider _tokenProvider;
+        private readonly SiteOptions _siteOptions;
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
             UserManager<IdentityUser> userManager,
             IEmailSender emailSender,
-            ITokenProvider tokenProvider)
+            ITokenProvider tokenProvider,
+            IOptions<SiteOptions> siteOptions)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _tokenProvider = tokenProvider;
+            _siteOptions = siteOptions.Value;
         }
 
         [BindProperty]
@@ -152,7 +157,8 @@ namespace StuffPacker.Areas.Identity.Pages.Account
         private string GetToken(Guid customerId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("this is the secret key");
+            
+            var key = Encoding.ASCII.GetBytes(_siteOptions.ApiSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
