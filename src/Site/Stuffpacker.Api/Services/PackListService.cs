@@ -1,5 +1,4 @@
-﻿using Shared.Contract.Dtos;
-using StuffPacker;
+﻿
 
 using System;
 using System.Collections.Generic;
@@ -20,20 +19,20 @@ namespace Stuffpacker.Api.Services
         //    _personalizedProductRepository = personalizedProductRepository;
         //    _productRepository = productRepository;
         //}
-        public async Task<IEnumerable<PackListDto>> Get(Guid userId)
-        {
-            var packLists = new List<PackListDto>();
-            //var list = await this._packListsRepository.GetByUser(userId);
-            //if (list == null)
-            //{
-            //    return packLists;
-            //}
-            //foreach (var item in list)
-            //{
-            //    packLists.Add(new PackListDto { UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
-            //}
-            return packLists;
-        }
+        //public async Task<IEnumerable<PackListDto>> Get(Guid userId)
+        //{
+        //    var packLists = new List<PackListDto>();
+        //    var list = await this._packListsRepository.GetByUser(userId);
+        //    if (list == null)
+        //    {
+        //        return packLists;
+        //    }
+        //    foreach (var item in list)
+        //    {
+        //        packLists.Add(new PackListDto { UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
+        //    }
+        //    return packLists;
+        //}
         //private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
         //{
         //    var list = new List<PackListGroupDto>();
