@@ -20,7 +20,7 @@ namespace StuffPacker.Persistence.Repository
 
         public async Task Add(UserProfileModel model)
         {
-            _context.Add(model.Entity);
+            await _context.AddAsync(model.Entity);
             await _context.SaveChangesAsync();
         }
 

@@ -22,7 +22,7 @@ namespace StuffPacker.Persistence.Repository
 
         public async Task Add(ProductModel model)
         {
-            _context.Add(model.Entity);
+            await _context.AddAsync(model.Entity);
             await _context.SaveChangesAsync();
         }
 
@@ -78,7 +78,7 @@ namespace StuffPacker.Persistence.Repository
                 {
                     PersonalizedProductModel pp = new PersonalizedProductModel(Guid.NewGuid(), userId, model.Id);
                     pp.Update(pModel.Category,pModel.Star,pModel.Wearable,pModel.Consumables);
-                    _context.Add(pp.Entity);
+                    await _context.AddAsync(pp.Entity);
                 }
 
                 await _context.SaveChangesAsync();

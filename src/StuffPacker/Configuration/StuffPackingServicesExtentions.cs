@@ -3,11 +3,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contract;
+using Shared.Contract.Provider;
 using Shared.Mail.Configuration;
 using Shared.Mail.Options;
+using Stuffpacker.Api.Client.Configuration;
+
 using StuffPacker.Components.Personalize;
 using StuffPacker.Mapper;
 using StuffPacker.Persistence.Configuration;
+using StuffPacker.Provider;
 using StuffPacker.Repositories;
 using StuffPacker.Services;
 
@@ -23,7 +27,7 @@ namespace StuffPacker.Configuration
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICurrentUser, CurrentUser>();
             services.AddScoped<IMemberService, MemberService>();
-            services.AddScoped<IMemberMapper, MemberMapper>();
+           
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFollowMapper, FollowMapper>();
 
@@ -36,7 +40,19 @@ namespace StuffPacker.Configuration
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<MailClientOptions>(configuration.GetSection("MailClientOptions"));
+            services.AddSingleton<ITokenProvider, TokenProvider>();
+
+
+            
+            //Mappers
+            services.AddScoped<IMemberMapper, MemberMapper>();
+            services.AddScoped<IPackListMapper, PackListMapper>();
+            
+
+
+
             services.AddSharedMail(configuration);
+            services.AddStuffPackerApiClientServices(configuration,loggerFactory);
             return services;
         }
     }

@@ -26,8 +26,10 @@ namespace StuffPacker.Services
         private readonly IPersonalizedProductRepository _personalizedProductRepository;
 
         private readonly ICurrentUser _currentUser;
+        private readonly IProductGroupRepository _productGroupRepository;
 
-        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper, IPersonalizedProductRepository personalizedProductRepository, ICurrentUser currentUser)
+        public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper, IPersonalizedProductRepository personalizedProductRepository, ICurrentUser currentUser,
+            IProductGroupRepository productGroupRepository)
         {
             _packListsRepository = packListsRepository;
             _productRepository = productRepository;
@@ -35,6 +37,7 @@ namespace StuffPacker.Services
             _productMapper = productMapper;
             _personalizedProductRepository = personalizedProductRepository;
             _currentUser = currentUser;
+            _productGroupRepository = productGroupRepository;
         }
 
         public async Task Add(Guid id, string name, Guid userId)
@@ -164,6 +167,7 @@ namespace StuffPacker.Services
             item.UpdateGroup(model.Id, model.Name);
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+            _messageService.SendMessage(new StringMessage($"ProductService:Update"));
         }
 
         public async Task UpdateProduct(ProductViewModel model)
@@ -179,7 +183,18 @@ namespace StuffPacker.Services
             }
             pModel.Update(model.Category,model.Star,model.Wearable,model.Consumables);
             await this._productRepository.Update(product,pModel);
+            //check if productCategory exist
+            var categoryExist = await this._productGroupRepository.GetByName(userId,model.Category);
+            if(categoryExist==null)
+            {
+                var newProductGroup = new ProductGroupModel(new Persistence.Entity.ProductGroupEntity { Id=Guid.NewGuid(),Name=model.Category,Maximized=true,Owner=userId});
+                await _productGroupRepository.Add(newProductGroup);
+            }
+
+
+
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+            _messageService.SendMessage(new StringMessage($"ProductService:Update"));
         }
 
         private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix,Guid userId)

@@ -420,6 +420,26 @@ namespace StuffPacker.Persistence.Migrations
                     b.ToTable("PersonalizedProducts");
                 });
 
+            modelBuilder.Entity("StuffPacker.Persistence.Entity.ProductGroupEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Maximized")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Owner")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductGroups");
+                });
+
             modelBuilder.Entity("StuffPacker.Persistence.Entity.UserProfileEntity", b =>
                 {
                     b.Property<Guid>("Id")

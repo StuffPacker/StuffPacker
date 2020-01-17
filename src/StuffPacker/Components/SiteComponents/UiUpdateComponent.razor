@@ -1,6 +1,7 @@
 ﻿@using StuffPacker.Services
 @using System.Reactive.Linq
 @using StuffPacker.store.packlist.Get
+@using StuffPacker.store.UserProduct
 @inject IDispatcher Dispatcher
 @inject IMessageService MessageService
 @code {
@@ -20,7 +21,10 @@
         {
             InvokeAsync(() => Dispatcher.Dispatch(new GetPackListDataAction()));
         }
-       
+        if (msg.StartsWith("ProductService:Update"))
+        {
+            InvokeAsync(() => Dispatcher.Dispatch(new GetUserProductsDataAction()));
+        }
 
     }
     private IDisposable SubscribeForMessageUpdates(Action<string> updateCount) => MessageService
