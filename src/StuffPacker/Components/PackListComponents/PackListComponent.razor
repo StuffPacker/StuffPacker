@@ -61,9 +61,7 @@
                     <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
                         @foreach (var item in weightPrefix)
                         {
-                            <MatBlazor.MatOption @attributes="@(GetSelected(weightPrefixValue == item))" Id="@item">
-                                @item
-                            </MatBlazor.MatOption>
+                            <MatBlazor.MatOption Value="@item" Id="@item"></MatBlazor.MatOption>
                         }
                     </MatBlazor.MatSelect><br />
                     <MatButton Icon="save" Style="color:green;" OnClick="@SaveList" Label="Save changes"></MatButton>
@@ -88,7 +86,7 @@
 
 @foreach (var group in Model.Items)
 {
-    <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" />
+    <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" Categories="@Categories"/>
 
 }
 @if (!PreviewMode)
@@ -104,14 +102,17 @@
 
     [Parameter]
     public bool PreviewMode { get; set; }
+    [Parameter]
+    public string[] Categories { get; set; }
 
-     ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
+    ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
     public string weightPrefixValue { get; set; }
     List<string> weightPrefix = new List<string>();
     string tempListName = "";
     bool ListEditMode = false;
     bool showLink = false;
     string packListUrl;
+
     protected override async Task OnInitializedAsync()
     {
         weightPrefixValue = Model.WeightPrefix.ToString();
