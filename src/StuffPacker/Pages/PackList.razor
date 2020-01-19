@@ -1,8 +1,10 @@
 ﻿@page "/packlist"
 @using StuffPacker.store.packlist
 @using StuffPacker.store.packlist.Get
+@using StuffPacker.store.UserProduct
 @using Microsoft.AspNetCore.Http;
 @inject IState<PackListDataState> PackListDataState
+@inject IState<UserProductsDataState> ProductsDataState
 @inject IDispatcher Dispatcher
 @inject StuffPacker.Services.IPackListService _packListService;
 @inject IHttpContextAccessor _httpContextAccessor;
@@ -13,24 +15,24 @@
 }
 else
 {
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+            </div>
+            <h1>Packlists</h1>
+            <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
         </div>
-        <h1>Packlists</h1>
-        <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
-    </div>
-    <div class="row">
-        @foreach (var item in PackListDataState.Value.PackLists)
+        <div class="row">
+            @foreach (var item in PackListDataState.Value.PackLists)
             {
-        <div class="col-sm-6" style="border:solid 1px #eee">
-            <StuffPacker.Components.PackListComponents.PackListComponent Model="item" />
-        </div>
+                <div class="col-sm-6" style="border:solid 1px #eee">
+                    <StuffPacker.Components.PackListComponents.PackListComponent Model="item" Categories="@GetCategories().ToArray()" />
+                </div>
             }
+        </div>
     </div>
-</div>
-   
-    
+
+
 
 }
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -56,8 +58,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Dispatcher.Dispatch(new GetUserProductsDataAction());
         PackListDataState.Subscribe(this);
-      
+        ProductsDataState.Subscribe(this);
+
     }
     void OpenAddDialog()
     {
@@ -89,5 +93,21 @@ else
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         return userId;
     }
-
+    private List<string> GetCategories()
+    {
+        var list = new List<string>();
+        if(ProductsDataState.Value.CategoryList==null)
+        {
+            return list;
+        }
+        foreach (var item in ProductsDataState.Value.CategoryList)
+        {
+            if(item.Id==Guid.Empty)
+            {
+                continue;
+            }
+            list.Add(item.Name);
+        }
+        return list;
+    }
 }

@@ -96,7 +96,7 @@ else
 }
 @if(!PreviewMode)
 {
-    <ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" />
+    <ProductUpdateComponent Model="productUpdateComponentViewModel" WeightPrefixes="weightPrefix" Categories="Categories" />
 }
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 
@@ -116,6 +116,9 @@ else
 
     [Parameter]
     public bool PreviewMode { get; set; }
+
+    [Parameter]
+    public string[] Categories { get; set; }
 
     ProductUpdateComponentViewModel productUpdateComponentViewModel = new ProductUpdateComponentViewModel();
     ConfirmComponentViewModel confirmModel = new ConfirmComponentViewModel();
@@ -141,7 +144,7 @@ else
         tempGroupName = group.Name;
         GroupEditMode = true;
     }
- void EditGroupItem(Guid groupId, Guid productId)
+    void EditGroupItem(Guid groupId, Guid productId)
     {
         var model = ListModel.Items.First(x => x.Id == groupId);
         var product = model.Items.First(x => x.Id == productId);
@@ -150,6 +153,7 @@ else
         productUpdateComponentViewModel.WeightPrefixValue = product.WeightPrefix.ToString();
         productUpdateComponentViewModel.ProductModel = product;
         productUpdateComponentViewModel.DialogIsOpen = true;
+
     }
     async Task DeleteGroupItem(Guid groupId, Guid productId)
     {
