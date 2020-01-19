@@ -33,7 +33,7 @@
                         @foreach (var item in FilteredList)
                         {
                             <tr>
-                                <td> <MatCheckbox @bind-Checked="@item.Selected" Label=""></MatCheckbox></td>
+                                <td> <MatCheckbox @bind-Value="@item.Selected" Label=""></MatCheckbox></td>
                                 <td>@item.Name</td>
                                 <td>
                                     @item.WeightAndToken
