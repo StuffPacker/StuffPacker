@@ -17,6 +17,7 @@ namespace StuffPacker.Model
         public string WeightPrefix  { get;set;}
         public bool IsPublic { get;  set; }
 
+        public bool Maximized { get; set; }
         public PackListEntity(Guid id,Guid userId)
         {
             Id = id;

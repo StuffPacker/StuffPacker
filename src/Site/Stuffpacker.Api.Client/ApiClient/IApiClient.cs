@@ -1,4 +1,5 @@
 ﻿using Shared.Contract.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,5 +10,6 @@ namespace Stuffpacker.Api.Client.ApiClient
     {
         Task<IEnumerable<PackListDto>> GetPackLists();
         void SetPrincipal(ClaimsPrincipal user);
+        Task UpdatePackListMaximized(Guid listId, bool maximized);
     }
 }

@@ -13,6 +13,8 @@ namespace StuffPacker.Services
         Task Update(PackListViewModel model);
         
         Task AddGroup(Guid listId,string name);
+
+        Task UpdateMaximized(Guid listId,bool maximized);
         Task AddGroupItem(Guid listId, Guid groupId, string name, Guid userId);
 
         Task UpdateProduct(ProductViewModel model);

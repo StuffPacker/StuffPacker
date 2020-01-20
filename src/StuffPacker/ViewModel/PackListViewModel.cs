@@ -38,7 +38,7 @@ namespace StuffPacker.ViewModel
         }
 
 
-
+        public bool Maximized { get; set; }
         public IEnumerable<PackListGroupViewModel> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }

@@ -1,4 +1,6 @@
-﻿using Shared.Contract.Dtos;
+﻿using Shared.Contract;
+using Shared.Contract.Dtos;
+using Shared.Contract.Dtos.PackList;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -32,8 +34,30 @@ namespace Stuffpacker.Api.Client.ApiClient
                     await HandleBadRequestOrGenericError(response);
                 }
              
-               
                 return await ToResult<List<PackListDto>>(response); ;
+            }
+        }
+
+        public async Task UpdatePackListMaximized(Guid listId, bool maximized)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                var dto = new UpdatePackListMaximizedDto
+                {
+                    Maximized = maximized
+                };
+                using (var requestBody= new JsonContent(dto))
+                {
+
+               
+                    var response = await client.PatchAsync($"{PacklistUrlPrefix}/{listId}/maximized", requestBody);
+                if (!response.IsSuccessStatusCode)
+                {
+                    await HandleBadRequestOrGenericError(response);
+                }
+
+                    return;
+                }
             }
         }
     }

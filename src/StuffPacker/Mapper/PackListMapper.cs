@@ -27,7 +27,8 @@ namespace StuffPacker.Mapper
                 Modified = dto.Modified,
                 UserId = dto.UserId,
                 WeightPrefix = dto.WeightPrefix,
-                Items = GetItems(dto.Items)
+                Items = GetItems(dto.Items),
+                Maximized=dto.Maximized
             };
         }
 
