@@ -18,6 +18,9 @@ using StuffPacker.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace StuffPacker
 {
@@ -39,6 +42,15 @@ namespace StuffPacker
         }
         public IConfiguration Configuration { get; }
         private ILoggerFactory LoggerFactory { get; }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.Conflict)
+                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(200, retryAttempt)));
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -61,8 +73,8 @@ namespace StuffPacker
 
             }).AddEntityFrameworkStores<StuffPackerDbContext>();
 
+            services.AddHttpClient("ApiClient").SetHandlerLifetime(TimeSpan.FromMinutes(5)).AddPolicyHandler(GetRetryPolicy());
 
-           
 
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });

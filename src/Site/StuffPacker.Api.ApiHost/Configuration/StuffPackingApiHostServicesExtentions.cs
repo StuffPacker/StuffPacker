@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contract;
@@ -15,6 +16,7 @@ namespace StuffPacker.Api.ApiHost.Configuration
             services.AddScoped<ICurrentUser, CurrentUser>();
             services.AddScoped<IPackListService, PackListService>();
              services.AddStuffPackerPersistence(configuration);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             return services;
         }
     }

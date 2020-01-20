@@ -43,5 +43,6 @@ namespace Shared.Contract.Dtos
         public IEnumerable<PackListGroupDto> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
+        public bool  Maximized { get; set; }
     }
 }

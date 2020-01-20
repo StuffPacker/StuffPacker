@@ -3,98 +3,114 @@
 
 @inject StuffPacker.Services.IPackListService _packListService;
 @inject IHttpContextAccessor _httpContextAccessor;
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-6">
-            @if (!PreviewMode)
-            {
-                if (Model.IsPublic)
+@if (Model.Maximized)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                @if (!PreviewMode)
                 {
-                    <MatButton Icon="visibility" Style="color:darkslategrey;" Label="Public"></MatButton>
-                    if (showLink)
+                    if (Model.IsPublic)
                     {
-                        <div style="background-color:#eee;">
-                            <MatButton Icon="keyboard_arrow_up" OnClick="@ShowLink" Style="color:black;"></MatButton><a style="color:darkgreen;" href="@packListUrl" target="_blank">This is your public link</a><MatButton Icon="highlight_off" OnClick="@RemovePublic" Style="color:darkred;"></MatButton>
-                        </div>
-
+                        <MatButton Icon="visibility" Style="color:darkslategrey;" Label="Public"></MatButton>
+                        if (showLink)
+                        {
+                            <div style="background-color:#eee;">
+                                <MatButton Icon="keyboard_arrow_up" OnClick="@ShowLink" Style="color:black;"></MatButton><a style="color:darkgreen;" href="@packListUrl" target="_blank">This is your public link</a><MatButton Icon="highlight_off" OnClick="@RemovePublic" Style="color:darkred;"></MatButton>
+                            </div>
+                        }
+                        else
+                        {
+                            <MatButton Icon="keyboard_arrow_down" OnClick="@ShowLink" Style="color:black;"></MatButton>
+                        }
 
                     }
                     else
                     {
-                        <MatButton Icon="keyboard_arrow_down" OnClick="@ShowLink" Style="color:black;"></MatButton>
+                        <MatButton Icon="visibility_off" Style="color:black;" OnClick="@MakePublic" Label="Make public"></MatButton>
+                    }
+                }
+                <h2>
+                    @if (ListEditMode)
+                    {
+                        <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name"></MatTextField>
+                    }
+                    else
+                    {
+                        if (!PreviewMode)
+                        {
+                            <MatButton Icon="keyboard_arrow_up" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
+                        }
+                        @Model.Name
+                        if (!PreviewMode)
+                        {
+                            <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditList())" Label=""></MatButton>
+                            <MatIconButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) =>
+                                                                                                                 {
+                                                                                                                     confirmModel.DialogIsOpen = true;
+                                                                                                                     confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
+                                                                                                                     confirmModel.OkButtonText = "Delete";
+                                                                                                                     confirmModel.OnOkClick = async () => await DeleteList();
+                                                                                                                 })"></MatIconButton>
+
+
+
+                        }
+
                     }
 
-                }
-                else
-                {
-                    <MatButton Icon="visibility_off" Style="color:black;" OnClick="@MakePublic" Label="Make public"></MatButton>
-                }
-            }
-            <h2>
+                </h2>
                 @if (ListEditMode)
                 {
-                    <MatTextField @bind-Value="@Model.Name" HelperText="Listname" Label="Name"></MatTextField>
+                    <div style="margin-top:10px;">
+                        <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
+                            @foreach (var item in weightPrefix)
+                                    {
+                                <MatBlazor.MatOption Value="@item" Id="@item"></MatBlazor.MatOption>
+                                    }
+                            /**/
+                            /**/
+                        </MatBlazor.MatSelect><br />
+                        <MatButton Icon="save" Style="color:green;" OnClick="@SaveList" Label="Save changes"></MatButton>
+                    </div>
                 }
                 else
                 {
-                    @Model.Name
-                    if (!PreviewMode)
-                    {
-                        <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditList())" Label=""></MatButton>
-                        <MatIconButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) => {
-                                                                        confirmModel.DialogIsOpen = true;
-                                                                        confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
-                                                                        confirmModel.OkButtonText = "Delete";
-                                                                        confirmModel.OnOkClick = async () => await DeleteList();
-                                                                    })"></MatIconButton>
-
-
-
-                    }
-
+                    <b>Total weight: @Model.WeightAndTokenShort</b>
                 }
 
-            </h2>
-            @if (ListEditMode)
-            {
-                <div style="margin-top:10px;">
-                    <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
-                        @foreach (var item in weightPrefix)
-                        {
-                            <MatBlazor.MatOption Value="@item" Id="@item"></MatBlazor.MatOption>
-                        }
-                    </MatBlazor.MatSelect><br />
-                    <MatButton Icon="save" Style="color:green;" OnClick="@SaveList" Label="Save changes"></MatButton>
-                </div>
-            }
-            else
-            {
-                <b>Total weight: @Model.WeightAndTokenShort</b>
-            }
-
-        </div>
-        <div class="col-sm-3">
-            <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
-        </div>
-        <div class="col-sm-3">
-            <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@GetTypesGraph(Model.Items.ToList())" />
+            </div>
+            <div class="col-sm-3">
+                <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@Model.Items.ToList()" />
+            </div>
+            <div class="col-sm-3">
+                <StuffPacker.Components.GraphComponents.ProductWeightComponent Groups="@GetTypesGraph(Model.Items.ToList())" />
+            </div>
         </div>
     </div>
-</div>
 
 
 
-@foreach (var group in Model.Items)
-{
-    <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" Categories="@Categories"/>
+    @foreach (var group in Model.Items)
+    {
+        <PackListGroupComponent Model="@group" PreviewMode="@PreviewMode" ListModel="@Model" UserId="@GetUserId()" Categories="@Categories" />
+
+    }
+    @if (!PreviewMode)
+    {
+        <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+    }
 
 }
-@if (!PreviewMode)
+else
 {
-    <MatButton Icon="add_circle" Style="color:green;" OnClick="@AddGroup" Label="Add group"></MatButton>
+    <div style="background-color:#eee; border:solid 1px #ccc; padding:3px;">
+        <b style="font-size:large">
+            <MatButton Icon="keyboard_arrow_down" Style="color:black;" OnClick="@ExpandColaps" Label=""></MatButton>
+            @Model.Name
+        </b>       
+    </div>
 }
-
-
 <StuffPacker.Components.BaseComponents.ConfirmComponent Model="confirmModel" />
 @code {
     [Parameter]
@@ -112,6 +128,14 @@
     bool ListEditMode = false;
     bool showLink = false;
     string packListUrl;
+
+    async Task ExpandColaps()
+    {
+        
+        await _packListService.UpdateMaximized(Model.Id, !Model.Maximized);
+        Model.Maximized = !Model.Maximized;
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
