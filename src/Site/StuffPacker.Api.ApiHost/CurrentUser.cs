@@ -1,69 +1,113 @@
-﻿using Shared.Contract;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Contract;
 using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace StuffPacker.Api.ApiHost
 {
     public class CurrentUser : ICurrentUser
     {
-        public bool IsAuthenticated => throw new NotImplementedException();
+        private readonly IHttpContextAccessor _httpContextAccessor;
+      
 
-        public IEnumerable<FollowMemberViewModel> GetFollowers()
+        public CurrentUser(IHttpContextAccessor httpContextAccessor)
         {
-            throw new NotImplementedException();
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public IEnumerable<FollowMemberViewModel> GetFollowing()
-        {
-            throw new NotImplementedException();
-        }
+        private string UserName;
+        private Guid userId;
+        private IEnumerable<FriendViewModel> FriendsList;
+        private List<FollowMemberViewModel> Following;
+        private List<FollowMemberViewModel> Followers;
+        private UserProfile UserProfile;
 
-        public Task<IEnumerable<FriendViewModel>> GetFriends()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<UserProfile> GetProfile()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Guid GetUserId()
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsAuthenticated => _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
 
         public string GetUserName()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(UserName) && IsAuthenticated)
+            {
+               
+                var n = _httpContextAccessor.HttpContext.User.FindFirst("CustomerId").Value;
+                UserName = n;
+                return n;
+            }
+            return "";
         }
 
         public UserType GetUserType()
         {
-            throw new NotImplementedException();
+            return UserType.User;
         }
 
-        public void SetFollowers(List<FollowMemberViewModel> members)
+        public Guid GetUserId()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if ((userId == null || userId == Guid.Empty) && IsAuthenticated)
+                {
+                    var id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    userId = id;
+                    return id;
+                }
+                return userId;
+            }
+            catch (Exception)
+            {
+
+                return Guid.Empty;
+            }
+
+
         }
 
-        public void SetFollowing(List<FollowMemberViewModel> members)
+
+
+        public async Task<IEnumerable<FriendViewModel>> GetFriends()
         {
-            throw new NotImplementedException();
+            return FriendsList;
+
+
+        }
+
+        public async Task<UserProfile> GetProfile()
+        {
+            return UserProfile;
         }
 
         public void SetFriends(IEnumerable<FriendViewModel> friends)
         {
-            throw new NotImplementedException();
+            FriendsList = friends;
         }
 
         public void SetProfile(UserProfile profile)
         {
-            throw new NotImplementedException();
+            UserProfile = profile;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowing()
+        {
+            return Following;
+        }
+
+        public void SetFollowing(List<FollowMemberViewModel> members)
+        {
+            Following = members;
+        }
+
+        public IEnumerable<FollowMemberViewModel> GetFollowers()
+        {
+            return Followers;
+        }
+
+        public void SetFollowers(List<FollowMemberViewModel> members)
+        {
+            Followers = members;
         }
     }
 }

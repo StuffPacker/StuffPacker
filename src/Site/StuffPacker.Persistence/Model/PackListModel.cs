@@ -32,6 +32,8 @@ namespace StuffPacker.Model
 
         public Guid UserId => Entity.UserId;
 
+        public bool Maximized => Entity.Maximized;
+
         private IEnumerable<PackListGroupModel> GetGroups()
         {
             var groups = new List<PackListGroupModel>();
@@ -70,6 +72,11 @@ namespace StuffPacker.Model
             list.Add(productId);
             g.Items = list;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
+        }
+
+        public void UpdateMaximized(bool maximized)
+        {
+            Entity.Maximized = maximized;
         }
 
         public void DeleteProductItem(Guid groupId, Guid productId)

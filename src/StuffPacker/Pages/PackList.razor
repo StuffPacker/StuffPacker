@@ -6,8 +6,9 @@
 @inject IState<PackListDataState> PackListDataState
 @inject IState<UserProductsDataState> ProductsDataState
 @inject IDispatcher Dispatcher
-@inject StuffPacker.Services.IPackListService _packListService;
-@inject IHttpContextAccessor _httpContextAccessor;
+@inject StuffPacker.Services.IPackListService _packListService
+@inject IHttpContextAccessor _httpContextAccessor
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 @if (PackListDataState.Value.PackLists == null)
 {
@@ -15,10 +16,9 @@
 }
 else
 {
+   
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-            </div>
+        <div class="row">          
             <h1>Packlists</h1>
             <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
         </div>
@@ -31,8 +31,6 @@ else
             }
         </div>
     </div>
-
-
 
 }
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -58,6 +56,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
+        //if (_httpContextAccessor.HttpContext.User.FindFirst("SpAdminApiToken") == null)
+        //{
+        //    NavigationManager.NavigateTo("/identity/account/logout",true);
+        //}
+
+
+
         Dispatcher.Dispatch(new GetUserProductsDataAction());
         PackListDataState.Subscribe(this);
         ProductsDataState.Subscribe(this);
@@ -96,13 +102,13 @@ else
     private List<string> GetCategories()
     {
         var list = new List<string>();
-        if(ProductsDataState.Value.CategoryList==null)
+        if (ProductsDataState.Value.CategoryList == null)
         {
             return list;
         }
         foreach (var item in ProductsDataState.Value.CategoryList)
         {
-            if(item.Id==Guid.Empty)
+            if (item.Id == Guid.Empty)
             {
                 continue;
             }

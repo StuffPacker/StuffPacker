@@ -1,4 +1,6 @@
-﻿using Shared.Contract;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Contract;
+using Stuffpacker.Api.Client.ApiClient;
 using StuffPacker.Mapper;
 using StuffPacker.Model;
 using StuffPacker.Model.Messaging;
@@ -28,8 +30,13 @@ namespace StuffPacker.Services
         private readonly ICurrentUser _currentUser;
         private readonly IProductGroupRepository _productGroupRepository;
 
+        private readonly IApiClient _apiClient;
+    private readonly    IHttpContextAccessor _httpContextAccessor;
+
         public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper, IPersonalizedProductRepository personalizedProductRepository, ICurrentUser currentUser,
-            IProductGroupRepository productGroupRepository)
+            IProductGroupRepository productGroupRepository,
+            IApiClient apiClient,
+            IHttpContextAccessor httpContextAccessor)
         {
             _packListsRepository = packListsRepository;
             _productRepository = productRepository;
@@ -38,6 +45,8 @@ namespace StuffPacker.Services
             _personalizedProductRepository = personalizedProductRepository;
             _currentUser = currentUser;
             _productGroupRepository = productGroupRepository;
+            _apiClient = apiClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task Add(Guid id, string name, Guid userId)
@@ -168,6 +177,14 @@ namespace StuffPacker.Services
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
             _messageService.SendMessage(new StringMessage($"ProductService:Update"));
+        }
+
+        public async Task UpdateMaximized(Guid listId, bool maximized)
+        {
+
+            _apiClient.SetPrincipal(_httpContextAccessor.HttpContext.User);
+            await _apiClient.UpdatePackListMaximized(listId,maximized);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
         public async Task UpdateProduct(ProductViewModel model)

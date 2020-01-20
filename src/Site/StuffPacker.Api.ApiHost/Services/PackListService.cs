@@ -1,6 +1,7 @@
 ﻿
 
 using Shared.Contract.Dtos;
+using Shared.Contract.Dtos.PackList;
 using StuffPacker.Model;
 using StuffPacker.Persistence.Repository;
 using StuffPacker.Repositories;
@@ -33,10 +34,21 @@ namespace StuffPacker.Api.ApiHost.Controllers
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListDto { UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
+                packLists.Add(new PackListDto {Maximized=item.Maximized, UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
             }
             return packLists;
         }
+
+        public async Task UpdateMaximized(Guid id,UpdatePackListMaximizedDto dto)
+        {
+            var packlist = await _packListsRepository.Get(id);
+            packlist.UpdateMaximized(dto.Maximized);
+            await _packListsRepository.Update(packlist);
+
+        }
+
+       
+
         private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
         {
             var list = new List<PackListGroupDto>();

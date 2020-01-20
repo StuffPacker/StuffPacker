@@ -65,7 +65,7 @@ namespace Stuffpacker.Api.Client.ApiClient
         {
             var baseAddress = new Uri(_siteOptions.ApiBaseUrl);
 
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("ApiClient");
 
             client.BaseAddress = baseAddress;
             client.Timeout = TimeSpan.FromSeconds(60);
