@@ -11,7 +11,10 @@
             <img alt="User Image" src="/img/user.png" />
         </div>
         <div class="col-md">
-            <h3>@nickName</h3>
+            <div style="display:none;">
+                <MatIconButton Class=".sp-mdc-button" Icon="settings" OnClick="@UpdateUserSettings"></MatIconButton>
+            </div>
+           <h3>@nickName</h3>
             @fullName
         </div>
     </div>
@@ -20,15 +23,16 @@
 <div class="container-fluid">
     <div class="row">
         <MemberFollowComponent Title="I´m Following" Members="@following" Following="true" NoMemberText="<p>You are not following anyone jet</p>" OnFollowChange="ReloadFollow" />
-        <MemberFollowComponent Title="Following Me" Members="@followers" Following="false" NoMemberText="<p>No one is following you</p>" OnFollowChange="ReloadFollow"  />
+        <MemberFollowComponent Title="Following Me" Members="@followers" Following="false" NoMemberText="<p>No one is following you</p>" OnFollowChange="ReloadFollow" />
         <StuffPacker.Components.PackListComponents.PackListsReferensListComponent Lists="lists" />
     </div>
 </div>
 
+
 @code {
     [Parameter]
     public Guid MemberId { get; set; }
-
+    bool dialogUpdateUserIsOpen = false;
 
     string nickName = string.Empty;
     string fullName = string.Empty;
@@ -36,33 +40,45 @@
     List<FollowMemberViewModel> followers = new List<FollowMemberViewModel>();
 
     List<PackListViewModel> lists = new List<PackListViewModel>();
+    private void UpdateUserDialogOkClick()
+    {
+
+    }
     protected override async Task OnInitializedAsync()
     {
         PackListDataState.Subscribe(this);
         var userProfile = await _currentUserProvider.GetProfile();
 
-       
+
 
         nickName = userProfile.NickName;
+        if (nickName == "-")
+        {
+            nickName = "No Name!";
+
+        }
         fullName = userProfile.FirstName + " " + userProfile.LastName;
 
-         following = (await _currentUserProvider.GetFollowing()).ToList();      
+        following = (await _currentUserProvider.GetFollowing()).ToList();
         followers = (await _currentUserProvider.GetFollowers()).ToList();
-      
-       
-        if(PackListDataState.Value.PackLists!=null)
-        {
-             lists = (PackListDataState.Value.PackLists).ToList();
-        }
-       
-    }
 
-     private async Task ReloadFollow()
+
+        if (PackListDataState.Value.PackLists != null)
+        {
+            lists = (PackListDataState.Value.PackLists).ToList();
+        }
+
+    }
+    private async Task UpdateUserSettings()
+    {
+        dialogUpdateUserIsOpen = true;
+    }
+    private async Task ReloadFollow()
     {
         await this._currentUserProvider.ReloadFollowers();
-         await this._currentUserProvider.ReloadFollowing();
+        await this._currentUserProvider.ReloadFollowing();
 
-          following = (await _currentUserProvider.GetFollowing()).ToList();      
+        following = (await _currentUserProvider.GetFollowing()).ToList();
         followers = (await _currentUserProvider.GetFollowers()).ToList();
         StateHasChanged();
     }

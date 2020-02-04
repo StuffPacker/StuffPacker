@@ -15,7 +15,7 @@
     protected override async Task OnInitializedAsync()
     {
         Guid id = Guid.Parse(idin);
-        PackListViewModel tmpList = await _packListService.GetList(id);
+        PackListViewModel tmpList = await _packListService.GetListViewer(id);
         if (!tmpList.IsPublic)
         {
             if (GetUserId() != tmpList.UserId)
@@ -24,11 +24,12 @@
             }
             else
             {
-                 listModel = tmpList;
+                listModel = tmpList;
             }
         }
         else
         {
+            tmpList.Maximized = true;
             listModel = tmpList;
         }
 
