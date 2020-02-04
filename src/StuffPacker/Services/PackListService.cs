@@ -162,6 +162,19 @@ namespace StuffPacker.Services
           
         }
 
+        public async Task<PackListViewModel> GetListViewer(Guid listId)
+        {
+
+            var packList = await this._packListsRepository.Get(listId);
+            if (packList == null)
+            {
+                return new PackListViewModel();
+            }
+
+            return new PackListViewModel { IsPublic = packList.IsPublic, UserId = packList.UserId, Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix, packList.UserId), WeightPrefix = packList.WeightPrefix };
+
+        }
+
         public async Task Update(PackListViewModel model)
         {
             var item = await this._packListsRepository.Get(model.Id);

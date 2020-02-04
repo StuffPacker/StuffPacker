@@ -9,6 +9,7 @@ namespace StuffPacker.Services
     {
         Task<IEnumerable<PackListViewModel>> Get(Guid userId);
         Task<PackListViewModel> GetList(Guid listId);
+        Task<PackListViewModel> GetListViewer(Guid listId);
         Task Add(Guid id,string name,Guid userId);
         Task Update(PackListViewModel model);
         
