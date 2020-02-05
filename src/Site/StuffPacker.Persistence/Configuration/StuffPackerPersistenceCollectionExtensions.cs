@@ -12,7 +12,7 @@ namespace StuffPacker.Persistence.Configuration
            )
         {
 
-
+            
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IPackListsRepository, PackListsRepository>();
             services.AddTransient<IPersonalizedProductRepository, PersonalizedProductRepository>();

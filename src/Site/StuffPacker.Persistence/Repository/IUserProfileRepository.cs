@@ -13,5 +13,7 @@ namespace StuffPacker.Persistence.Repository
         Task<IEnumerable<UserProfileModel>> Get();
 
         Task Add(UserProfileModel model);
+        Task<UserProfileModel> GetByNickName(string nickname);
+        Task Update(UserProfileModel model);
     }
 }

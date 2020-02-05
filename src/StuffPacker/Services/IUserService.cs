@@ -14,5 +14,7 @@ namespace StuffPacker.Services
 
         Task<IEnumerable<FollowMemberViewModel>> GetFollowing(Guid userId);
         Task<IEnumerable<FollowMemberViewModel>> GetFollowers(Guid userId);
+
+        Task<string> UpdateNames(Guid userId,UserViewModel model);
     }
 }
