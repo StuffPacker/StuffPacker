@@ -70,6 +70,7 @@ namespace StuffPacker.Persistence.Repository
             modelToUpdate.Groups = model.Entity.Groups;
             modelToUpdate.IsPublic = model.Entity.IsPublic;
             modelToUpdate.Maximized = model.Entity.Maximized;
+            modelToUpdate.Visible = model.Entity.Visible;
             await _context.SaveChangesAsync();
         }
 

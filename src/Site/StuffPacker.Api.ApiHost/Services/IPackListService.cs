@@ -11,6 +11,6 @@ namespace StuffPacker.Api.ApiHost.Controllers
     {
         Task<IEnumerable<PackListDto>> Get(Guid userId);
         Task UpdateMaximized(Guid id,UpdatePackListMaximizedDto dto);
-      
+        Task UpdateVisibleList(UpdatePackListVisibleListDto dto);
     }
 }

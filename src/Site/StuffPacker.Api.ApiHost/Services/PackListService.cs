@@ -34,7 +34,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListDto {Maximized=item.Maximized, UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
+                packLists.Add(new PackListDto {Visible=item.Visible,Maximized=item.Maximized, UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
             }
             return packLists;
         }
@@ -47,7 +47,15 @@ namespace StuffPacker.Api.ApiHost.Controllers
 
         }
 
-       
+        public async Task UpdateVisibleList(UpdatePackListVisibleListDto dto)
+        {
+            foreach (var item in dto.VisibleList)
+            {
+                var packlist = await _packListsRepository.Get(item.Id);
+                packlist.UpdateVisible(item.Visible);
+                await _packListsRepository.Update(packlist);
+            }
+        }
 
         private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
         {

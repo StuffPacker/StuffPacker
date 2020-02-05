@@ -34,6 +34,8 @@ namespace StuffPacker.Model
 
         public bool Maximized => Entity.Maximized;
 
+        public bool Visible => Entity.Visible;
+
         private IEnumerable<PackListGroupModel> GetGroups()
         {
             var groups = new List<PackListGroupModel>();
@@ -72,6 +74,11 @@ namespace StuffPacker.Model
             list.Add(productId);
             g.Items = list;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
+        }
+
+        public void UpdateVisible(bool visible)
+        {
+            Entity.Visible = visible;
         }
 
         public void UpdateMaximized(bool maximized)
