@@ -12,6 +12,7 @@ namespace Stuffpacker.Api.Client.ApiClient
     public class ApiClient : BaseApiClient, IApiClient
     {
         private const string PacklistUrlPrefix = "api/v1/packlist";
+        private const string ProfileUrlPrefix = "api/v1/profile";
         private ClaimsPrincipal _user;
         private readonly IApiAuthClientFactory _clientFactory;
 
@@ -84,7 +85,35 @@ namespace Stuffpacker.Api.Client.ApiClient
                 }
             }
         }
-        
-      
+
+        public async Task<ProfileDto> GetUserByNickName(string nickName)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                var response = await client.GetAsync($"{ProfileUrlPrefix}/nickname/{nickName}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    await HandleBadRequestOrGenericError(response);
+                }
+
+                return await ToResult<ProfileDto>(response); ;
+            }
+        }
+
+        public async Task UpdateUserNames(Guid userId, UpdateUserNamesDto dto)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {                
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PatchAsync($"{ProfileUrlPrefix}/{userId}/names", requestBody);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+                    return;
+                }
+            }
+        }
     }
 }

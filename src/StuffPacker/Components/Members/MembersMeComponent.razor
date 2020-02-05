@@ -5,15 +5,14 @@
 @inject ICurrentUserProvider _currentUserProvider
 @inject IUserService _userService
 @inject IState<PackListDataState> PackListDataState
+@inject NavigationManager _navigationManager
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-1">
-            <img alt="User Image" src="/img/user.png" />
+            <img alt="User Image" style="width:100%;" src="@imgUrl" />
         </div>
-        <div class="col-md">
-            <div style="display:none;">
-                <MatIconButton Class=".sp-mdc-button" Icon="settings" OnClick="@UpdateUserSettings"></MatIconButton>
-            </div>
+        <div class="col-md">            
+                <MatIconButton Class=".sp-mdc-button" Icon="settings" OnClick="@UpdateUserSettings"></MatIconButton>           
            <h3>@nickName</h3>
             @fullName
         </div>
@@ -32,10 +31,11 @@
 @code {
     [Parameter]
     public Guid MemberId { get; set; }
-    bool dialogUpdateUserIsOpen = false;
+
 
     string nickName = string.Empty;
     string fullName = string.Empty;
+    string imgUrl = "/img/user.png";
     List<FollowMemberViewModel> following = new List<FollowMemberViewModel>();
     List<FollowMemberViewModel> followers = new List<FollowMemberViewModel>();
 
@@ -58,7 +58,7 @@
 
         }
         fullName = userProfile.FirstName + " " + userProfile.LastName;
-
+        imgUrl = "/img/members/"+userProfile.UserImgPath;
         following = (await _currentUserProvider.GetFollowing()).ToList();
         followers = (await _currentUserProvider.GetFollowers()).ToList();
 
@@ -71,7 +71,7 @@
     }
     private async Task UpdateUserSettings()
     {
-        dialogUpdateUserIsOpen = true;
+        _navigationManager.NavigateTo("/member/settings");
     }
     private async Task ReloadFollow()
     {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contract;
 using StuffPacker.Api.ApiHost.Controllers;
+using StuffPacker.Api.ApiHost.Services;
 using StuffPacker.Persistence.Configuration;
 
 namespace StuffPacker.Api.ApiHost.Configuration
@@ -15,6 +16,8 @@ namespace StuffPacker.Api.ApiHost.Configuration
         {
             services.AddScoped<ICurrentUser, CurrentUser>();
             services.AddScoped<IPackListService, PackListService>();
+            services.AddScoped<IProfileService, ProfileService>();
+            
              services.AddStuffPackerPersistence(configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             return services;

@@ -12,5 +12,7 @@ namespace Stuffpacker.Api.Client.ApiClient
         void SetPrincipal(ClaimsPrincipal user);
         Task UpdatePackListMaximized(Guid listId, bool maximized);
         Task UpdatePackListVisibleList(Dictionary<Guid, bool> visibleList);
+        Task<ProfileDto> GetUserByNickName(string nickName);
+        Task UpdateUserNames(Guid userId, UpdateUserNamesDto dto);
     }
 }
