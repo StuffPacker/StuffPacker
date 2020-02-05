@@ -24,6 +24,26 @@ namespace StuffPacker.Persistence.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<UserProfileModel> GetByNickName(string nickname)
+        {
+            var product = await _context.UserProfiles.AsNoTracking()
+       .FirstOrDefaultAsync(m => m.NickName == nickname);
+            if (product == null)
+            {
+                return null;
+            }
+            return new UserProfileModel(product);
+        }
+
+        public async Task Update(UserProfileModel model)
+        {
+            var modelToUpdate = await _context.UserProfiles.FirstOrDefaultAsync(s => s.Id == model.Id);
+            modelToUpdate.NickName = model.Entity.NickName;
+            modelToUpdate.FirstName = model.Entity.FirstName;
+            modelToUpdate.LastName = model.Entity.LastName; 
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<UserProfileModel> Get(Guid userId)
         {
             var product = await _context.UserProfiles.AsNoTracking()

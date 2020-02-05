@@ -1,0 +1,55 @@
+﻿@page "/member/settings"
+@using Microsoft.AspNetCore.Http;
+@using Mapper
+@inject IUserService _userService
+@inject IHttpContextAccessor _httpContextAccessor
+@inject IUserMapper _userMapper;
+@attribute [Authorize]
+<h3>Member Settings</h3>
+<h2><b style="color:red;">@errorMessage</b></h2>
+<b>Nickname</b>
+<br />
+<MatTextField @bind-Value="@userModel.NickName" HelperText="Nickname" Label="NickName"></MatTextField>
+<br />
+<br />
+<b>FirstName</b>
+<br />
+<MatTextField @bind-Value="@userModel.FirstName" HelperText="FirstName" Label="FirstName"></MatTextField>
+<br />
+<br />
+<b>LastName</b>
+<br />
+<MatTextField @bind-Value="@userModel.LastName" HelperText="LastName" Label="LastName"></MatTextField>
+<br />
+<br />
+<button @onclick="SaveChanges">Save</button>
+<h3 style="color:#00ff90;">
+    @okMessage
+</h3>
+@code {
+    UserViewModel userModel = new UserViewModel();
+    string errorMessage = "";
+    string okMessage = "";
+    protected override async Task OnInitializedAsync()
+    {
+        var profile = await _userService.GetUserProfile(GetUserId());
+        userModel = _userMapper.Map(profile);
+    }
+    private Guid GetUserId()
+    {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        return userId;
+    }
+    protected async Task SaveChanges()
+    {
+        errorMessage = string.Empty;
+        okMessage = string.Empty;
+        var result = await _userService.UpdateNames(GetUserId(),userModel);
+        if(!string.IsNullOrEmpty(result))
+        {
+            errorMessage = result;
+            return;
+        }
+        okMessage = "Saved!";
+    }
+}

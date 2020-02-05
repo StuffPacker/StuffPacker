@@ -28,6 +28,7 @@ namespace StuffPacker.Configuration
             services.AddScoped<ICurrentUser, CurrentUser>();
             services.AddScoped<IMemberService, MemberService>();
            
+           
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFollowMapper, FollowMapper>();
 
@@ -47,7 +48,7 @@ namespace StuffPacker.Configuration
             //Mappers
             services.AddScoped<IMemberMapper, MemberMapper>();
             services.AddScoped<IPackListMapper, PackListMapper>();
-            
+            services.AddScoped<IUserMapper, UserMapper>();
 
 
 

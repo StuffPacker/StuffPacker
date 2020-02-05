@@ -19,5 +19,12 @@ namespace StuffPacker.Persistence.Model
         public Guid Id => Entity.Id;
 
         public string UserImgPath => Entity.UserImgPath;
+
+        public void UpdateNames(string nickName, string firstName, string lastName)
+        {
+            Entity.NickName = nickName;
+            Entity.FirstName = firstName;
+            Entity.LastName = lastName;
+        }
     }
 }
