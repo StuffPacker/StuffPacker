@@ -42,6 +42,8 @@ namespace StuffPacker.ViewModel
         public IEnumerable<PackListGroupViewModel> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
+
+        public bool Visible { get; set; }
     }
 
 

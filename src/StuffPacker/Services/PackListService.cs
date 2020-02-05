@@ -227,6 +227,13 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"ProductService:Update"));
         }
 
+        public async Task UpdateVisibleList(Dictionary<Guid, bool> visibleList)
+        {
+            _apiClient.SetPrincipal(_httpContextAccessor.HttpContext.User);
+            await _apiClient.UpdatePackListVisibleList(visibleList);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
         private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix,Guid userId)
         {
             var list = new List<PackListGroupViewModel>();

@@ -18,12 +18,17 @@ else
 {
    
     <div class="container-fluid">
-        <div class="row">          
-            <h1>Packlists</h1>
-            <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
+        <div class="row">      
+            <div class="col-12">
+                <h1>Packlists</h1>
+                <MatBlazor.MatButton Raised="true" OnClick=@(e => { dialogVisibleListsIsOpen = true; })>Visible packlists</MatBlazor.MatButton>
+                <br />
+                <MatButton Icon="add_circle" Style="color:green;" OnClick="@OpenAddDialog" Label="Add packlist"></MatButton>
+            </div>
+           
         </div>
         <div class="row">
-            @foreach (var item in PackListDataState.Value.PackLists)
+            @foreach (var item in PackListDataState.Value.PackLists.Where(x=>x.Visible).ToList())
             {
                 <div class="col-sm-6" style="border:solid 1px #eee">
                     <StuffPacker.Components.PackListComponents.PackListComponent Model="item" Categories="@GetCategories().ToArray()" />
@@ -33,11 +38,35 @@ else
     </div>
 
 }
-<MatDialog @bind-IsOpen="@dialogIsOpen">
+<MatDialog @bind-IsOpen="@dialogVisibleListsIsOpen">
+    <MatDialogTitle>Visible lists</MatDialogTitle>
+    <MatDialogContent>
+        <table class="table">
+            <tr>
+                <td>Visible</td>
+                <td>Name</td>
+            </tr>
+            @if (PackListDataState.Value.PackLists != null)
+            {
+                @foreach (var item in PackListDataState.Value.PackLists)
+                {
+                    <tr>
+                        <td><MatCheckbox @bind-Value="item.Visible"></MatCheckbox></td>
+                        <td>@item.Name</td>
+                    </tr>
+                }
+            }
 
+        </table>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogVisibleListsIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@VisibleListsSaveClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
     <MatDialogTitle>Add list</MatDialogTitle>
     <MatDialogContent>
-
         <p>Name</p>
         <MatTextField @bind-Value="@dialogListName"></MatTextField>
     </MatDialogContent>
@@ -47,7 +76,7 @@ else
     </MatDialogActions>
 </MatDialog>
 @code {
-
+    bool dialogVisibleListsIsOpen = false;
     bool dialogIsOpen = false;
     bool dialogInfoIsOpen = false;
     bool dialogEditMode = false;
@@ -68,6 +97,16 @@ else
         PackListDataState.Subscribe(this);
         ProductsDataState.Subscribe(this);
 
+    }
+    async Task VisibleListsSaveClick()
+    {
+        var dict = new Dictionary<Guid,bool>();
+        foreach (var item in PackListDataState.Value.PackLists)
+        {
+            dict.Add(item.Id,item.Visible);
+        }
+        await _packListService.UpdateVisibleList(dict);
+        dialogVisibleListsIsOpen = false;
     }
     void OpenAddDialog()
     {
