@@ -60,5 +60,31 @@ namespace Stuffpacker.Api.Client.ApiClient
                 }
             }
         }
+        public async Task UpdatePackListVisibleList(Dictionary<Guid, bool> visibleList)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                var list = new List<PackListVisibleDto>();
+                foreach (var item in visibleList)
+                {
+                    list.Add(new PackListVisibleDto { Id=item.Key,Visible=item.Value});
+                }
+                var dto = new UpdatePackListVisibleListDto
+                {
+                    VisibleList = list
+                };
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PatchAsync($"{PacklistUrlPrefix}/visiblelist", requestBody);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+                    return;
+                }
+            }
+        }
+        
+      
     }
 }

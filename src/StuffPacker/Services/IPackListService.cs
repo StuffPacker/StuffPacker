@@ -31,5 +31,7 @@ namespace StuffPacker.Services
         Task<IEnumerable<AddProductListItemViewModel>> GetAddableProducts(Guid userId);
 
         Task AddProducts(Guid userId, Guid listId, Guid groupId, IEnumerable<AddProductListItemViewModel> productlist);
+
+        Task UpdateVisibleList(Dictionary<Guid,bool> visibleList);
     }
 }

@@ -28,7 +28,8 @@ namespace StuffPacker.Mapper
                 UserId = dto.UserId,
                 WeightPrefix = dto.WeightPrefix,
                 Items = GetItems(dto.Items),
-                Maximized=dto.Maximized
+                Maximized=dto.Maximized,
+                Visible=dto.Visible
             };
         }
 

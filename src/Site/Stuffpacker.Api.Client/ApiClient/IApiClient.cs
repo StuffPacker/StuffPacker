@@ -11,5 +11,6 @@ namespace Stuffpacker.Api.Client.ApiClient
         Task<IEnumerable<PackListDto>> GetPackLists();
         void SetPrincipal(ClaimsPrincipal user);
         Task UpdatePackListMaximized(Guid listId, bool maximized);
+        Task UpdatePackListVisibleList(Dictionary<Guid, bool> visibleList);
     }
 }

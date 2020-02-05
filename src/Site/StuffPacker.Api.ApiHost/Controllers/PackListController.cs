@@ -32,5 +32,15 @@ namespace StuffPacker.Api.ApiHost.Controllers
 
             return Ok();
         }
+
+
+        [HttpPatch("visiblelist")]
+        public async Task<IActionResult> UpdateVisibleList([FromBody] UpdatePackListVisibleListDto dto)
+        {
+            await _packListService.UpdateVisibleList(dto);
+
+            return Ok();
+        }
+       
     }
 }
