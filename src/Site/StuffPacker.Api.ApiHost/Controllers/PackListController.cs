@@ -21,7 +21,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
         public async Task<IActionResult> Get()
         {
 
-            var list = await _packListService.Get(GetUserId());
+            var list = await _packListService.GetLists(GetUserId());
 
             return this.Ok(list);
         }
@@ -32,7 +32,13 @@ namespace StuffPacker.Api.ApiHost.Controllers
 
             return Ok();
         }
+        [HttpPatch("{id}/kit")]
+        public async Task<IActionResult> UpdateMaximized([FromBody] UpdatePackListKitDto dto, Guid id)
+        {
+            await _packListService.UpdateKit(id, dto);
 
+            return Ok();
+        }
 
         [HttpPatch("visiblelist")]
         public async Task<IActionResult> UpdateVisibleList([FromBody] UpdatePackListVisibleListDto dto)

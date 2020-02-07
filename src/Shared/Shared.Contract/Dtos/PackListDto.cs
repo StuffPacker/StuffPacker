@@ -45,5 +45,7 @@ namespace Shared.Contract.Dtos
         public WeightPrefix WeightPrefix { get; set; }
         public bool  Maximized { get; set; }
         public bool Visible { get; set; }
+
+        public bool Kit { get; set; }
     }
 }

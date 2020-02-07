@@ -5,7 +5,7 @@ namespace StuffPacker.ViewModel
 {
     public class AddProductListItemViewModel
     {
-        public AddProductListItemViewModel(Guid id,string name,bool selected,bool isNew,decimal weight,WeightPrefix weightPrefix,string category)
+        public AddProductListItemViewModel(Guid id,string name,bool selected,bool isNew,decimal weight,WeightPrefix weightPrefix,string category,bool isKit)
         {
             Id = id;
             Name = name;
@@ -14,6 +14,7 @@ namespace StuffPacker.ViewModel
             Weight = weight;
             WeightPrefix = weightPrefix;
             Category = category;
+            IsKit = isKit;
         }
 
         public string Name { get; set; }
@@ -23,6 +24,7 @@ namespace StuffPacker.ViewModel
 
         public decimal Weight { get; set; }
         public string WeightAndToken => GetWeightAndToken();
+        public bool IsKit { get; set; }
 
         public string Category { get; set; }
 

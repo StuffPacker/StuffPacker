@@ -28,6 +28,7 @@ namespace StuffPacker.Model
 
         public WeightPrefix WeightPrefix => (WeightPrefix) Enum.Parse(typeof(WeightPrefix), Entity.WeightPrefix, true);
 
+       
         public bool IsPublic => Entity.IsPublic;
 
         public Guid UserId => Entity.UserId;
@@ -36,6 +37,8 @@ namespace StuffPacker.Model
 
         public bool Visible => Entity.Visible;
 
+        public bool Kit => Entity.Kit;
+
         private IEnumerable<PackListGroupModel> GetGroups()
         {
             var groups = new List<PackListGroupModel>();
@@ -43,8 +46,33 @@ namespace StuffPacker.Model
             {
                 return groups;
             }
+            try
+            {
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<List<PackListGroupModel>>(Entity.Groups);
+            }
+            catch (Exception)
+            {
+                var gs= Newtonsoft.Json.JsonConvert.DeserializeObject<List<OldPackListGroupModel>>(Entity.Groups);
+                var list = new List<PackListGroupModel>();
+                foreach (var item in gs)
+                {
+                    var items = new List<PackListGroupItemModel>();
+                    foreach (var i in item.Items)
+                    {
+                        items.Add(new PackListGroupItemModel { Id=i,IsKit=false});
+                    }
+                    list.Add(new PackListGroupModel
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Items = items
+                    }
+                        ) ;
+                }
+                return list;
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<PackListGroupModel>>(Entity.Groups) ;
+            }
+            
 
         }
 
@@ -59,19 +87,24 @@ namespace StuffPacker.Model
             var g = GetGroups().ToList();
             g.Add(new PackListGroupModel
             {
-                Items = new List<Guid>(),
+                Items = new List<PackListGroupItemModel>(),
                 Name = name,
                 Id = id
             });
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(g);
         }
 
-        public void AddGroupItem(Guid groupId,Guid productId)
+        public void UpdateKit(bool kit)
+        {
+            Entity.Kit = kit;
+        }
+
+        public void AddGroupItem(Guid groupId,Guid productId,bool isKit)
         {
             var all = (GetGroups().ToList());
             var g = all.First(x=>x.Id==groupId);            
             var list = g.Items.ToList();
-            list.Add(productId);
+            list.Add(new PackListGroupItemModel { Id=productId,IsKit=isKit});
             g.Items = list;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
         }
@@ -91,7 +124,8 @@ namespace StuffPacker.Model
             var all = (GetGroups().ToList());
             var g = all.First(x => x.Id == groupId);
             var list = g.Items.ToList();
-            list.Remove(productId);
+            var item = list.First(x=>x.Id==productId);
+            list.Remove(item);
             g.Items = list;
             Entity.Groups = Newtonsoft.Json.JsonConvert.SerializeObject(all);
         }

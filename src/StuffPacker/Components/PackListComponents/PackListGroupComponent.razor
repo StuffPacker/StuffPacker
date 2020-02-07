@@ -50,7 +50,7 @@
                 <td>
                     @if (item.Star)
                     {
-                        <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })"  Icon="star"></MatIcon>
+                        <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" Icon="star"></MatIcon>
                     }
                     @if (item.Wearable)
                     {
@@ -59,6 +59,10 @@
                     @if (item.Consumables)
                     {
                         <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
+                    }
+                    @if (item.IsKit)
+                    {
+                        <span title="Kit" style="color:#000000;" class="oi oi-box"></span>
                     }
                 </td>
                 <td>
