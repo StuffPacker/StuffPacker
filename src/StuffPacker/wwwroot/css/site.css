@@ -130,7 +130,7 @@ app {
     }
 
     .main .top-row {
-        position: sticky;
+        /*position: sticky;*/
         top: 0;
     }
 
@@ -149,6 +149,10 @@ app {
     }
     .table .thead-dark th {
         color: #CBFD03;
+    }
+    .deletebutton{
+        color:darkred;
+        cursor:pointer;
     }
    
 }

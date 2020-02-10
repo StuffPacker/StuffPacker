@@ -71,6 +71,7 @@ namespace StuffPacker.Persistence.Repository
             modelToUpdate.IsPublic = model.Entity.IsPublic;
             modelToUpdate.Maximized = model.Entity.Maximized;
             modelToUpdate.Visible = model.Entity.Visible;
+            modelToUpdate.Kit = model.Entity.Kit;
             await _context.SaveChangesAsync();
         }
 

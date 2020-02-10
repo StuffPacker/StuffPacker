@@ -28,9 +28,9 @@ else
            
         </div>
         <div class="row">
-            @foreach (var item in PackListDataState.Value.PackLists.Where(x=>x.Visible).ToList())
+            @foreach (var item in PackListDataState.Value.PackLists.Where(x=>x.Visible).OrderByDescending(x=>x.Maximized).ToList())
             {
-                <div class="col-sm-6" style="border:solid 1px #eee">
+                <div class="col-xl-6" style="border:solid 1px #eee">
                     <StuffPacker.Components.PackListComponents.PackListComponent Model="item" Categories="@GetCategories().ToArray()" />
                 </div>
             }

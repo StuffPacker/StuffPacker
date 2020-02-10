@@ -17,7 +17,7 @@ namespace StuffPacker.Mapper
             _currentUSer = currentUSer;
         }
 
-        public async Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels )
+        public async Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels, IEnumerable<PackListModel> kits)
         {
             var viewModels = new List<AddProductListItemViewModel>();
             userProducts = userProducts.OrderBy(x => x.Name).ToList();
@@ -30,8 +30,12 @@ namespace StuffPacker.Mapper
                 {
                     category = pp.Category;
                 }
-                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,item.Weight,item.WeightPrefix, category));
+                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,item.Weight,item.WeightPrefix, category,false));
 
+            }
+            foreach (var item in kits)
+            {
+                viewModels.Add(new AddProductListItemViewModel(item.Id,item.Name,false,false,0,item.WeightPrefix,"Kit",true));
             }
             return viewModels;
         }

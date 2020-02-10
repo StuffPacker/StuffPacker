@@ -1,4 +1,5 @@
 ﻿using Shared.Contract.Dtos;
+using Shared.Contract.Dtos.PackList;
 using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,9 @@ namespace StuffPacker.Mapper
                 UserId = dto.UserId,
                 WeightPrefix = dto.WeightPrefix,
                 Items = GetItems(dto.Items),
-                Maximized=dto.Maximized,
-                Visible=dto.Visible
+                Maximized = dto.Maximized,
+                Visible = dto.Visible,
+                Kit = dto.Kit
             };
         }
 
@@ -43,13 +45,13 @@ namespace StuffPacker.Mapper
                     Id = item.Id,
                     Name = item.Name,
                     WeightPrefix = item.WeightPrefix,
-                    Items = GetProducts(item.Items)
+                    Items = GetProducts(item.Items,item.Kits)
                 });
             }
             return list;
         }
 
-        private IEnumerable<ProductViewModel> GetProducts(IEnumerable<ProductDto> items)
+        private IEnumerable<ProductViewModel> GetProducts(IEnumerable<ProductDto> items,IEnumerable<KitDto> kits)
         {
             var list = new List<ProductViewModel>();
             foreach (var item in items)
@@ -67,6 +69,19 @@ namespace StuffPacker.Mapper
                     Weight=item.Weight,
                     WeightPrefix=item.WeightPrefix                    
                 });
+            }
+            foreach (var item in kits)
+            {
+                list.Add(new ProductViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Category = "Kit",
+                    Amount = 1,
+                    Weight = item.Weight,
+                    WeightPrefix = item.WeightPrefix,
+                    IsKit = true
+                }) ;
             }
             return list;
         }

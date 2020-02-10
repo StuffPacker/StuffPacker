@@ -115,5 +115,26 @@ namespace Stuffpacker.Api.Client.ApiClient
                 }
             }
         }
+
+        public async Task UpdatePackListKit(Guid listId, bool kit)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                var dto = new UpdatePackListKitDto
+                {
+                    Kit = kit
+                };
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PatchAsync($"{PacklistUrlPrefix}/{listId}/kit", requestBody);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+
+                    return;
+                }
+            }
+        }
     }
 }

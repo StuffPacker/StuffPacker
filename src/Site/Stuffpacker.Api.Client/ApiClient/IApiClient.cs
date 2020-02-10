@@ -14,5 +14,6 @@ namespace Stuffpacker.Api.Client.ApiClient
         Task UpdatePackListVisibleList(Dictionary<Guid, bool> visibleList);
         Task<ProfileDto> GetUserByNickName(string nickName);
         Task UpdateUserNames(Guid userId, UpdateUserNamesDto dto);
+        Task UpdatePackListKit(Guid listId, bool kit);
     }
 }

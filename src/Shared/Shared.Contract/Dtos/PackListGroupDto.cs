@@ -1,4 +1,5 @@
-﻿using StuffPacker;
+﻿using Shared.Contract.Dtos.PackList;
+using StuffPacker;
 using System;
 using System.Collections.Generic;
 
@@ -28,6 +29,7 @@ namespace Shared.Contract.Dtos
         public IEnumerable<ProductDto> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
+        public IEnumerable<KitDto> Kits { get; set; }
 
         private decimal GetTotalWeight()
         {
