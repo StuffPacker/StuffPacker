@@ -13,7 +13,8 @@
             @Model.Name
             if (!PreviewMode)
             {
-                <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
+
+                <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>               
                 <MatButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
@@ -68,9 +69,11 @@
                 <td>
                     @if (!PreviewMode)
                     {
-
-                        <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
-                        <MatButton Icon="remove_circle" Style="color:darkred;" Class="sp-mdc-button" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        if (!item.IsKit)
+                        {
+                            <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        }
+                        <span @onclick="@(e => DeleteGroupItem(Model.Id, item.Id))" class="oi oi-trash deletebutton"></span>
                     }
 
                 </td>

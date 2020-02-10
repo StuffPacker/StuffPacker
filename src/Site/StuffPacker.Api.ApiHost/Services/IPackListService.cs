@@ -9,7 +9,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
 {
     public interface IPackListService
     {
-        Task<IEnumerable<PackListDto>> GetLists(Guid userId);
+        Task<IEnumerable<PackListDto>> GetLists(Guid userId,int loop);
         Task UpdateMaximized(Guid id,UpdatePackListMaximizedDto dto);
         Task UpdateVisibleList(UpdatePackListVisibleListDto dto);
         Task UpdateKit(Guid id, UpdatePackListKitDto dto);

@@ -24,7 +24,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
             _personalizedProductRepository = personalizedProductRepository;
             _productRepository = productRepository;
         }
-        public async Task<IEnumerable<PackListDto>> GetLists(Guid userId)
+        public async Task<IEnumerable<PackListDto>> GetLists(Guid userId,int loop)
         {
             var packLists = new List<PackListDto>();
             var list = await this._packListsRepository.GetByUser(userId);
@@ -34,15 +34,15 @@ namespace StuffPacker.Api.ApiHost.Controllers
             }
             foreach (var item in list)
             {
-                packLists.Add(await GetPackListDto(item));
+                packLists.Add(await GetPackListDto(item,loop));
                
             }
             return packLists;
         }
 
-        private async Task<PackListDto> GetPackListDto(PackListModel item)
+        private async Task<PackListDto> GetPackListDto(PackListModel item,int loop)
         {
-            return (new PackListDto { Kit = item.Kit, Visible = item.Visible, Maximized = item.Maximized, UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
+            return (new PackListDto { Kit = item.Kit, Visible = item.Visible, Maximized = item.Maximized, UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId,loop), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
 
         }
 
@@ -71,23 +71,43 @@ namespace StuffPacker.Api.ApiHost.Controllers
             }
         }
 
-        private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
+        private async Task<IEnumerable<PackListGroupDto>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId,int loop)
         {
             var list = new List<PackListGroupDto>();
             foreach (var item in groups)
             {
-                list.Add(new PackListGroupDto(weightPrefix) { Name = item.Name, Items = await GetProducts(item.Items, userId), Id = item.Id,Kits=await GetKits(item.Items.Where(x=>x.IsKit).ToList()) });
+
+                IEnumerable<KitDto> kits = new List<KitDto>();
+                try
+                {
+                    kits=await GetKits(item.Items.Where(x => x.IsKit).ToList(), loop);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                           //TODO Should log this            
+                }
+                   
+
+                
+
+                list.Add(new PackListGroupDto(weightPrefix) { Name = item.Name, Items = await GetProducts(item.Items, userId), Id = item.Id,Kits=kits });
             }
             return list;
         }
-        private async Task<IEnumerable<KitDto>> GetKits(IEnumerable<PackListGroupItemModel> items)
+        private async Task<IEnumerable<KitDto>> GetKits(IEnumerable<PackListGroupItemModel> items,int loop)
         {
+            if(loop>10)
+            {
+                throw new IndexOutOfRangeException("loop in kits");
+            }
             var list = new List<KitDto>();
            
             foreach (var item in items)
             {
                 var model = await _packListsRepository.Get(item.Id);
-                var k = await GetPackListDto(model);
+                var temp = loop;
+                temp=temp + 1;
+                var k = await GetPackListDto(model,temp);
                 list.Add(new KitDto
                 {
                     Id=item.Id,

@@ -21,7 +21,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
         public async Task<IActionResult> Get()
         {
 
-            var list = await _packListService.GetLists(GetUserId());
+            var list = await _packListService.GetLists(GetUserId(),0);
 
             return this.Ok(list);
         }

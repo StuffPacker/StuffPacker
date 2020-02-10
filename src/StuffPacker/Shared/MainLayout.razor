@@ -16,12 +16,12 @@
                 Hello, @context.User.Identity.Name <MatIconButton Class=".sp-mdc-button" Icon="account_circle" OnClick="@GoToUser"></MatIconButton>
 
                 <form method="post" action="Identity/Account/LogOut">
-                    <button type="submit" class="nav-link btn btn-link d-lg-none" style="color:white;">Log out</button>
-                    <button type="submit" class="nav-link btn btn-link d-none d-lg-block" style="color:black;">Log out</button>
+                    <button type="submit" class="nav-link btn btn-link d-xl-none" style="color:white;">Log out</button>
+                    <button type="submit" class="nav-link btn btn-link d-none d-xl-block" style="color:black;">Log out</button>
                 </form>
             </Authorized>
             <NotAuthorized>
-                <div class="d-none d-lg-block">
+                <div class="d-none d-xl-block">
                     <a style="color:#000000;" href="Identity/Account/Register">Register</a>
                     <a style="color:#000000;" href="Identity/Account/Login">Log in</a>
                 </div>
