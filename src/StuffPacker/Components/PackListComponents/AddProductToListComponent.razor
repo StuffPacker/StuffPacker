@@ -22,6 +22,7 @@
                                 <th>
                                     Name<br /><input style="width:50px;" @bind-value="FilterName" @bind-value:event="oninput" />
                                 </th>
+                                <th></th>
                                 <th>
                                     Wight<br />&nbsp;
                                 </th>
@@ -35,6 +36,13 @@
                             <tr>
                                 <td> <MatCheckbox @bind-Value="@item.Selected" Label=""></MatCheckbox></td>
                                 <td>@item.Name</td>
+                                <td>
+                                    @if (item.IsKit)
+                                    {
+                                        <span style="color:#000000;" class="oi oi-box"></span><i>(kit)</i>
+                                    }
+
+                                </td>
                                 <td>
                                     @item.WeightAndToken
 
@@ -99,7 +107,7 @@
     }
     void AddNewProduct()
     {
-        dialogAddProductProducts.Add(new AddProductListItemViewModel(Guid.NewGuid(),addProductDialogName,true,true,0,WeightPrefix.Gram,string.Empty));
+        dialogAddProductProducts.Add(new AddProductListItemViewModel(Guid.NewGuid(),addProductDialogName,true,true,0,WeightPrefix.Gram,string.Empty,false));
         addProductDialogName = "";
     }
     private List<AddProductListItemViewModel>    GetProductList()

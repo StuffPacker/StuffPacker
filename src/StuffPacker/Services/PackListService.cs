@@ -31,7 +31,7 @@ namespace StuffPacker.Services
         private readonly IProductGroupRepository _productGroupRepository;
 
         private readonly IApiClient _apiClient;
-    private readonly    IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PackListService(IPackListsRepository packListsRepository, IProductRepository productRepository, IMessageService messageService, IProductMapper productMapper, IPersonalizedProductRepository personalizedProductRepository, ICurrentUser currentUser,
             IProductGroupRepository productGroupRepository,
@@ -52,7 +52,9 @@ namespace StuffPacker.Services
         public async Task Add(Guid id, string name, Guid userId)
         {
             var model = new PackListModel(id, userId);
-            model.Update(name,WeightPrefix.Gram,false);
+            model.Update(name, WeightPrefix.Gram, false);
+            model.UpdateVisible(true);
+            model.UpdateMaximized(true);
             await this._packListsRepository.Add(model);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -73,11 +75,11 @@ namespace StuffPacker.Services
 
             var entity = new ProductEntity(productId, userId);
             var productModel = new ProductModel(entity);
-            productModel.Update(name,Convert.ToDecimal(0),WeightPrefix.Gram,string.Empty);
+            productModel.Update(name, Convert.ToDecimal(0), WeightPrefix.Gram, string.Empty);
             await this._productRepository.Add(productModel);
 
             var model = await this._packListsRepository.Get(listId);
-            model.AddGroupItem(groupId, productId);
+            model.AddGroupItem(groupId, productId,false);
             await this._packListsRepository.Update(model);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -88,16 +90,21 @@ namespace StuffPacker.Services
             var list = await this._packListsRepository.Get(listId);
             foreach (var item in selected)
             {
-                var productId = item.Id;
-                if (item.IsNew)
+                if(!item.IsKit)
+                {                   
+                    if (item.IsNew)
+                    {
+                        var entity = new ProductEntity(item.Id, userId);
+                        var productModel = new ProductModel(entity);
+                        productModel.Update(item.Name, Convert.ToDecimal(0), WeightPrefix.Gram, string.Empty);
+                        await this._productRepository.Add(productModel);
+                    }
+                }
+                if(item.Id!= listId)
                 {
-                    var entity = new ProductEntity(productId, userId);
-                    var productModel = new ProductModel(entity);
-                    productModel.Update(item.Name,Convert.ToDecimal(0),WeightPrefix.Gram,string.Empty);
-                    await this._productRepository.Add(productModel);
+                    list.AddGroupItem(groupId, item.Id, item.IsKit);
                 }
                
-                list.AddGroupItem(groupId, productId);
             }
             await this._packListsRepository.Update(list);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
@@ -138,7 +145,7 @@ namespace StuffPacker.Services
             }
             foreach (var item in list)
             {
-                packLists.Add(new PackListViewModel { UserId=item.UserId,IsPublic=item.IsPublic,Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups,item.WeightPrefix,item.UserId),WeightPrefix=item.WeightPrefix,Modified=item.Modified });
+                packLists.Add(new PackListViewModel { UserId = item.UserId, IsPublic = item.IsPublic, Id = item.Id, Name = item.Name, Items = await GetGroups(item.Groups, item.WeightPrefix, item.UserId), WeightPrefix = item.WeightPrefix, Modified = item.Modified });
             }
             return packLists;
         }
@@ -147,19 +154,21 @@ namespace StuffPacker.Services
         {
             var userProducts = await this._productRepository.GetByOwner(userId);
             var personalizedProductModels = await this._personalizedProductRepository.GetByUser(userId);
-            return await _productMapper.Map(userProducts, personalizedProductModels);
+            var kits = await _packListsRepository.GetByUser(userId);
+            kits = kits.Where(x=>x.Kit).ToList();
+            return await _productMapper.Map(userProducts, personalizedProductModels,kits);
         }
 
         public async Task<PackListViewModel> GetList(Guid listId)
         {
-            var packList =  await this._packListsRepository.Get(listId);
+            var packList = await this._packListsRepository.Get(listId);
             if (packList == null)
             {
-                return new PackListViewModel(); 
+                return new PackListViewModel();
             }
-           
-          return      new PackListViewModel {IsPublic=packList.IsPublic,UserId=packList.UserId ,Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix,packList.UserId), WeightPrefix = packList.WeightPrefix };
-          
+
+            return new PackListViewModel { IsPublic = packList.IsPublic, UserId = packList.UserId, Id = packList.Id, Name = packList.Name, Items = await GetGroups(packList.Groups, packList.WeightPrefix, packList.UserId), WeightPrefix = packList.WeightPrefix };
+
         }
 
         public async Task<PackListViewModel> GetListViewer(Guid listId)
@@ -178,7 +187,7 @@ namespace StuffPacker.Services
         public async Task Update(PackListViewModel model)
         {
             var item = await this._packListsRepository.Get(model.Id);
-            item.Update(model.Name,model.WeightPrefix,model.IsPublic);
+            item.Update(model.Name, model.WeightPrefix, model.IsPublic);
             await this._packListsRepository.Update(item);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
@@ -192,32 +201,39 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"ProductService:Update"));
         }
 
+        public async Task UpdateKit(Guid listId, bool kit)
+        {
+            _apiClient.SetPrincipal(_httpContextAccessor.HttpContext.User);
+            await _apiClient.UpdatePackListKit(listId, kit);
+            _messageService.SendMessage(new StringMessage($"PackListService:Update"));
+        }
+
         public async Task UpdateMaximized(Guid listId, bool maximized)
         {
 
             _apiClient.SetPrincipal(_httpContextAccessor.HttpContext.User);
-            await _apiClient.UpdatePackListMaximized(listId,maximized);
+            await _apiClient.UpdatePackListMaximized(listId, maximized);
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
         public async Task UpdateProduct(ProductViewModel model)
         {
-            var userId =  _currentUser.GetUserId();
+            var userId = _currentUser.GetUserId();
             var product = await this._productRepository.Get(model.Id);
-            product.Update(model.Name, Convert.ToDecimal(model.Weight),model.WeightPrefix,model.Description);
+            product.Update(model.Name, Convert.ToDecimal(model.Weight), model.WeightPrefix, model.Description);
 
-            var pModel = await _personalizedProductRepository.Get(userId,model.Id);
-            if(pModel==null)
+            var pModel = await _personalizedProductRepository.Get(userId, model.Id);
+            if (pModel == null)
             {
-                pModel = new PersonalizedProductModel(Guid.Empty,userId,model.Id);
+                pModel = new PersonalizedProductModel(Guid.Empty, userId, model.Id);
             }
-            pModel.Update(model.Category,model.Star,model.Wearable,model.Consumables);
-            await this._productRepository.Update(product,pModel);
+            pModel.Update(model.Category, model.Star, model.Wearable, model.Consumables);
+            await this._productRepository.Update(product, pModel);
             //check if productCategory exist
-            var categoryExist = await this._productGroupRepository.GetByName(userId,model.Category);
-            if(categoryExist==null)
+            var categoryExist = await this._productGroupRepository.GetByName(userId, model.Category);
+            if (categoryExist == null)
             {
-                var newProductGroup = new ProductGroupModel(new Persistence.Entity.ProductGroupEntity { Id=Guid.NewGuid(),Name=model.Category,Maximized=true,Owner=userId});
+                var newProductGroup = new ProductGroupModel(new Persistence.Entity.ProductGroupEntity { Id = Guid.NewGuid(), Name = model.Category, Maximized = true, Owner = userId });
                 await _productGroupRepository.Add(newProductGroup);
             }
 
@@ -234,36 +250,40 @@ namespace StuffPacker.Services
             _messageService.SendMessage(new StringMessage($"PackListService:Update"));
         }
 
-        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix,Guid userId)
+        private async Task<IEnumerable<PackListGroupViewModel>> GetGroups(IEnumerable<PackListGroupModel> groups, WeightPrefix weightPrefix, Guid userId)
         {
             var list = new List<PackListGroupViewModel>();
             foreach (var item in groups)
             {
-                list.Add(new PackListGroupViewModel(weightPrefix) { Name = item.Name, Items = await GetItems(item.Items,userId), Id = item.Id });
+                list.Add(new PackListGroupViewModel(weightPrefix) { Name = item.Name, Items = await GetItems(item.Items, userId), Id = item.Id });
             }
             return list;
         }
 
-        private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<Guid> items,Guid userId)
+        private async Task<IEnumerable<ProductViewModel>> GetItems(IEnumerable<PackListGroupItemModel> items, Guid userId)
         {
             var list = new List<ProductViewModel>();
             var personalizedProductList = await _personalizedProductRepository.GetByUser(userId);
             foreach (var item in items)
             {
-                var itemExist = list.Find(x => x.Id == item);
+                if(item.IsKit)
+                {
+                    continue;
+                }
+                var itemExist = list.Find(x => x.Id == item.Id);
                 if (itemExist != null)
                 {
                     itemExist.Amount = itemExist.Amount + 1;
                 }
                 else
                 {
-                    var p = await this._productRepository.Get(item);
-                    var pp = personalizedProductList.FirstOrDefault(x=>x.ProductId==item);
+                    var p = await this._productRepository.Get(item.Id);
+                    var pp = personalizedProductList.FirstOrDefault(x => x.ProductId == item.Id);
                     var category = "";
                     bool star = false;
                     bool wearable = false;
                     bool consumables = false;
-                    if (pp!=null)
+                    if (pp != null)
                     {
                         category = pp.Category;
                         wearable = pp.Wearable;
@@ -279,11 +299,11 @@ namespace StuffPacker.Services
                             WeightPrefix = p.WeightPrefix,
                             Amount = 1,
                             Id = p.Id,
-                            Category=category,
-                            Star=star,
-                            Wearable= wearable,
-                            Consumables= consumables,
-                            Description=p.Description
+                            Category = category,
+                            Star = star,
+                            Wearable = wearable,
+                            Consumables = consumables,
+                            Description = p.Description
                         });
                     }
 

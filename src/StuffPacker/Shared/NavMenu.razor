@@ -5,15 +5,15 @@
     <span class="navbar-brand">Stuff Packer</span>
     <AuthorizeView>
         <Authorized>
-            <MatIconButton Class=".sp-mdc-button d-lg-none" Icon="account_circle" Style="color:white;" OnClick="@GoToUser"></MatIconButton>
+            <MatIconButton Class=".sp-mdc-button d-xl-none" Icon="account_circle" Style="color:white;" OnClick="@GoToUser"></MatIconButton>
 
 
             <form method="post" action="Identity/Account/LogOut">
-                <button type="submit" class="nav-link btn btn-link d-lg-none" style="color:white;">Log out</button>
+                <button type="submit" class="nav-link btn btn-link d-xl-none" style="color:white;">Log out</button>
             </form>
         </Authorized>
         <NotAuthorized>
-            <div class=" d-lg-none">
+            <div class=" d-xl-none">
                 <a href="Identity/Account/Register" style="color:white;">Register</a>&nbsp;
                 <a href="Identity/Account/Login" style="color:white;">Log in</a>
             </div>

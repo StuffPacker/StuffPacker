@@ -20,6 +20,8 @@ namespace StuffPacker.Model
         public bool Maximized { get; set; }
 
         public bool Visible { get; set; }
+        public bool Kit { get; set; }
+
         public PackListEntity(Guid id,Guid userId)
         {
             Id = id;

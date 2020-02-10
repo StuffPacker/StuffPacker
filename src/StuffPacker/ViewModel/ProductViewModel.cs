@@ -35,6 +35,8 @@ namespace StuffPacker.ViewModel
 
         public string ConvertedWeight => GetConvertedWeight();
 
+        public bool IsKit { get; set; }
+
         private string GetConvertedWeight()
         {
             return (WeightHelper.ConvertFromGram(Convert.ToDecimal(Weight), WeightPrefix)).ToString();

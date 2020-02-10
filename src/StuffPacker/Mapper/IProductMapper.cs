@@ -8,9 +8,10 @@ namespace StuffPacker.Mapper
 {
     public interface IProductMapper
     {
-       Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts, IEnumerable<PersonalizedProductModel> personalizedProductModels);
+       Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts, IEnumerable<PersonalizedProductModel> personalizedProductModels, IEnumerable<PackListModel> kits);
      Task<IEnumerable<ProductViewModel>> MapUserProducts(IEnumerable<ProductModel> products, IEnumerable<PersonalizedProductModel> personalizedProductModels);
         Task<IEnumerable<ProductListCategoryViewModel>> MapProductGroups(IEnumerable<ProductGroupModel> productGroups);
         Task<ProductListCategoryViewModel> MapProductGroup(ProductGroupModel productGroup);
+        
     }
 }

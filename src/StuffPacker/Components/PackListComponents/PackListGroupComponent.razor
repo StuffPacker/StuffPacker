@@ -13,7 +13,8 @@
             @Model.Name
             if (!PreviewMode)
             {
-                <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>
+
+                <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e=> EditGroup(Model.Id))" Label=""></MatButton>               
                 <MatButton Icon="delete" Style="color:darkred;" Class="sp-mdc-button" OnClick="@((e) => {
                                                                         confirmModel.DialogIsOpen = true;
                                                                         confirmModel.Header = $"Are you sure you want to delete {Model.Name}?";
@@ -50,7 +51,7 @@
                 <td>
                     @if (item.Star)
                     {
-                        <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })"  Icon="star"></MatIcon>
+                        <MatIcon Class=".sp-mdc-button" Style="color:#ff6a00;" Attributes="@(new Dictionary<string, object>() { {"title","Favorite" } })" Icon="star"></MatIcon>
                     }
                     @if (item.Wearable)
                     {
@@ -60,13 +61,19 @@
                     {
                         <MatIcon Class=".sp-mdc-button" Style="color:darkgreen;" Attributes="@(new Dictionary<string, object>() { {"title","Consumables" } })" Icon="fastfood"></MatIcon>
                     }
+                    @if (item.IsKit)
+                    {
+                        <span title="Kit" style="color:#000000;" class="oi oi-box"></span>
+                    }
                 </td>
                 <td>
                     @if (!PreviewMode)
                     {
-
-                        <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
-                        <MatButton Icon="remove_circle" Style="color:darkred;" Class="sp-mdc-button" OnClick="@(e => DeleteGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        if (!item.IsKit)
+                        {
+                            <MatButton Icon="edit" Style="color:burlywood;" Class="sp-mdc-button" OnClick="@(e => EditGroupItem(Model.Id, item.Id))" Label=""></MatButton>
+                        }
+                        <span @onclick="@(e => DeleteGroupItem(Model.Id, item.Id))" class="oi oi-trash deletebutton"></span>
                     }
 
                 </td>

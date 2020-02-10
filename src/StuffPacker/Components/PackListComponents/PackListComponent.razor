@@ -10,8 +10,19 @@
             <div class="col-sm-6">
                 @if (!PreviewMode)
                 {
+                    string kitColor = "#000000";
+                    if(Model.Kit)
+                    {
+                        kitColor = "green";
+                    }
+                    <span @onclick="changeKit" style="color:@kitColor;" class="oi oi-box"></span><i>(kit)</i>
+                }
+
+                @if (!PreviewMode)
+                {
                     if (Model.IsPublic)
                     {
+
                         <MatButton Icon="visibility" Style="color:darkslategrey;" Label="Public"></MatButton>
                         if (showLink)
                         {
@@ -52,9 +63,6 @@
                                                                                                                      confirmModel.OkButtonText = "Delete";
                                                                                                                      confirmModel.OnOkClick = async () => await DeleteList();
                                                                                                                  })"></MatIconButton>
-
-
-
                         }
 
                     }
@@ -66,10 +74,8 @@
                         <MatBlazor.MatSelect Label="Prefix" @bind-Value="weightPrefixValue">
                             @foreach (var item in weightPrefix)
                                     {
-                                <MatBlazor.MatOption Value="@item" Id="@item"></MatBlazor.MatOption>
-                                    }
-                            /**/
-                            /**/
+                                <MatBlazor.MatOption Value="@item" Id="@item">@item</MatBlazor.MatOption>
+                                    }                           
                         </MatBlazor.MatSelect><br />
                         <MatButton Icon="save" Style="color:green;" OnClick="@SaveList" Label="Save changes"></MatButton>
                     </div>
@@ -131,12 +137,16 @@ else
 
     async Task ExpandColaps()
     {
-        
+
         await _packListService.UpdateMaximized(Model.Id, !Model.Maximized);
         Model.Maximized = !Model.Maximized;
 
     }
-
+    async Task changeKit()
+    {
+        await _packListService.UpdateKit(Model.Id, !Model.Kit);
+        Model.Kit = !Model.Kit;
+    }
     protected override async Task OnInitializedAsync()
     {
         weightPrefixValue = Model.WeightPrefix.ToString();
@@ -182,7 +192,6 @@ else
     {
         showLink = !showLink;
     }
-
     async Task AddGroup()
     {
         await _packListService.AddGroup(Model.Id, "New Group");
@@ -214,8 +223,6 @@ else
         await this._packListService.Update(Model);
 
     }
-
-
 
     async Task SaveList()
     {
