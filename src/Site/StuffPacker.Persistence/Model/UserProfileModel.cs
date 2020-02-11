@@ -26,5 +26,10 @@ namespace StuffPacker.Persistence.Model
             Entity.FirstName = firstName;
             Entity.LastName = lastName;
         }
+
+        public void UpdateImg(string img)
+        {
+            Entity.UserImgPath = img;
+        }
     }
 }

@@ -42,7 +42,13 @@ namespace StuffPacker.Api.ApiHost.Controllers
             await _profileService.UpdateNames(userId,dto);
             return Ok();
         }
+        [HttpPatch("{userId}/img")]
+        public async Task<IActionResult> UpdateImg(Guid userId, [FromBody]UpdateUserImageDto dto)
+        {
+            await _profileService.UpdateImg(userId, dto.ImageName);
+            return Ok();
+        }
 
 
-}
+    }
 }

@@ -1,0 +1,56 @@
+﻿@using System.IO
+@using StuffPacker.Enums
+@using MatBlazor
+@inject IFileService _fileService;
+
+<MatFileUpload OnChange="@FilesReady"></MatFileUpload>
+<h3 style="color:darkred">@errorMessage</h3>
+@foreach (var f in list)
+{
+    <div>@f</div>
+}
+@code {
+
+    [Parameter]
+    public FileUploadType FileUploadType { get; set; }
+
+    [Parameter]
+    public EventCallback<string> AfterUpload { get; set; }
+
+    string errorMessage = "";
+    List<string> list = new List<string>();
+
+    async Task FilesReady(IMatFileUploadEntry[] files)
+    {
+        if(FileUploadType== FileUploadType.none)
+        {
+            throw new Exception("no file type selected");
+        }
+        var file = files[0];
+        var result = _fileService.CheckExtension(Path.GetExtension(file.Name.ToLower()), FileUploadType);
+        if (string.IsNullOrEmpty(result))
+        {
+            var fileName=await UploadFile(file);
+            errorMessage = result;
+            await AfterUpload.InvokeAsync(fileName);
+        }
+        errorMessage = result;
+    }
+
+    private async Task<string> UploadFile(IMatFileUploadEntry file)
+    {
+
+
+        var fileName = await _fileService.GetFileName(FileUploadType,file.Name);
+        var bytes = default(byte[]);
+        using (var memstream = new MemoryStream())
+        {
+            await file.WriteToStreamAsync(memstream);
+            bytes = memstream.ToArray();
+        }
+
+        var memory = new MemoryStream(bytes);
+        await _fileService.Save(memory, fileName,FileUploadType);
+        return fileName;
+    }
+}

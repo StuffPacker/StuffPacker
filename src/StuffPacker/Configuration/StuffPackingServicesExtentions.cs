@@ -42,9 +42,9 @@ namespace StuffPacker.Configuration
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<MailClientOptions>(configuration.GetSection("MailClientOptions"));
             services.AddSingleton<ITokenProvider, TokenProvider>();
-
-
+            services.AddTransient<IFileService, FileService>();
             
+
             //Mappers
             services.AddScoped<IMemberMapper, MemberMapper>();
             services.AddScoped<IPackListMapper, PackListMapper>();
