@@ -11,7 +11,8 @@ namespace StuffPacker.Mapper
             {
                 NickName = profile.NickName,
                 FirstName = profile.FirstName,
-                LastName = profile.LastName
+                LastName = profile.LastName,
+                ImgUrl = "/img/members/"+profile.UserImgPath
             };
         }
     }

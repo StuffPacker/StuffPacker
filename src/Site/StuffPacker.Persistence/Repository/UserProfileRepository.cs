@@ -40,7 +40,9 @@ namespace StuffPacker.Persistence.Repository
             var modelToUpdate = await _context.UserProfiles.FirstOrDefaultAsync(s => s.Id == model.Id);
             modelToUpdate.NickName = model.Entity.NickName;
             modelToUpdate.FirstName = model.Entity.FirstName;
-            modelToUpdate.LastName = model.Entity.LastName; 
+            modelToUpdate.LastName = model.Entity.LastName;
+            modelToUpdate.UserImgPath = model.Entity.UserImgPath;
+
             await _context.SaveChangesAsync();
         }
 

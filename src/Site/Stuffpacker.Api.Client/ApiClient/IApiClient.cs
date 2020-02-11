@@ -15,5 +15,6 @@ namespace Stuffpacker.Api.Client.ApiClient
         Task<ProfileDto> GetUserByNickName(string nickName);
         Task UpdateUserNames(Guid userId, UpdateUserNamesDto dto);
         Task UpdatePackListKit(Guid listId, bool kit);
+        Task UpdateUserImg(Guid userId, UpdateUserImageDto dto);
     }
 }
