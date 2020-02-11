@@ -9,5 +9,6 @@ namespace StuffPacker.Api.ApiHost.Services
     {
         Task<UserProfileModel> GetByNickName(string nickname);
         Task UpdateNames(Guid userId, UpdateUserNamesDto dto);
+        Task UpdateImg(Guid userId,string img);
     }
 }

@@ -23,6 +23,13 @@ namespace StuffPacker.Api.ApiHost.Services
             return result;
         }
 
+        public async Task UpdateImg(Guid userId, string img)
+        {
+            var model = await _userProfileRepository.Get(userId);
+            model.UpdateImg(img);
+            await _userProfileRepository.Update(model);
+        }
+
         public async Task UpdateNames(Guid userId, UpdateUserNamesDto dto)
         {
             var model = await _userProfileRepository.Get(userId);

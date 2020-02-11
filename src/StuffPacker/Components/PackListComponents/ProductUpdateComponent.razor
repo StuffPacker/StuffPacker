@@ -41,15 +41,11 @@
                         <MatOptionString Id="@item" >@item</MatOptionString>                          
                         }
                     </MatSelect>
-
-
-
-                  
                 </div>
             </div>
         </div>
         <br />
-        <textarea>@Model.ProductModel.Description</textarea>
+        <input type="text" @bind-value="@Model.ProductModel.Description"> </input>
         <MatTextField @bind-Value="@Model.ProductModel.Category" Label="Category"></MatTextField><br />
       
         @*<MatAutocompleteList Items="@Categories" TItem="string" @bind-Value="@Model.ProductModel.Category" Label="Category"></MatAutocompleteList>

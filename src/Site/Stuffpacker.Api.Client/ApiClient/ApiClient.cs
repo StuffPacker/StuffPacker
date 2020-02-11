@@ -136,5 +136,21 @@ namespace Stuffpacker.Api.Client.ApiClient
                 }
             }
         }
+
+        public async Task UpdateUserImg(Guid userId, UpdateUserImageDto dto)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PatchAsync($"{ProfileUrlPrefix}/{userId}/img", requestBody);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+                    return;
+                }
+            }
+        }
     }
 }

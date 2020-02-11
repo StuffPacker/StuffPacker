@@ -76,6 +76,12 @@ namespace StuffPacker.Services
             return new UserProfile(userProfile.NickName,userProfile.FirstName,userProfile.LastName,userProfile.UserImgPath); 
         }
 
+        public async Task<string> UpdateImg(Guid userId, string img)
+        {
+            await _apiClient.UpdateUserImg(userId, new UpdateUserImageDto { ImageName=img});
+            return string.Empty;
+        }
+
         public async Task<string> UpdateNames(Guid userId, UserViewModel model)
         {
             if(string.IsNullOrEmpty(model.NickName))

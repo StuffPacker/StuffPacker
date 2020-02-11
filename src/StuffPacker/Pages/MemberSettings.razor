@@ -7,6 +7,20 @@
 @attribute [Authorize]
 <h3>Member Settings</h3>
 <h2><b style="color:red;">@errorMessage</b></h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <img alt="User Image" style="width:100%;" src="@userModel.ImgUrl" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <StuffPacker.Components.BaseComponents.FileUploadComponent FileUploadType="Enums.FileUploadType.UserImg" AfterUpload="AfterUpload"></StuffPacker.Components.BaseComponents.FileUploadComponent>
+        </div>
+    </div>
+</div>
+
+<br />
 <b>Nickname</b>
 <br />
 <MatTextField @bind-Value="@userModel.NickName" HelperText="Nickname" Label="NickName"></MatTextField>
@@ -30,10 +44,13 @@
     UserViewModel userModel = new UserViewModel();
     string errorMessage = "";
     string okMessage = "";
+    string oldImg = "";
+
     protected override async Task OnInitializedAsync()
     {
         var profile = await _userService.GetUserProfile(GetUserId());
         userModel = _userMapper.Map(profile);
+        oldImg = userModel.ImgUrl;
     }
     private Guid GetUserId()
     {
@@ -44,12 +61,21 @@
     {
         errorMessage = string.Empty;
         okMessage = string.Empty;
-        var result = await _userService.UpdateNames(GetUserId(),userModel);
-        if(!string.IsNullOrEmpty(result))
+        var result = await _userService.UpdateNames(GetUserId(), userModel);
+        if(oldImg!=userModel.ImgUrl)
+        {
+           await _userService.UpdateImg(GetUserId(), userModel.ImgUrl.Replace("/img/members/",""));
+        }
+
+        if (!string.IsNullOrEmpty(result))
         {
             errorMessage = result;
             return;
         }
         okMessage = "Saved!";
+    }
+    void AfterUpload(string fileName)
+    {
+        userModel.ImgUrl = "/img/members/"+fileName;
     }
 }
