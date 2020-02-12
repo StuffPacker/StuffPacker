@@ -1,12 +1,13 @@
 ﻿@using ViewModel.Members
-
+@using Enums
 @inject IMemberService _memberService
 @inject ICurrentUserProvider _currentUserProvider
+@inject ICdnHelper _cdnHelper
 @if (Member != null)
 {
     <div class="col-md-4">
         <figure class="card card-product">
-            <div class="img-wrap"><img src="@Member.UserImgPath"></div>
+            <div class="img-wrap"><img src="@_cdnHelper.GetPath(CdnFileType.UserImage,Member.UserImgPath)"></div>
             <figcaption class="info-wrap">
                 <h4 class="title"><a href="@("/members/"+Member.UserId)">@Member.NickName</a></h4>
                 <p class="desc">@Member.FullName</p>

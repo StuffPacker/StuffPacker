@@ -50,7 +50,8 @@
         }
 
         var memory = new MemoryStream(bytes);
-        await _fileService.Save(memory, fileName,FileUploadType);
+        // await _fileService.Save(memory, fileName,FileUploadType);
+        await _fileService.UploadToStorage(fileName,memory, FileUploadType);
         return fileName;
     }
 }

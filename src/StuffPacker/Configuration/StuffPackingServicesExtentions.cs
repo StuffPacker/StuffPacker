@@ -43,7 +43,7 @@ namespace StuffPacker.Configuration
             services.Configure<MailClientOptions>(configuration.GetSection("MailClientOptions"));
             services.AddSingleton<ITokenProvider, TokenProvider>();
             services.AddTransient<IFileService, FileService>();
-            
+            services.AddTransient<ICdnHelper, CdnHelper>();
 
             //Mappers
             services.AddScoped<IMemberMapper, MemberMapper>();

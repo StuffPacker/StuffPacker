@@ -51,7 +51,7 @@ namespace StuffPacker.Mapper
                     FirstName = item.FirstName,
                     LastName = item.LastName,
                     UserId = item.Id,
-                    UserImgPath = "/img/members/" + item.UserImgPath,
+                    UserImgPath = item.UserImgPath,
                     Packlists = await GetPackListCount(item.Id),
                     Products = await GetProductsList(item.Id)
                 });

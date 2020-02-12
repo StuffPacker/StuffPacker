@@ -1,16 +1,18 @@
 ﻿@page "/member/settings"
 @using Microsoft.AspNetCore.Http;
 @using Mapper
+@using Enums
 @inject IUserService _userService
 @inject IHttpContextAccessor _httpContextAccessor
-@inject IUserMapper _userMapper;
+@inject IUserMapper _userMapper
+@inject ICdnHelper _cdnHelper
 @attribute [Authorize]
 <h3>Member Settings</h3>
 <h2><b style="color:red;">@errorMessage</b></h2>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
-            <img alt="User Image" style="width:100%;" src="@userModel.ImgUrl" />
+            <img alt="User Image" style="width:100%;" src="@_cdnHelper.GetPath(CdnFileType.UserImage,userModel.ImgUrl)" />
         </div>
     </div>
     <div class="row">
@@ -64,7 +66,7 @@
         var result = await _userService.UpdateNames(GetUserId(), userModel);
         if(oldImg!=userModel.ImgUrl)
         {
-           await _userService.UpdateImg(GetUserId(), userModel.ImgUrl.Replace("/img/members/",""));
+            await _userService.UpdateImg(GetUserId(), userModel.ImgUrl);
         }
 
         if (!string.IsNullOrEmpty(result))
@@ -76,6 +78,6 @@
     }
     void AfterUpload(string fileName)
     {
-        userModel.ImgUrl = "/img/members/"+fileName;
+        userModel.ImgUrl = fileName;
     }
 }
