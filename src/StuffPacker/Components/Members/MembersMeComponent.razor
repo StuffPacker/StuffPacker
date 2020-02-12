@@ -2,10 +2,12 @@
 @using StuffPacker.store.packlist.Get
 @using StuffPacker.store.packlist
 @using System.Linq
+@using Enums
 @inject ICurrentUserProvider _currentUserProvider
 @inject IUserService _userService
 @inject IState<PackListDataState> PackListDataState
 @inject NavigationManager _navigationManager
+@inject ICdnHelper _cdnHelper
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-1">
@@ -58,7 +60,7 @@
 
         }
         fullName = userProfile.FirstName + " " + userProfile.LastName;
-        imgUrl = "/img/members/"+userProfile.UserImgPath;
+        imgUrl = _cdnHelper.GetPath(CdnFileType.UserImage, userProfile.UserImgPath);
         following = (await _currentUserProvider.GetFollowing()).ToList();
         followers = (await _currentUserProvider.GetFollowers()).ToList();
 

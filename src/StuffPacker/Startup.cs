@@ -37,8 +37,9 @@ namespace StuffPacker
         }
         public virtual void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureSingletonIOption<SiteOptions>(Configuration,
-             StuffPackerConfigurationOptionNames.SiteOptions);
+            services.ConfigureSingletonIOption<SiteOptions>(Configuration,StuffPackerConfigurationOptionNames.SiteOptions);
+            services.ConfigureSingletonIOption<StorageOptions>(Configuration, StuffPackerConfigurationOptionNames.StorageOptions);
+            
         }
         public IConfiguration Configuration { get; }
         private ILoggerFactory LoggerFactory { get; }

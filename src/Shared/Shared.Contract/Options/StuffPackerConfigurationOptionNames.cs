@@ -8,5 +8,7 @@ namespace Shared.Contract.Options
     {
         public const string Prefix = "StuffPacker:";
         public static string SiteOptions => Prefix + "SiteOptions";
+        public static string StorageOptions => "StorageOptions";
+        
     }
 }
