@@ -1,22 +1,26 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 using StuffPacker.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Shared.Contract.Options;
 namespace StuffPacker.Services
 {
     public class FileService : IFileService
     {
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IWebHostEnvironment _env;
+        private readonly StorageOptions _storageOptions;
 
-        public FileService(ICurrentUserProvider currentUserProvider, IWebHostEnvironment env)
+        public FileService(ICurrentUserProvider currentUserProvider, IWebHostEnvironment env,IOptions<StorageOptions> storageOptions)
         {
             _currentUserProvider = currentUserProvider;
             _env = env;
+            _storageOptions = storageOptions.Value;
         }
         public async Task<string> GetFileName(FileUploadType fileUploadType,string filename)
         {
@@ -104,6 +108,35 @@ namespace StuffPacker.Services
                     break;
             }
             return string.Empty;
+        }
+
+        public async Task UploadToStorage(string fileName,MemoryStream file, FileUploadType fileUploadType)
+        {
+            string connectionString = _storageOptions.ConnectionString; 
+
+            // Create a BlobServiceClient object which will be used to create a container client
+            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+
+            var containerName = GetBlobContainer(fileUploadType);
+            BlobContainerClient containerClient =  blobServiceClient.GetBlobContainerClient(containerName) ;// .CreateBlobContainerAsync(containerName);
+
+            // Get a reference to a blob
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+
+            // Open the file and upload its data
+            //using FileStream uploadFileStream = File.OpenRead(localFilePath);
+            await blobClient.UploadAsync(file);
+            //uploadFileStream.Close();
+        }
+
+        private string GetBlobContainer(FileUploadType fileUploadType)
+        {
+            switch(fileUploadType)
+            {
+                case FileUploadType.UserImg:
+                    return "usrimg";
+            }
+            throw new Exception("Cant find container name");
         }
     }
 }
