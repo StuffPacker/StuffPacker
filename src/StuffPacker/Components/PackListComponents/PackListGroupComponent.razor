@@ -29,7 +29,8 @@
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
-                <th>Name</th>               
+                <th>Name</th>    
+                <th>Images</th>
                 <th>Amount</th>
                 <th>Weight</th>
                 <th>Info</th>
@@ -43,7 +44,25 @@
                    
                         @item.Name                  
 
-                </td>              
+                </td>    
+                <td>
+                    @if (!item.IsKit)
+                    {
+                    <div class="container-fluid">
+
+                        @foreach (var image in item.Images)
+                        {
+                            <div class=" row">
+                                <div class="col">
+                                    <a href="@image.Url" target="_blank"><img src="@image.Url" style="max-width:100px" /></a><br />
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                    }
+
+                </td>
                 <th>@item.Amount</th>
                 <td>
                     @item.WeightAndTokenShort

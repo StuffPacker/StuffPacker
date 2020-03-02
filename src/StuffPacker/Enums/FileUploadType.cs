@@ -3,6 +3,7 @@
     public enum FileUploadType
     {
         none = 0,
-        UserImg
+        UserImg,
+        ProductImg
     }
 }

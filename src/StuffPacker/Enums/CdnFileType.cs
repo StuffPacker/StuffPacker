@@ -3,6 +3,7 @@
     public enum CdnFileType
     {
         none = 0,
-        UserImage
+        UserImage,
+        ProductImage
     }
 }

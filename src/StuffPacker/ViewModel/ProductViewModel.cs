@@ -1,10 +1,13 @@
 ﻿using Shared.Contract;
+using StuffPacker.ViewModel.Base;
 using System;
+using System.Collections.Generic;
 
 namespace StuffPacker.ViewModel
 {
     public class ProductViewModel
     {
+        public List<ImageViewModel> Images { get; set; }
         public string Name { get; set; }
         public Guid Id { get; set; }
         public decimal Weight { get; set; }

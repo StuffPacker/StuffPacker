@@ -20,6 +20,8 @@ namespace StuffPacker.Services
             {
                 case CdnFileType.UserImage:
                     return _storageOptions.Cdn + "usrimg/" + fileName;
+                case CdnFileType.ProductImage:
+                    return _storageOptions.Cdn + "productimg/" + fileName;
             }
             throw new Exception("No CdnFileType selected");
         }

@@ -1,7 +1,10 @@
 ﻿using Shared.Contract;
+using Shared.Contract.Dtos.Product;
 using StuffPacker.Model;
 using StuffPacker.Persistence.Model;
+using StuffPacker.Services;
 using StuffPacker.ViewModel;
+using StuffPacker.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +15,11 @@ namespace StuffPacker.Mapper
     public class ProductMapper : IProductMapper
     {
         private readonly ICurrentUser _currentUSer;
-        public ProductMapper(ICurrentUser currentUSer)
+        private readonly ICdnHelper _cdnHelper;
+        public ProductMapper(ICurrentUser currentUSer, ICdnHelper cdnHelper)
         {
             _currentUSer = currentUSer;
+            _cdnHelper = cdnHelper;
         }
 
         public async Task<IEnumerable<AddProductListItemViewModel>> Map(IEnumerable<ProductModel> userProducts,IEnumerable<PersonalizedProductModel> personalizedProductModels, IEnumerable<PackListModel> kits)
@@ -78,21 +83,36 @@ namespace StuffPacker.Mapper
                      consumables = pp.Consumables;
                      wearable = pp.Wearable;
                 }
-                
+
                 list.Add(new ProductViewModel
                 {
-                    Id=item.Id,
-                    Name=item.Name,
+                    Id = item.Id,
+                    Name = item.Name,
                     Weight = item.Weight,
                     WeightPrefix = item.WeightPrefix,
-                    Category= category,
-                    Star=star,
-                    Consumables= consumables,
-                    Wearable= wearable,
-                    Description=item.Description
-                });
+                    Category = category,
+                    Star = star,
+                    Consumables = consumables,
+                    Wearable = wearable,
+                    Description = item.Description,
+                    Images = GetImages(item.Images)
+                }) ;
             }
             return list;
+        }
+
+        private List<ImageViewModel> GetImages(IEnumerable<ProductImageDto> images)
+        {
+            var list = new List<ImageViewModel>();
+            foreach (var item in images)
+            {
+                list.Add(new ImageViewModel
+                {
+                    Url = _cdnHelper.GetPath(Enums.CdnFileType.ProductImage,item.FileName)
+                }) ;
+            }
+            
+                return list;
         }
     }
 }
