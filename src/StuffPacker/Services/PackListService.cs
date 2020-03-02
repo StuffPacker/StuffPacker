@@ -11,6 +11,7 @@ using StuffPacker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace StuffPacker.Services
@@ -222,6 +223,17 @@ namespace StuffPacker.Services
             var product = await this._productRepository.Get(model.Id);
             product.Update(model.Name, Convert.ToDecimal(model.Weight), model.WeightPrefix, model.Description);
 
+            var newProductImages = model.Images.Where(x=>x.Id!=Guid.Empty).ToList();
+            var existingimages = product.Images;
+            foreach (var image in newProductImages)
+            {
+                var img = existingimages.FirstOrDefault(x=>x.Id==image.Id);
+                if(img==null)
+                {
+                    product.AddImg(image.Id,image.FileName);
+                }
+            }
+          
             var pModel = await _personalizedProductRepository.Get(userId, model.Id);
             if (pModel == null)
             {

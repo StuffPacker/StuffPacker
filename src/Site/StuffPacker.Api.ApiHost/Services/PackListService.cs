@@ -118,10 +118,10 @@ namespace StuffPacker.Api.ApiHost.Controllers
             }
             return list;
         }
-        private async Task<IEnumerable<ProductDto>> GetProducts(IEnumerable<PackListGroupItemModel> items, Guid userId)
+        private async Task<IEnumerable<PersonalizedProductDto>> GetProducts(IEnumerable<PackListGroupItemModel> items, Guid userId)
         {
             
-            var list = new List<ProductDto>();
+            var list = new List<PersonalizedProductDto>();
             var personalizedProductList = await _personalizedProductRepository.GetByUser(userId);
             foreach (var item in items)
             {
@@ -151,7 +151,7 @@ namespace StuffPacker.Api.ApiHost.Controllers
                     }
                     if (p != null)
                     {
-                        list.Add(new ProductDto
+                        list.Add(new PersonalizedProductDto
                         {
                             Name = p.Name,
                             Weight = p.Weight,
@@ -162,7 +162,8 @@ namespace StuffPacker.Api.ApiHost.Controllers
                             Star = star,
                             Wearable = wearable,
                             Consumables = consumables,
-                            Description = p.Description
+                            Description = p.Description,
+                            Images=p.Images
                         });
                     }
 

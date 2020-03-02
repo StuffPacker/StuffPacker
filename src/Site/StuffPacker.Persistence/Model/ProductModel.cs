@@ -1,5 +1,8 @@
 ﻿using Shared.Contract;
+using Shared.Contract.Dtos.Product;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace StuffPacker.Model
 {
@@ -35,7 +38,29 @@ namespace StuffPacker.Model
             Entity.Weight = weight;
             Entity.Description = description;
         }
+        public IEnumerable<ProductImageDto> Images=>GetImages();
 
-       
+        private IEnumerable<ProductImageDto> GetImages()
+        {
+            var images = Entity.Images;
+            if(string.IsNullOrEmpty(images))
+            {
+                return new List<ProductImageDto>();
+            }
+            return Shared.Common.Serializer.Default.DeSerialize<List<ProductImageDto>>(images);
+        }
+
+        public void AddImg(Guid fileId,string imageName)
+        {
+            var images = Images.ToList();
+            images.Add(new ProductImageDto
+            {
+                Id=fileId,
+                FileName=imageName
+            });
+            Entity.Images = Shared.Common.Serializer.Default.Serialize(images);
+        }
+
+        
     }
 }

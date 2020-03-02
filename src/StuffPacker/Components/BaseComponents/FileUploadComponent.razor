@@ -1,7 +1,9 @@
 ﻿@using System.IO
 @using StuffPacker.Enums
 @using MatBlazor
+@using Model
 @inject IFileService _fileService;
+@inject ICurrentUserProvider _currentUserProvider
 
 <MatFileUpload OnChange="@FilesReady"></MatFileUpload>
 <h3 style="color:darkred">@errorMessage</h3>
@@ -15,33 +17,63 @@
     public FileUploadType FileUploadType { get; set; }
 
     [Parameter]
-    public EventCallback<string> AfterUpload { get; set; }
+    public EventCallback<StuffPacker.Model.UploadFileModel[]> AfterUpload { get; set; }
+
+    [Parameter]
+    public bool AllowMultipleFiles { get; set; }
 
     string errorMessage = "";
     List<string> list = new List<string>();
 
     async Task FilesReady(IMatFileUploadEntry[] files)
     {
-        if(FileUploadType== FileUploadType.none)
+        if (FileUploadType == FileUploadType.none)
         {
             throw new Exception("no file type selected");
         }
-        var file = files[0];
-        var result = _fileService.CheckExtension(Path.GetExtension(file.Name.ToLower()), FileUploadType);
-        if (string.IsNullOrEmpty(result))
+        var list = new List<UploadFileModel>();
+        var filesToUpload = files;
+        if(!AllowMultipleFiles)
         {
-            var fileName=await UploadFile(file);
-            errorMessage = result;
-            await AfterUpload.InvokeAsync(fileName);
+            filesToUpload = new IMatFileUploadEntry[]{ files[0] };
         }
-        errorMessage = result;
+        foreach (var file in filesToUpload)
+        {
+
+            var result = _fileService.CheckExtension(Path.GetExtension(file.Name.ToLower()), FileUploadType);
+            if (string.IsNullOrEmpty(result))
+            {
+                Guid fileId = Guid.NewGuid();
+                if (FileUploadType == FileUploadType.UserImg)
+                {
+                    fileId = _currentUserProvider.GetUserId;
+                }
+                var fileName = await UploadFile(fileId, file);
+                errorMessage = result;
+
+
+                list.Add(new UploadFileModel
+                {
+                    FileName = fileName,
+                    Id = fileId
+                });
+
+            }
+            else
+            {
+                errorMessage = result;
+                return;
+            }
+
+        }
+        await AfterUpload.InvokeAsync(list.ToArray());
+
     }
 
-    private async Task<string> UploadFile(IMatFileUploadEntry file)
+    private async Task<string> UploadFile(Guid fileId,IMatFileUploadEntry file)
     {
 
-
-        var fileName = await _fileService.GetFileName(FileUploadType,file.Name);
+        var fileName = await _fileService.GetFileName(fileId, FileUploadType, file.Name);
         var bytes = default(byte[]);
         using (var memstream = new MemoryStream())
         {
@@ -51,7 +83,7 @@
 
         var memory = new MemoryStream(bytes);
         // await _fileService.Save(memory, fileName,FileUploadType);
-        await _fileService.UploadToStorage(fileName,memory, FileUploadType);
+        await _fileService.UploadToStorage(fileName, memory, FileUploadType);
         return fileName;
     }
 }

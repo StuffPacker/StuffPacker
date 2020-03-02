@@ -26,7 +26,7 @@ namespace Shared.Contract.Dtos
 
         public decimal Weight => GetTotalWeight();
 
-        public IEnumerable<ProductDto> Items { get; set; }
+        public IEnumerable<PersonalizedProductDto> Items { get; set; }
 
         public WeightPrefix WeightPrefix { get; set; }
         public IEnumerable<KitDto> Kits { get; set; }

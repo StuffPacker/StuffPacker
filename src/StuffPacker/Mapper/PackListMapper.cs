@@ -1,6 +1,9 @@
 ﻿using Shared.Contract.Dtos;
 using Shared.Contract.Dtos.PackList;
+using Shared.Contract.Dtos.Product;
+using StuffPacker.Services;
 using StuffPacker.ViewModel;
+using StuffPacker.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +11,11 @@ namespace StuffPacker.Mapper
 {
     public class PackListMapper : IPackListMapper
     {
+        private readonly ICdnHelper _cdnHelper;
+        public PackListMapper(ICdnHelper cdnHelper)
+        {
+            _cdnHelper = cdnHelper;
+        }
         public IEnumerable<PackListViewModel> Map(IEnumerable<PackListDto> packLists)
         {
             var list = new List<PackListViewModel>();
@@ -45,30 +53,32 @@ namespace StuffPacker.Mapper
                     Id = item.Id,
                     Name = item.Name,
                     WeightPrefix = item.WeightPrefix,
-                    Items = GetProducts(item.Items,item.Kits)
+                    Items = GetProducts(item.Items,item.Kits),
+                    
                 });
             }
             return list;
         }
 
-        private IEnumerable<ProductViewModel> GetProducts(IEnumerable<ProductDto> items,IEnumerable<KitDto> kits)
+        private IEnumerable<ProductViewModel> GetProducts(IEnumerable<PersonalizedProductDto> items,IEnumerable<KitDto> kits)
         {
             var list = new List<ProductViewModel>();
             foreach (var item in items)
             {
                 list.Add(new ProductViewModel
                 {
-                    Amount=item.Amount,
-                    Category=item.Category,
-                    Consumables=item.Consumables,                   
-                    Description=item.Description,
-                    Id=item.Id,
-                    Name=item.Name,
-                    Star=item.Star,
-                    Wearable=item.Wearable,
-                    Weight=item.Weight,
-                    WeightPrefix=item.WeightPrefix                    
-                });
+                    Amount = item.Amount,
+                    Category = item.Category,
+                    Consumables = item.Consumables,
+                    Description = item.Description,
+                    Id = item.Id,
+                    Name = item.Name,
+                    Star = item.Star,
+                    Wearable = item.Wearable,
+                    Weight = item.Weight,
+                    WeightPrefix = item.WeightPrefix,
+                    Images = GetImages(item.Images)
+                }) ;
             }
             foreach (var item in kits)
             {
@@ -81,6 +91,19 @@ namespace StuffPacker.Mapper
                     Weight = item.Weight,
                     WeightPrefix = item.WeightPrefix,
                     IsKit = true
+                }) ;
+            }
+            return list;
+        }
+
+        private List<ImageViewModel> GetImages(IEnumerable<ProductImageDto> images)
+        {
+            var list = new List<ImageViewModel>();
+            foreach (var item in images)
+            {
+                list.Add(new ImageViewModel
+                {
+                    Url = _cdnHelper.GetPath(Enums.CdnFileType.ProductImage,item.FileName)
                 }) ;
             }
             return list;
