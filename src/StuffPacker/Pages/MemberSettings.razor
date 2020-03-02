@@ -76,8 +76,8 @@
         }
         okMessage = "Saved!";
     }
-    void AfterUpload(string fileName)
+    void AfterUpload(StuffPacker.Model.UploadFileModel[] files)
     {
-        userModel.ImgUrl = fileName;
+        userModel.ImgUrl = (files[0]).FileName;
     }
 }

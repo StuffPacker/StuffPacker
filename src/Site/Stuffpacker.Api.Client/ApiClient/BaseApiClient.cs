@@ -1,16 +1,31 @@
 ﻿using Shared.Common;
+using Shared.Contract;
 using Shared.Contract.Error;
 using Shared.Contract.Exceptions;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Stuffpacker.Api.Client.ApiClient
 {
     public class BaseApiClient
     {
+        private readonly IApiAuthClientFactory _clientFactory;
+        private ClaimsPrincipal _user;
+        public BaseApiClient(IApiAuthClientFactory clientFactory)
+        {
+            _clientFactory = clientFactory;
+           
+
+          
+        }
+        public void SetPrincipal(ClaimsPrincipal user)
+        {
+            _user = user;
+        }
         protected static async Task HandleBadRequestOrGenericError(HttpResponseMessage response)
         {
             if (response.StatusCode == HttpStatusCode.BadRequest)
@@ -61,6 +76,68 @@ namespace Stuffpacker.Api.Client.ApiClient
             body = body.Replace("\"", string.Empty);
             return Guid.Parse(body);
 
+        }
+        protected async Task Patch(string url, object dto)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PatchAsync(url, requestBody);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+                    return;
+                }
+            }
+        }
+        protected async Task<T> Get<T>(string url) where T : class, new()
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                var response = await client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    await HandleBadRequestOrGenericError(response);
+                }
+                return await ToResult<T>(response);
+            }
+        }
+        protected async Task<T> Post<T>(string url, object dto) where T : class, new()
+        {
+
+            using (var client = await _clientFactory.Create(_user))
+            {
+
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.PostAsync(url, requestBody);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+
+                    return await ToResult<T>(response);
+                }
+            }
+        }
+        protected async Task Delete(string url, object dto)
+        {
+            using (var client = await _clientFactory.Create(_user))
+            {
+                using (var requestBody = new JsonContent(dto))
+                {
+                    var response = await client.DeleteAsync(url, requestBody);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await HandleBadRequestOrGenericError(response);
+                    }
+                }
+
+            }
         }
     }
 }

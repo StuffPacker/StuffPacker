@@ -1,13 +1,12 @@
-﻿using StuffPacker;
+﻿using Shared.Contract.Dtos.Product;
+using StuffPacker;
 using System;
 
 namespace Shared.Contract.Dtos
 {
-    public class ProductDto
+    public class PersonalizedProductDto:ProductDto
     {
-        public string Name { get; set; }
-        public Guid Id { get; set; }
-        public decimal Weight { get; set; }
+       
         public WeightPrefix WeightPrefix { get; set; }
 
         public string Category { get; set; }
@@ -16,9 +15,9 @@ namespace Shared.Contract.Dtos
         public bool Wearable { get; set; }
         public bool Consumables { get; set; }
 
-        public string Description { get; set; }
+        
 
-        public ProductDto()
+        public PersonalizedProductDto()
         {
             WeightPrefix = WeightPrefix.Gram;
             Amount = 1;

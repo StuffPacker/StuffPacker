@@ -12,6 +12,7 @@ namespace StuffPacker.Model
 
         public Guid? Owner { get; set; }
         public string Description { get; set; }
+        public string Images { get;  set; }
 
         public ProductEntity(Guid id,Guid? owner)
         {

@@ -1,4 +1,7 @@
-﻿@inject StuffPacker.Services.IPackListService _packListService;
+﻿@using Model
+
+@inject StuffPacker.Services.IPackListService _packListService;
+@inject ICdnHelper _cdnHelper 
 <MatDialog @bind-IsOpen="@Model.DialogIsOpen">
     <MatDialogTitle>Update product</MatDialogTitle>
     <MatDialogContent>
@@ -38,7 +41,7 @@
                     <MatSelect Label="Prefix" @bind-Value="Model.WeightPrefixValue">
                         @foreach (var item in WeightPrefixes)
                         {
-                        <MatOptionString Id="@item" >@item</MatOptionString>                          
+                            <MatOptionString Id="@item">@item</MatOptionString>
                         }
                     </MatSelect>
                 </div>
@@ -47,7 +50,30 @@
         <br />
         <input type="text" @bind-value="@Model.ProductModel.Description"> </input>
         <MatTextField @bind-Value="@Model.ProductModel.Category" Label="Category"></MatTextField><br />
-      
+
+        <h3>Images</h3>
+        <StuffPacker.Components.BaseComponents.FileUploadComponent FileUploadType="Enums.FileUploadType.ProductImg" AfterUpload="AfterUpload" AllowMultipleFiles="true"></StuffPacker.Components.BaseComponents.FileUploadComponent>
+
+
+        @if (Model.ProductModel.Images != null)
+        {
+            <div class="container-fluid">
+                @foreach (var item in Model.ProductModel.Images)
+                {
+                    <div class="row">
+                        <div class="col">
+                            <a href="@item.Url" target="_blank">
+                                <img style="width:100%" src="@item.Url" />
+                            </a>
+                        </div>
+                    </div>
+
+                }
+            </div>
+
+        }
+        <br />
+        <br />
         @*<MatAutocompleteList Items="@Categories" TItem="string" @bind-Value="@Model.ProductModel.Category" Label="Category"></MatAutocompleteList>
         <br />*@
 
@@ -84,7 +110,19 @@
         Model.ProductModel.Consumables = !Model.ProductModel.Consumables;
     }
 
+    void AfterUpload(UploadFileModel[] uploadedFiles)
+    {
 
+        foreach (var item in uploadedFiles)
+        {
+            Model.ProductModel.Images.Add(new ViewModel.Base.ImageViewModel
+            {
+                Url = _cdnHelper.GetPath(Enums.CdnFileType.ProductImage, item.FileName),
+                Id = item.Id,
+                FileName=item.FileName
+            });
+        }
+    }
 
     async Task OkClick()
     {
@@ -93,7 +131,10 @@
         {
             id = Model.ProductModel.Id;
         }
-
+        if(string.IsNullOrEmpty(Model.WeightPrefixValue))
+        {
+            Model.WeightPrefixValue = WeightPrefix.Gram.ToString();
+        }
         WeightPrefix enumValue = (WeightPrefix)Enum.Parse(typeof(WeightPrefix), Model.WeightPrefixValue, true);
         Model.ProductModel.WeightPrefix = enumValue;
         Model.ProductModel.Weight = Convert.ToDecimal(Model.ConvertedWeight);

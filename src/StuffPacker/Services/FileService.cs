@@ -12,26 +12,33 @@ namespace StuffPacker.Services
 {
     public class FileService : IFileService
     {
-        private readonly ICurrentUserProvider _currentUserProvider;
+        
         private readonly IWebHostEnvironment _env;
         private readonly StorageOptions _storageOptions;
 
-        public FileService(ICurrentUserProvider currentUserProvider, IWebHostEnvironment env,IOptions<StorageOptions> storageOptions)
+        public FileService(IWebHostEnvironment env,IOptions<StorageOptions> storageOptions)
         {
-            _currentUserProvider = currentUserProvider;
+            
             _env = env;
             _storageOptions = storageOptions.Value;
         }
-        public async Task<string> GetFileName(FileUploadType fileUploadType,string filename)
+        public async Task<string> GetFileName(Guid Id,FileUploadType fileUploadType,string filename)
         {
            
             switch(fileUploadType)
             {
                 case FileUploadType.UserImg:
-                    return GetUserImg(_currentUserProvider.GetUserId,Path.GetExtension(filename));
-                    
+                    return GetUserImg(Id,Path.GetExtension(filename));
+                case FileUploadType.ProductImg:
+                    return GetFilenameInner(Id, Path.GetExtension(filename));
+
             }
             throw new Exception("no file upload type selected");
+        }
+
+        private string GetFilenameInner(Guid id, string fileExtension)
+        {
+            return id.ToString("N") + DateTime.UtcNow.Ticks + fileExtension;
         }
 
         private string GetUserImg(Guid userId,string fileExtension)
@@ -40,7 +47,7 @@ namespace StuffPacker.Services
             {
                 throw new Exception("no user");
             }
-            return userId.ToString("N") + DateTime.UtcNow.Ticks + fileExtension;
+            return GetFilenameInner(userId,fileExtension);
         }
 
         public async Task Save(MemoryStream stream, string fileName, FileUploadType fileUploadType)
@@ -106,6 +113,13 @@ namespace StuffPacker.Services
                         return "file extension must be one of: png,jpg";
                     }
                     break;
+
+                case FileUploadType.ProductImg:
+                    if (extension != ".png" && extension != ".jpg" && extension != ".jpeg")
+                    {
+                        return "file extension must be one of: png,jpg";
+                    }
+                    break;
             }
             return string.Empty;
         }
@@ -135,6 +149,8 @@ namespace StuffPacker.Services
             {
                 case FileUploadType.UserImg:
                     return "usrimg";
+                case FileUploadType.ProductImg:
+                    return "productimg";
             }
             throw new Exception("Cant find container name");
         }
