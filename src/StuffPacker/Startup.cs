@@ -21,6 +21,9 @@ using System.Text;
 using System;
 using Polly;
 using Polly.Extensions.Http;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace StuffPacker
 {
@@ -91,6 +94,17 @@ namespace StuffPacker
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            if (!env.IsDevelopment())
+            {
+                var options = new RewriteOptions();
+                options.AddRedirectToHttps();
+                options.Rules.Add(new RedirectToRaceRule());
+                app.UseRewriter(options);
+            }
+              
+
+
+
             app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
 
             if (env.IsDevelopment())
@@ -124,6 +138,31 @@ namespace StuffPacker
            "api/{controller=test}/{action=Index}/{id?}");
             });
 
+        }
+    }
+    public class RedirectToRaceRule : IRule
+    {
+        public virtual void ApplyRule(RewriteContext context)
+        {
+            var req = context.HttpContext.Request;
+            if (req.Host.Host.Equals("friendsontrail.com", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Result = RuleResult.ContinueRules;
+                return;
+            }
+
+            if (req.Host.Value.StartsWith("race.", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Result = RuleResult.ContinueRules;
+                return;
+            }
+
+            var wwwHost = new HostString($"race.{req.Host.Value}");
+            var newUrl = UriHelper.BuildAbsolute(req.Scheme, wwwHost, req.PathBase, req.Path, req.QueryString);
+            var response = context.HttpContext.Response;
+            response.StatusCode = 301;
+            response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Location] = newUrl;
+            context.Result = RuleResult.EndResponse;
         }
     }
 }
